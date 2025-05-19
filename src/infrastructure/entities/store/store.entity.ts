@@ -1,0 +1,76 @@
+import { AuditableEntity } from 'src/infrastructure/base/auditable.entity';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
+import { City } from '../city/city.entity';
+import { OwnedEntity } from 'src/infrastructure/base/owned.entity';
+import { User } from '../user/user.entity';
+import { Offer } from '../offer/offer.entity';
+@Entity()
+export class Store extends OwnedEntity {
+  @Column()
+  name: string;
+
+  @OneToOne(() => User)
+  user: User;
+  @Column({ nullable: true })
+  logo: string;
+
+  @Column({ nullable: true })
+  cover_image: string;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @ManyToOne(() => City, (city) => city.stores, { nullable: true })
+  city: City;
+
+  @Column({ nullable: true })
+  city_id: string;
+  // latitude
+  @Column({ type: 'float', precision: 10, scale: 6 })
+  latitude: number;
+
+  // longitude
+  @Column({ type: 'float', precision: 11, scale: 6 })
+  longitude: number;
+
+  @Column({
+    type: 'geometry',
+    spatialFeatureType: 'Point',
+    srid: 4326,
+    nullable: true,
+  })
+  location: string;
+
+  @Column({ default: false })
+  is_main_branch: boolean;
+  @OneToMany(() => Store, (store) => store.city, { nullable: true })
+  branches: Store[];
+  @ManyToOne(() => Store, (store) => store.branches, { nullable: true })
+  @JoinColumn({ name: 'main_branch_id' })
+  main_branch: Store;
+  @Column({ nullable: true })
+  main_branch_id: string;
+
+  @ManyToMany(() => Offer, (offer) => offer.stores)
+  offers: Offer[];
+
+  @BeforeInsert()
+  saveLocation() {
+    this.location = `POINT(${this.latitude} ${this.longitude})`;
+  }
+
+  @BeforeUpdate()
+  updateLocation() {
+    this.location = `POINT(${this.latitude} ${this.longitude})`;
+  }
+}
