@@ -1,16 +1,16 @@
-# github action ci/cd to build and deploy using scp
-name: Deploy
+name: Deploy Docker App
 
 on:
   push:
     branches:
-      - master-{x}
+      - master  # adjust branch if needed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -18,8 +18,14 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
+            echo "Navigating to project directory..."
             cd /var/www/${{ secrets.PROJECT }}
-            git pull
-            sudo npm i
-            sudo npm run build
-            pm2 restart 1
+
+            echo "Pulling latest changes..."
+            git pull origin master
+
+            echo "Building and restarting Docker containers..."
+            docker compose down
+            docker compose up -d --build
+
+            echo "✅ Deployment complete."
