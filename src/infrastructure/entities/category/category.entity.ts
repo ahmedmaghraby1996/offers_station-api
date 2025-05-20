@@ -13,3 +13,4 @@ export class Category extends AuditableEntity{
     @OneToMany(() => SubCategory, (subcategory) => subcategory.category)
     subcategories: SubCategory[]
 }
+// 
