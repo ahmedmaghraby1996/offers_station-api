@@ -19,6 +19,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             echo "Navigating to project directory..."
+            cd ..
             cd /var/www/${{ secrets.PROJECT }}
 
             echo "Pulling latest changes..."
