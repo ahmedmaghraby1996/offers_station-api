@@ -17,6 +17,8 @@ import { Country } from '../entities/country/country.entity';
 import { Store } from '../entities/store/store.entity';
 import { Offer } from '../entities/offer/offer.entity';
 import { OfferImages } from '../entities/offer/offer-images.entity';
+import { Category } from '../entities/category/category.entity';
+import { SubCategory } from '../entities/category/subcategory.entity';
 
 
 
@@ -38,7 +40,9 @@ Country,
     Country,
     Store,
     Offer,
-    OfferImages
+    OfferImages,
+    Category,
+    SubCategory
 
 ];
 

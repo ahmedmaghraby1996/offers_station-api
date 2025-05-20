@@ -14,6 +14,7 @@ import { City } from '../city/city.entity';
 import { OwnedEntity } from 'src/infrastructure/base/owned.entity';
 import { User } from '../user/user.entity';
 import { Offer } from '../offer/offer.entity';
+import { Category } from '../category/category.entity';
 @Entity()
 export class Store extends OwnedEntity {
   @Column()
@@ -63,6 +64,13 @@ export class Store extends OwnedEntity {
 
   @ManyToMany(() => Offer, (offer) => offer.stores)
   offers: Offer[];
+
+
+  @ManyToOne(() => Category , )
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
+  @Column({ nullable: true })
+  category_id: string;
 
   @BeforeInsert()
   saveLocation() {
