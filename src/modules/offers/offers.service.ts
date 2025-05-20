@@ -16,6 +16,7 @@ export class OffersService extends BaseService<Offer> {
   }
 // 
 // 
+// 
   async createOffer(req: CreateOfferRequest) {
     const offer = await this.createOfferTransaction.run(req);
     return offer;
