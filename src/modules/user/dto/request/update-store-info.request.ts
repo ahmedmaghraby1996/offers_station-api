@@ -27,4 +27,10 @@ export class UpdateStoreInfoRequest {
     @ApiProperty({ required: true, description: 'Store city_id', example: '1', default: '1' })
     @IsNotEmpty() @IsString()
     city_id: string;
+
+
+        // city_id
+    @ApiProperty({ required: true, description: 'Store category_id', example: '1', default: '1' })
+    @IsNotEmpty() @IsString()
+    category_id: string;
 }
