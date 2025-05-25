@@ -72,13 +72,18 @@ export class Store extends OwnedEntity {
   @Column({ nullable: true })
   category_id: string;
 
-  @BeforeInsert()
-  saveLocation() {
+@BeforeInsert()
+saveLocation() {
+  if (this.latitude != null && this.longitude != null) {
     this.location = `POINT(${this.latitude} ${this.longitude})`;
   }
+}
 
-  @BeforeUpdate()
-  updateLocation() {
+@BeforeUpdate()
+updateLocation() {
+  if (this.latitude != null && this.longitude != null) {
     this.location = `POINT(${this.latitude} ${this.longitude})`;
   }
+}
+
 }
