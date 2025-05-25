@@ -37,11 +37,11 @@ export class Store extends OwnedEntity {
   @Column({ nullable: true })
   city_id: string;
   // latitude
-  @Column({ type: 'float', precision: 10, scale: 6 })
+  @Column({ type: 'float', precision: 10, scale: 6, nullable: true })
   latitude: number;
 
   // longitude
-  @Column({ type: 'float', precision: 11, scale: 6 })
+  @Column({ type: 'float', precision: 11, scale: 6 , nullable: true })
   longitude: number;
 
   @Column({
