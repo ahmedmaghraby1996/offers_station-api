@@ -17,7 +17,7 @@ import { Offer } from '../offer/offer.entity';
 import { Category } from '../category/category.entity';
 @Entity()
 export class Store extends OwnedEntity {
-  @Column()
+  @Column({nullable: true })
   name: string;
 
   @OneToOne(() => User)
