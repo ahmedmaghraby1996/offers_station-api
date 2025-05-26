@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -7,5 +8,6 @@ import {
 @Entity()
 export abstract class BaseEntity extends TypeORMBaseEntity {
     @PrimaryGeneratedColumn('uuid')
+    @Expose()
     id!: string;
 }

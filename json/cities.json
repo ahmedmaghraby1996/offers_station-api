@@ -1,4 +1,8 @@
-[ 
+{
+    "country":{
+        "name_ar":"السعوية",
+        "name_en":"Saudi Arabia",
+        "cities":[ 
 { "code": "AHB", "name_ar": "أبها", "name_en": "Abha" }, 
 { "code": "ABQ", "name_ar": "بقيق", "name_en": "Abqaiq" },
  { "code": "DMM", "name_ar": "الدمام", "name_en": "Ad Dammam" }, 
@@ -35,3 +39,5 @@
 { "code": "YNB", "name_ar": "ينبع", "name_en": "Yanbu commercial city " },  
 { "code": "ZUL", "name_ar": "الزلفي", "name_en": "Zilfi" }  
 ]
+    }
+}

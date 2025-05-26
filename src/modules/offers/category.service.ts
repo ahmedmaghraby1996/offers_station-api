@@ -5,20 +5,15 @@ import { Offer } from 'src/infrastructure/entities/offer/offer.entity';
 import { Repository } from 'typeorm';
 import { CreateOfferRequest } from './dto/requests/create-offer.request';
 import { CreateOfferTransaction } from './util/create-offer.transaction';
+import { Category } from 'src/infrastructure/entities/category/category.entity';
 
 @Injectable()
-export class OffersService extends BaseService<Offer> {
+export class CategoryService extends BaseService<Category> {
   constructor(
-    @InjectRepository(Offer) private readonly repo: Repository<Offer>,
-    private readonly createOfferTransaction: CreateOfferTransaction,
-    
-    
+    @InjectRepository(Category) private readonly repo: Repository<Category>,
   ) {
     super(repo);
   }
 
-  async createOffer(req: CreateOfferRequest) {
-    const offer = await this.createOfferTransaction.run(req);
-    return offer;
-  }
+
 }

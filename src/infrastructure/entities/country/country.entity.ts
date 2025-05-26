@@ -15,6 +15,8 @@ export class Country extends AuditableEntity {
 
   @OneToMany(() => City, (city) => city.country)
   cities: City[]
-
+constructor(partial?: Partial<Country>) {
+  super();
+  Object.assign(this, partial);}
 
 }
