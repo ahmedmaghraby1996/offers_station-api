@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferRequest } from './dto/requests/create-offer.request';
 import { CategoryService } from './category.service';
@@ -39,7 +39,7 @@ export class OffersController {
   }
 
   @Post('create')
-  async createOffer(req: CreateOfferRequest) {
+  async createOffer(@Body()req: CreateOfferRequest) {
     const offer = await this.offersService.createOffer(req);
     return offer;
   }
