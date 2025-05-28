@@ -1,6 +1,7 @@
 import { AuditableEntity } from "src/infrastructure/base/auditable.entity";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { Category } from "./category.entity";
+import { Offer } from "../offer/offer.entity";
 @Entity()
 export class SubCategory extends AuditableEntity {
   @Column()
@@ -16,4 +17,7 @@ export class SubCategory extends AuditableEntity {
 
  @Column({ nullable: true })
  category_id: number;
+
+ @OneToMany(() => Offer, (offer) => offer.subcategory)
+ offers: Offer[]
 }

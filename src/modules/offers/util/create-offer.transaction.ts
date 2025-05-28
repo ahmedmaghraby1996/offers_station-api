@@ -13,6 +13,7 @@ import { Request } from 'express';
 import * as fs from 'fs';
 import { OfferImages } from 'src/infrastructure/entities/offer/offer-images.entity';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
+import { v4 as uuid } from 'uuid';
 @Injectable()
 export class CreateOfferTransaction extends BaseTransaction<
   CreateOfferRequest,
@@ -32,23 +33,26 @@ export class CreateOfferTransaction extends BaseTransaction<
     context: EntityManager,
   ): Promise<Offer> {
     try {
-      const offer = plainToInstance(Offer, req, {
-        excludeExtraneousValues: true,
-      });
-
-      const images = req?.images.map((image) => {
-        if (!fs.existsSync('storage/offer-images')) {
-          fs.mkdirSync('storage/offer-images');
-        }
-        // store the future path of the image
-        const newPath = image.replace('/tmp/', '/offer-images/');
-        fs.renameSync(image, newPath);
-        return new OfferImages({
-          image: newPath,
-          order_by: req.images.indexOf(image),
-          offer_id: offer.id,
+      const offer = context.create(
+        Offer,
+        plainToInstance(Offer, { ...req, id: uuid() }),
+      );
+      if (req?.images?.length > 0) {
+        const images = req?.images?.map((image) => {
+          if (!fs.existsSync('storage/offer-images')) {
+            fs.mkdirSync('storage/offer-images');
+          }
+          // store the future path of the image
+          const newPath = image.replace('/tmp/', '/offer-images/');
+          fs.renameSync(image, newPath);
+          return new OfferImages({
+            image: newPath,
+            order_by: req.images.indexOf(image) + 1, // start order_by from 1
+            offer_id: offer.id,
+          });
         });
-      });
+        await context.save(images);
+      }
       const stores = await context.find(Store, {
         where: {
           id: In(req.stores),
@@ -56,8 +60,10 @@ export class CreateOfferTransaction extends BaseTransaction<
       });
 
       offer.stores = stores;
+      console.log(stores);
+      console.log(offer);
       await context.save(offer);
-      await context.save(images);
+
       return offer;
     } catch (error) {
       throw new BadRequestException(error);

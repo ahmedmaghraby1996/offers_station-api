@@ -20,7 +20,7 @@ export class Store extends OwnedEntity {
   @Column({nullable: true })
   name: string;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   user: User;
   @Column({ nullable: true })
   logo: string;

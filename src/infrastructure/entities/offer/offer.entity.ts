@@ -1,9 +1,11 @@
 import { AuditableEntity } from "src/infrastructure/base/auditable.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { Store } from "../store/store.entity";
 import { OfferImages } from "./offer-images.entity";
+import { SubCategory } from "../category/subcategory.entity";
 @Entity()
 export class Offer extends AuditableEntity{
+    
 
  @Column()
  title_ar: string;
@@ -38,4 +40,10 @@ export class Offer extends AuditableEntity{
  @ManyToMany(() => Store, (store) => store.offers)
  @JoinTable()
  stores: Store[]
+
+
+ @ManyToOne(()=>SubCategory, (subcategory) => subcategory.offers)
+ subcategory: SubCategory
+ @Column({nullable:true})
+ subcategory_id: number
 }

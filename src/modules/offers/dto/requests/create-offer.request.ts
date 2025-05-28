@@ -9,6 +9,8 @@ title_en: string;
 @ApiProperty()
 description_ar: string;
 @ApiProperty()
+subcategory_id: string;
+@ApiProperty()
 description_en: string;
 @ApiProperty({required:false})
 @IsOptional()

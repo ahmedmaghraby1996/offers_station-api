@@ -1,0 +1,75 @@
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsNumber,
+  IsArray,
+  IsDate,
+} from 'class-validator';
+
+export class UpdateOfferRequest {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  title_ar?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  title_en?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description_ar?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description_en?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDate()
+  start_date?: Date;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDate()
+  end_date?: Date;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  original_price?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  offer_price?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  code?: string;
+  
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  subcategory_id?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  stores?: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  images?: string[];
+}

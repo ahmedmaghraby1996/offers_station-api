@@ -1,5 +1,3 @@
-
-
 import { Module } from '@nestjs/common';
 
 import { NotificationModule } from './notification/notification.module';
@@ -13,18 +11,19 @@ import { ContactUsModule } from './contact-us/contact-us.module';
 import { FaqModule } from './faq/faq.module';
 import { SendEmailModule } from './send-email/send-email.module';
 import { OffersModule } from './offers/offers.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
-  
     NotificationModule,
     SuggestionsComplaintsModule,
     StaticPageModule,
     ContactUsModule,
     FaqModule,
-    SendEmailModule, 
-    TransactionModule, OffersModule,
-    
+    SendEmailModule,
+    TransactionModule,
+    OffersModule,
+    FileModule
   ],
   exports: [],
 })
