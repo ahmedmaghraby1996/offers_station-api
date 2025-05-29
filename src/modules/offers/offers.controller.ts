@@ -81,7 +81,7 @@ export class OffersController {
   async getStoreOffers(@Query() query: PaginatedRequest) {
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
-    applyQueryFilters(query, `stores.user_id=${this.request.user.id}`);
+    applyQueryFilters(query, `user_id=${this.request.user.id}`);
     const total = await this.offersService.count(query);
     const offers = await this.offersService.findAll(query);
     const result = plainToInstance(OfferResponse, offers, {

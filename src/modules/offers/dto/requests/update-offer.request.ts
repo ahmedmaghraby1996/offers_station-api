@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsString,
   IsOptional,
@@ -35,14 +36,12 @@ export class UpdateOfferRequest {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @Transform(({ value }) => new Date(value))
   @IsDate()
   start_date?: Date;
-
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsDate()
-  end_date?: Date;
-
+  duration_in_days: number;
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
@@ -57,7 +56,7 @@ export class UpdateOfferRequest {
   @IsOptional()
   @IsString()
   code?: string;
-  
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()

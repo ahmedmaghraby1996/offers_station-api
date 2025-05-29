@@ -33,9 +33,10 @@ export class CreateOfferTransaction extends BaseTransaction<
     context: EntityManager,
   ): Promise<Offer> {
     try {
+      const user_id = this.request.user.id;
       const offer = context.create(
         Offer,
-        plainToInstance(Offer, { ...req, id: uuid() }),
+        plainToInstance(Offer, { ...req, id: uuid(), user_id }),
       );
       if (req?.images?.length > 0) {
         const images = req?.images?.map((image) => {
