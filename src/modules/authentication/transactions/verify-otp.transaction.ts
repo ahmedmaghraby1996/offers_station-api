@@ -10,7 +10,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { VerifyOtpRequest } from '../dto/requests/verify-otp.dto';
 import { AuthResponse } from '../dto/responses/auth.response';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
-
+import { Store } from 'src/infrastructure/entities/store/store.entity';
 
 @Injectable()
 export class VerifyOtpTransaction extends BaseTransaction<
@@ -57,12 +57,44 @@ export class VerifyOtpTransaction extends BaseTransaction<
       }
 
       if (!user) throw new BadRequestException('message.invalid_credentials');
-      const payload = { username: user.username, sub: user.id };
     
+      const payload = { username: user.username, sub: user.id };
+  if (user.roles.includes(Role.STORE)) {
+        // check for store
+        const store = await context.findOne(Store, {
+          where: { user_id: user.id },
+        });
+        if (
+          store.name == null ||
+          store.address == null ||
+          store.city_id == null ||
+          store.latitude == null ||
+          store.longitude == null ||
+          store.category_id == null
+        )
+       return {
+        ...user,
+        role: user.roles[0],
+        is_store_completed: false,
+        access_token: this.jwtService.sign(
+          payload,
+          jwtSignOptions(this._config),
+        )
+       }   
+       else return {
+        ...user,
+        role: user.roles[0],
+        is_store_completed: true,
+        access_token: this.jwtService.sign(
+          payload,
+          jwtSignOptions(this._config),
+        )
+       }
+      }
       return {
         ...user,
         role: user.roles[0],
-   
+
         access_token: this.jwtService.sign(
           payload,
           jwtSignOptions(this._config),
