@@ -38,7 +38,18 @@ export class CreateOfferTransaction extends BaseTransaction<
         Offer,
         plainToInstance(Offer, { ...req, user_id }),
       );
-      if (req?.images?.length > 0) {
+  
+      const stores = await context.find(Store, {
+        where: {
+          id: In(req.stores),
+        },
+      });
+
+      offer.stores = stores;
+      console.log(stores);
+      console.log(offer);
+      await context.save(offer);
+    if (req?.images?.length > 0) {
         const images = req?.images?.map((image) => {
           if (!fs.existsSync('storage/offer-images')) {
             fs.mkdirSync('storage/offer-images');
@@ -54,17 +65,6 @@ export class CreateOfferTransaction extends BaseTransaction<
         });
         await context.save(images);
       }
-      const stores = await context.find(Store, {
-        where: {
-          id: In(req.stores),
-        },
-      });
-
-      offer.stores = stores;
-      console.log(stores);
-      console.log(offer);
-      await context.save(offer);
-
       return offer;
     } catch (error) {
       throw new BadRequestException(error);
