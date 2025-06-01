@@ -18,9 +18,11 @@ export class CreateOfferRequest {
   @Transform(({ value }) => new Date(value))
   @IsDate()
   start_date: Date;
-  @ApiProperty({ required: false })
+   @ApiProperty({ required: false })
   @IsOptional()
-  duration_in_days: number;
+  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  end_date?: Date;
   @ApiProperty()
   original_price: number;
   @ApiProperty()

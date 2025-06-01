@@ -17,8 +17,6 @@ export class OfferResponse {
   @Expose()
   end_date: Date;
   @Expose()
-  duration_in_days: number;
-  @Expose()
   original_price: number;
   @Expose()
   offer_price: number;
