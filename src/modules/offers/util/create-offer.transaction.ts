@@ -36,7 +36,7 @@ export class CreateOfferTransaction extends BaseTransaction<
       const user_id = this.request.user.id;
       const offer = context.create(
         Offer,
-        plainToInstance(Offer, { ...req,id: uuid(), user_id }),
+        plainToInstance(Offer, { ...req, user_id }),
       );
   
       const stores = await context.find(Store, {
