@@ -29,6 +29,7 @@ import { app } from 'firebase-admin';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { OfferResponse } from './dto/responses/offer-response';
+import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -49,10 +50,21 @@ export class OffersController {
     const categories = await this.categoryService.findAll(PaginatedRequest);
     const total = await this.categoryService.count(PaginatedRequest);
 
-    const response = plainToInstance(Category, categories, {
-      excludeExtraneousValues: true,
+
+    const result = this._i18nResponse.entity(categories);
+    return new PaginatedResponse(result, {
+      meta: { total, ...PaginatedRequest },
     });
-    const result = this._i18nResponse.entity(response);
+  }
+
+
+    @Get('sub-categories')
+  async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
+    const subcategories = await this.categoryService.findAll(PaginatedRequest);
+    const total = await this.categoryService.count(PaginatedRequest);
+
+  
+    const result = this._i18nResponse.entity(subcategories);
     return new PaginatedResponse(result, {
       meta: { total, ...PaginatedRequest },
     });

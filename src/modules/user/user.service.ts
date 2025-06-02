@@ -23,6 +23,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
+import { AddBranchRequest } from './dto/request/add-branch.request';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
@@ -105,5 +106,24 @@ export class UserService extends BaseService<User> {
     console.log('store', store);
 
     return await this.storeRepo.save(store);
+  }
+
+  async createBranch(req: AddBranchRequest) {
+    const main_branch = await this.storeRepo.findOne({
+      where: { user_id: this.request.user.id, is_main_branch: true },
+    });
+    if (!main_branch)
+      throw new BadRequestException('message.main_branch_not_found');
+    const branch = new Store({
+      ...req,
+      is_main_branch: false,
+      user_id: main_branch.user_id,
+      category_id: main_branch.category_id,
+      logo: main_branch.logo,
+      
+    });
+
+  
+    return await this.storeRepo.save(branch);
   }
 }

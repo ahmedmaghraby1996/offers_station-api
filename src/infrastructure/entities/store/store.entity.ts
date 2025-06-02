@@ -86,4 +86,7 @@ updateLocation() {
   }
 }
 
+constructor(partial: Partial<Store>) {
+  super();
+  Object.assign(this, partial); }
 }
