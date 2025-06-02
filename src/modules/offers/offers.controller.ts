@@ -49,22 +49,25 @@ export class OffersController {
   async getCategories(@Query() PaginatedRequest: PaginatedRequest) {
     const categories = await this.categoryService.findAll(PaginatedRequest);
     const total = await this.categoryService.count(PaginatedRequest);
+    const response = plainToInstance(Category, categories, {
+      excludeExtraneousValues: true,
+    });
 
-
-    const result = this._i18nResponse.entity(categories);
+    const result = this._i18nResponse.entity(response);
     return new PaginatedResponse(result, {
       meta: { total, ...PaginatedRequest },
     });
   }
 
-
-    @Get('sub-categories')
+  @Get('sub-categories')
   async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
     const subcategories = await this.categoryService.findAll(PaginatedRequest);
     const total = await this.categoryService.count(PaginatedRequest);
+    const response = plainToInstance(SubCategory, subcategories, {
+      excludeExtraneousValues: true,
+    });
 
-  
-    const result = this._i18nResponse.entity(subcategories);
+    const result = this._i18nResponse.entity(response);
     return new PaginatedResponse(result, {
       meta: { total, ...PaginatedRequest },
     });
@@ -100,7 +103,7 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-    const translated=this._i18nResponse.entity(result);
+    const translated = this._i18nResponse.entity(result);
     return new PaginatedResponse(translated, {
       meta: { total, ...query },
     });

@@ -2,13 +2,20 @@ import { AuditableEntity } from "src/infrastructure/base/auditable.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { Category } from "./category.entity";
 import { Offer } from "../offer/offer.entity";
+import { Expose, Transform } from "class-transformer";
+import { toUrl } from "src/core/helpers/file.helper";
 @Entity()
 export class SubCategory extends AuditableEntity {
   @Column()
+  @Expose()
   name_ar: string;
   @Column()
+  @Expose()
   name_en: string;
   @Column({ nullable: true })
+   @Transform(({ value }) => {
+    toUrl(value);
+  })
   logo: string;
 
  @ManyToOne(() => Category, (category) => category.subcategories)
