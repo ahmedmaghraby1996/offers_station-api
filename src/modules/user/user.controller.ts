@@ -193,7 +193,7 @@ export class UserController {
   }
 
     @Roles(Role.STORE)
-  @Put('add-branch')
+  @Post('add-branch')
   async addBranch(
     @Body() req: AddBranchRequest,
  
