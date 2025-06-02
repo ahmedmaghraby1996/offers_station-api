@@ -49,6 +49,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { toUrl } from 'src/core/helpers/file.helper';
 import { I18nResponse } from 'src/core/helpers/i18n.helper';
 import { UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
+import { AddBranchRequest } from './dto/request/add-branch.request';
 
 @ApiBearerAuth()
 @ApiHeader({
@@ -189,5 +190,15 @@ export class UserController {
     }
     const storeInfo = await this.userService.updateStoreInfo(req);
     return new ActionResponse(storeInfo);
+  }
+
+    @Roles(Role.STORE)
+  @Put('add-branch')
+  async addBranch(
+    @Body() req: AddBranchRequest,
+ 
+  ) {
+    const branch = await this.userService.createBranch(req);
+    return new ActionResponse(branch);
   }
 }
