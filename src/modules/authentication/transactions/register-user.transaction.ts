@@ -89,7 +89,7 @@ export class RegisterUserTransaction extends BaseTransaction<
    
        
         if(req.role == Role.STORE){
-          const store = new Store();
+          const store = new Store({});
           store.user_id = savedUser.id;
          store.is_main_branch = true
           await context.save(store);
