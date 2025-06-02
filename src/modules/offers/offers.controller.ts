@@ -88,7 +88,8 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-    return new PaginatedResponse(result, {
+    const translated=this._i18nResponse.entity(result);
+    return new PaginatedResponse(translated, {
       meta: { total, ...query },
     });
   }
