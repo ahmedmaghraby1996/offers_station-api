@@ -15,7 +15,7 @@ export class BranchResponse {
   latitude: number;
 
   @Expose()
-  langitude: number;
+  longitude: number;
 
   @Expose()
   address: string;

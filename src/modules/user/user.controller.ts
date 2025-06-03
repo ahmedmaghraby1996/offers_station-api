@@ -153,30 +153,6 @@ export class UserController {
     );
   }
 
-  @Get('/:id')
-  async getUserById(@Param('id') id: string) {
-    const user = await this.userService._repo.findOne({
-      where: { id: id },
-      relations: { city: true },
-    });
-    return new ActionResponse(
-      this._i18nResponse.entity(
-        plainToInstance(UserResponse, {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          gender: user.gender,
-          phone: user.phone,
-          avatar: user.avatar,
-          role: user.roles[0],
-          created_at: user.created_at,
-
-          city: user.city,
-        }),
-      ),
-    );
-  }
-
   @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('logo'))
   @ApiConsumes('multipart/form-data')
   @Roles(Role.STORE)
@@ -209,5 +185,28 @@ export class UserController {
     });
     const result = this._i18nResponse.entity(resposne);
     return new ActionResponse(result);
+  }
+  @Get('/:id')
+  async getUserById(@Param('id') id: string) {
+    const user = await this.userService._repo.findOne({
+      where: { id: id },
+      relations: { city: true },
+    });
+    return new ActionResponse(
+      this._i18nResponse.entity(
+        plainToInstance(UserResponse, {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          gender: user.gender,
+          phone: user.phone,
+          avatar: user.avatar,
+          role: user.roles[0],
+          created_at: user.created_at,
+
+          city: user.city,
+        }),
+      ),
+    );
   }
 }
