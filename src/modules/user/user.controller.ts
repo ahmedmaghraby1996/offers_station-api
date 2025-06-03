@@ -50,6 +50,7 @@ import { toUrl } from 'src/core/helpers/file.helper';
 import { I18nResponse } from 'src/core/helpers/i18n.helper';
 import { UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
 import { AddBranchRequest } from './dto/request/add-branch.request';
+import { BranchResponse } from './dto/branch.response';
 
 @ApiBearerAuth()
 @ApiHeader({
@@ -192,13 +193,21 @@ export class UserController {
     return new ActionResponse(storeInfo);
   }
 
-    @Roles(Role.STORE)
+  @Roles(Role.STORE)
   @Post('add-branch')
-  async addBranch(
-    @Body() req: AddBranchRequest,
- 
-  ) {
+  async addBranch(@Body() req: AddBranchRequest) {
     const branch = await this.userService.createBranch(req);
     return new ActionResponse(branch);
+  }
+
+  @Roles(Role.STORE)
+  @Get('get-branches')
+  async getBranch() {
+    const branch = await this.userService.getBranches();
+    const resposne = plainToInstance(BranchResponse, branch, {
+      excludeExtraneousValues: true,
+    });
+    const result = this._i18nResponse.entity(resposne);
+    return new ActionResponse(result);
   }
 }

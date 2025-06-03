@@ -126,4 +126,10 @@ export class UserService extends BaseService<User> {
   
     return await this.storeRepo.save(branch);
   }
+
+
+  async getBranches(){
+    const branches = await this.storeRepo.find({where:{user_id:this.request.user.id}});
+    return branches;
+  }
 }
