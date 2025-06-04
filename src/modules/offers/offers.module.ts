@@ -4,6 +4,7 @@ import { OffersService } from './offers.service';
 import { CreateOfferTransaction } from './util/create-offer.transaction';
 import { CategoryService } from './category.service';
 import { UpdateOfferTransaction } from './util/update-offer.transaction';
+import { SubCategoryService } from './sub_category.service';
 
 @Module({
   controllers: [OffersController],
@@ -12,6 +13,7 @@ import { UpdateOfferTransaction } from './util/update-offer.transaction';
     CreateOfferTransaction,
     CategoryService,
     UpdateOfferTransaction,
+    SubCategoryService
   ],
 })
 export class OffersModule {}
