@@ -1,5 +1,6 @@
-import { Expose, Transform } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { toUrl } from 'src/core/helpers/file.helper';
+import { BranchResponse } from 'src/modules/user/dto/branch.response';
 
 export class OfferResponse {
   @Expose()
@@ -31,4 +32,7 @@ export class OfferResponse {
     });
   })
   images: any;
+  @Expose()
+  @Type(()=>BranchResponse)
+  stores:BranchResponse
 }

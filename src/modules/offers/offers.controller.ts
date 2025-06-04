@@ -100,6 +100,7 @@ export class OffersController {
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'images');
+    applyQueryIncludes(query, 'stores');
     applyQueryFilters(query, `user_id=${this.request.user.id}`);
     const total = await this.offersService.count(query);
     const offers = await this.offersService.findAll(query);
