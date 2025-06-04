@@ -47,7 +47,20 @@ export class OffersController {
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
-  @Get('categories')
+    @Get('/sub-categories')
+  async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
+    const subcategories = await this.subCategoryService.findAll(PaginatedRequest);
+    const total = await this.subCategoryService.count(PaginatedRequest);
+    const response = plainToInstance(SubCategory, subcategories, {
+      excludeExtraneousValues: true,
+    });
+
+    const result = this._i18nResponse.entity(response);
+    return new PaginatedResponse(result, {
+      meta: { total, ...PaginatedRequest },
+    });
+  }
+  @Get('/categories')
   async getCategories(@Query() PaginatedRequest: PaginatedRequest) {
     const categories = await this.categoryService.findAll(PaginatedRequest);
     const total = await this.categoryService.count(PaginatedRequest);
@@ -61,19 +74,7 @@ export class OffersController {
     });
   }
 
-  @Get('sub-categories')
-  async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
-    const subcategories = await this.subCategoryService.findAll(PaginatedRequest);
-    const total = await this.categoryService.count(PaginatedRequest);
-    const response = plainToInstance(SubCategory, subcategories, {
-      excludeExtraneousValues: true,
-    });
 
-    const result = this._i18nResponse.entity(response);
-    return new PaginatedResponse(result, {
-      meta: { total, ...PaginatedRequest },
-    });
-  }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
