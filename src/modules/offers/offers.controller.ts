@@ -30,6 +30,7 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { OfferResponse } from './dto/responses/offer-response';
 import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
+import { SubCategoryService } from './sub_category.service';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -41,6 +42,7 @@ export class OffersController {
   constructor(
     private readonly offersService: OffersService,
     private readonly categoryService: CategoryService,
+    protected readonly subCategoryService: SubCategoryService,
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
@@ -61,7 +63,7 @@ export class OffersController {
 
   @Get('sub-categories')
   async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
-    const subcategories = await this.categoryService.findAll(PaginatedRequest);
+    const subcategories = await this.subCategoryService.findAll(PaginatedRequest);
     const total = await this.categoryService.count(PaginatedRequest);
     const response = plainToInstance(SubCategory, subcategories, {
       excludeExtraneousValues: true,
