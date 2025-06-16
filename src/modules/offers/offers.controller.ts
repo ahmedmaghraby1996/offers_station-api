@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Post,
   Query,
   UseGuards,
@@ -31,6 +32,7 @@ import { Request } from 'express';
 import { OfferResponse } from './dto/responses/offer-response';
 import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
 import { SubCategoryService } from './sub_category.service';
+import { Not } from 'typeorm';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -47,9 +49,11 @@ export class OffersController {
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
-    @Get('/sub-categories')
+  @Get('/sub-categories')
   async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
-    const subcategories = await this.subCategoryService.findAll(PaginatedRequest);
+    const subcategories = await this.subCategoryService.findAll(
+      PaginatedRequest,
+    );
     const total = await this.subCategoryService.count(PaginatedRequest);
     const response = plainToInstance(SubCategory, subcategories, {
       excludeExtraneousValues: true,
@@ -73,7 +77,6 @@ export class OffersController {
       meta: { total, ...PaginatedRequest },
     });
   }
-
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -111,5 +114,17 @@ export class OffersController {
     return new PaginatedResponse(translated, {
       meta: { total, ...query },
     });
+  }
+  //DELETE OFFER
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.STORE)
+  @Post('delete')
+  async deleteOffer(@Body('id') id: string) {
+    const offer = await this.offersService.findOne(id);
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+    return await this.offersService.softDelete(id);
   }
 }

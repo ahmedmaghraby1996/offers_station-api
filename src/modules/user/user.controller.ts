@@ -48,7 +48,10 @@ import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { toUrl } from 'src/core/helpers/file.helper';
 import { I18nResponse } from 'src/core/helpers/i18n.helper';
-import { UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
+import {
+  UpdateBranchInfoRequest,
+  UpdateStoreInfoRequest,
+} from './dto/request/update-store-info.request';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 import { BranchResponse } from './dto/branch.response';
 
@@ -165,10 +168,22 @@ export class UserController {
     if (logo) {
       req.logo = logo;
     }
-    const storeInfo = await this.userService.updateStoreInfo(req);
+    const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
-
+  @Roles(Role.STORE)
+  @Put('update-branch-info')
+  async updateBranchInfo(@Body() req: UpdateBranchInfoRequest) {
+    const storeInfo = await this.userService.updateBranchInfo(req);
+    return new ActionResponse(storeInfo);
+  }
+  //DELETE BRANCH
+  @Roles(Role.STORE)
+  @Delete('delete-branch/:id')
+  async deleteBranch(@Param('id') id: string) {
+    const branch = await this.userService.deleteBranch(id);
+    return new ActionResponse(branch);
+  }
   @Roles(Role.STORE)
   @Post('add-branch')
   async addBranch(@Body() req: AddBranchRequest) {

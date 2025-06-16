@@ -21,7 +21,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { ConfigService } from '@nestjs/config';
 
-import { UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
+import { UpdateBranchInfoRequest, UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 
@@ -77,9 +77,9 @@ export class UserService extends BaseService<User> {
       where: { id: user.id },
     });
   }
-  async updateStoreInfo(req: UpdateStoreInfoRequest) {
+  async updateMainStoreInfo(req: UpdateStoreInfoRequest) {
     const store = await this.storeRepo.findOne({
-      where: { user_id: this.request.user.id },
+      where: { user_id: this.request.user.id ,is_main_branch: true},
     });
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
@@ -107,6 +107,19 @@ export class UserService extends BaseService<User> {
 
     return await this.storeRepo.save(store);
   }
+   async updateBranchInfo(req: UpdateBranchInfoRequest) {
+    const store = await this.storeRepo.findOne({
+      where: { user_id: this.request.user.id ,is_main_branch: false,id: req.branch_id},
+    });
+    if (!store) throw new NotFoundException('store not found');
+    if (req.name) store.name = req.name;
+    if (req.address) store.address = req.address;
+    if (req.latitude) store.latitude = req.latitude;
+    if (req.longitude) store.longitude = req.longitude;
+    if (req.city_id) store.city_id = req.city_id;
+   
+    return await this.storeRepo.save(store);
+  }
 
   async createBranch(req: AddBranchRequest) {
     const main_branch = await this.storeRepo.findOne({
@@ -131,5 +144,12 @@ export class UserService extends BaseService<User> {
   async getBranches(){
     const branches = await this.storeRepo.find({where:{user_id:this.request.user.id}});
     return branches;
+  }
+  async deleteBranch(id: string) {
+    const branch = await this.storeRepo.findOne({
+      where: { id: id, user_id: this.request.user.id },
+    });
+    if (!branch) throw new NotFoundException('branch not found');
+    return await this.storeRepo.softRemove(branch);
   }
 }
