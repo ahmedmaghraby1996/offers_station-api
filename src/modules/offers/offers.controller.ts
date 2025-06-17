@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   NotFoundException,
@@ -111,8 +112,8 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-    const translated = this._i18nResponse.entity(result);
-    return new PaginatedResponse(translated, {
+  
+    return new PaginatedResponse(result, {
       meta: { total, ...query },
     });
   }
@@ -120,7 +121,7 @@ export class OffersController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
-  @Post('delete')
+  @Delete('delete')
   async deleteOffer(@Body('id') id: string) {
     const offer = await this.offersService.findOne(id);
     if (!offer) {
