@@ -42,10 +42,19 @@ export class UpdateOfferTransaction extends BaseTransaction<
       }
 
       // Update offer fields
-      const updatedData = plainToInstance(Offer, req, {
-        excludeExtraneousValues: true,
+      const updatedData = new Offer({
+        offer_price: req.offer_price,
+        original_price: req.original_price,
+        title_ar: req.title_ar,
+        title_en: req.title_en,
+        description_ar: req.description_ar,
+        description_en: req.description_en,
+        start_date: req.start_date,
+       
+        end_date: req.end_date,
+        code: req.code,
+        
       });
-
       Object.assign(existingOffer, updatedData);
 
       // Update offer images
@@ -66,7 +75,7 @@ export class UpdateOfferTransaction extends BaseTransaction<
       if (existingOffer.images?.length) {
         await context.remove(existingOffer.images);
       }
-
+if(req.stores?.length > 0) {
       // Update associated stores
       const stores = await context.find(Store, {
         where: {
@@ -75,7 +84,7 @@ export class UpdateOfferTransaction extends BaseTransaction<
       });
 
       existingOffer.stores = stores;
-
+    }
       await context.save(existingOffer);
       await context.save(newImages);
 

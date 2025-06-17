@@ -5,6 +5,7 @@ import {
   Inject,
   NotFoundException,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -89,7 +90,7 @@ export class OffersController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
-  @Post('update')
+  @Put('update')
   async updateOffer(@Body() req: UpdateOfferRequest) {
     const offer = await this.offersService.updateOffer(req);
     return offer;
