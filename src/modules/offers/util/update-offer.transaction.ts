@@ -72,9 +72,7 @@ export class UpdateOfferTransaction extends BaseTransaction<
       });
 
       // Remove old images (optional)
-      if (existingOffer.images?.length) {
-        await context.remove(existingOffer.images);
-      }
+   
 if(req?.stores?.length > 0) {
       // Update associated stores
       const stores = await context.find(Store, {
@@ -87,6 +85,7 @@ if(req?.stores?.length > 0) {
     }
       await context.save(existingOffer);
       if (newImages?.length > 0) {
+         await context.remove(existingOffer.images);
       await context.save(newImages);}
 
       return existingOffer;
