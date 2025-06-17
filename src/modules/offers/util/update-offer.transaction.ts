@@ -75,7 +75,7 @@ export class UpdateOfferTransaction extends BaseTransaction<
       if (existingOffer.images?.length) {
         await context.remove(existingOffer.images);
       }
-if(req.stores?.length > 0) {
+if(req?.stores?.length > 0) {
       // Update associated stores
       const stores = await context.find(Store, {
         where: {
@@ -86,7 +86,8 @@ if(req.stores?.length > 0) {
       existingOffer.stores = stores;
     }
       await context.save(existingOffer);
-      await context.save(newImages);
+      if (newImages?.length > 0) {
+      await context.save(newImages);}
 
       return existingOffer;
     } catch (error) {
