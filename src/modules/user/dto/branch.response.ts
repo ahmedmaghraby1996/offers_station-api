@@ -20,8 +20,38 @@ export class BranchResponse {
   @Expose()
   address: string;
   @Expose()
-  @Transform((value) => toUrl(value.obj.log))
+  @Transform((value) => toUrl(value.obj.logo))
   logo: string;
+  @Expose()
+  @Transform((value) => toUrl(value.obj.catalogue))
+  catalogue: string;
+  @Expose()
+  first_phone: string;
+
+  @Expose()
+  second_phone: string;
+
+  @Expose()
+  facebook_link: string;
+
+  @Expose()
+  instagram_link: string;
+
+  @Expose()
+  x_link: string;
+
+  @Expose()
+  whatsapp_link: string;
+
+  @Expose()
+  snapchat_link: string;
+
+  @Expose()
+  youtube_link: string;
+
+  @Expose()
+  twitter_link: string;
+  
 
   @Expose()
   @Type(() => City)

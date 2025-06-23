@@ -21,7 +21,10 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { ConfigService } from '@nestjs/config';
 
-import { UpdateBranchInfoRequest, UpdateStoreInfoRequest } from './dto/request/update-store-info.request';
+import {
+  UpdateBranchInfoRequest,
+  UpdateStoreInfoRequest,
+} from './dto/request/update-store-info.request';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 
@@ -79,7 +82,7 @@ export class UserService extends BaseService<User> {
   }
   async updateMainStoreInfo(req: UpdateStoreInfoRequest) {
     const store = await this.storeRepo.findOne({
-      where: { user_id: this.request.user.id ,is_main_branch: true},
+      where: { user_id: this.request.user.id, is_main_branch: true },
     });
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
@@ -88,6 +91,15 @@ export class UserService extends BaseService<User> {
     if (req.longitude) store.longitude = req.longitude;
     if (req.city_id) store.city_id = req.city_id;
     if (req.category_id) store.category_id = req.category_id;
+    if (req.x_link) store.x_link = req.x_link;
+    if (req.whatsapp_link) store.whatsapp_link = req.whatsapp_link;
+    if (req.snapchat_link) store.snapchat_link = req.snapchat_link;
+    if (req.youtube_link) store.youtube_link = req.youtube_link;
+    if (req.tiktok_link) store.tiktok_link = req.tiktok_link;
+    if (req.instagram_link) store.instagram_link = req.instagram_link;
+    if (req.facebook_link) store.facebook_link = req.facebook_link;
+    if (req.first_phone) store.first_phone = req.first_phone;
+    if (req.second_phone) store.second_phone = req.second_phone;
 
     if (req.logo) {
       const resizedImage = await this.imageManager.resize(req.logo, {
@@ -99,17 +111,35 @@ export class UserService extends BaseService<User> {
       });
       const path = await this.storageManager.store(
         { buffer: resizedImage, originalname: req.logo.originalname },
-        { path: 'avatars' },
+        { path: 'stores' },
       );
       store.logo = path;
+    }
+    if (req.catalogue) {
+      const resizedImage = await this.imageManager.resize(req.catalogue, {
+        size: { width: 300, height: 300 },
+        options: {
+          fit: sharp.fit.cover,
+          position: sharp.strategy.entropy,
+        },
+      });
+      const path = await this.storageManager.store(
+        { buffer: resizedImage, originalname: req.catalogue.originalname },
+        { path: 'catalogues' },
+      );
+      store.catalogue = path;
     }
     console.log('store', store);
 
     return await this.storeRepo.save(store);
   }
-   async updateBranchInfo(req: UpdateBranchInfoRequest) {
+  async updateBranchInfo(req: UpdateBranchInfoRequest) {
     const store = await this.storeRepo.findOne({
-      where: { user_id: this.request.user.id ,is_main_branch: false,id: req.branch_id},
+      where: {
+        user_id: this.request.user.id,
+        is_main_branch: false,
+        id: req.branch_id,
+      },
     });
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
@@ -117,7 +147,7 @@ export class UserService extends BaseService<User> {
     if (req.latitude) store.latitude = req.latitude;
     if (req.longitude) store.longitude = req.longitude;
     if (req.city_id) store.city_id = req.city_id;
-   
+
     return await this.storeRepo.save(store);
   }
 
@@ -133,16 +163,15 @@ export class UserService extends BaseService<User> {
       user_id: main_branch.user_id,
       category_id: main_branch.category_id,
       logo: main_branch.logo,
-      
     });
 
-  
     return await this.storeRepo.save(branch);
   }
 
-
-  async getBranches(){
-    const branches = await this.storeRepo.find({where:{user_id:this.request.user.id}});
+  async getBranches(is_main_branch?: boolean) {
+    const branches = await this.storeRepo.find({
+      where: { user_id: this.request.user.id , is_main_branch: is_main_branch ?? false },
+    });
     return branches;
   }
   async deleteBranch(id: string) {

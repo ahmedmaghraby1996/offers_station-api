@@ -164,9 +164,13 @@ export class UserController {
     @Body() req: UpdateStoreInfoRequest,
     @UploadedFile(new UploadValidator().build())
     logo: Express.Multer.File,
+    catalogue: Express.Multer.File,
   ) {
     if (logo) {
       req.logo = logo;
+    }
+    if (catalogue) {
+      req.catalogue = catalogue;
     }
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
@@ -193,8 +197,8 @@ export class UserController {
 
   @Roles(Role.STORE)
   @Get('get-branches')
-  async getBranch() {
-    const branch = await this.userService.getBranches();
+  async getBranch(@Query('is_main_branch') is_main_branch?: boolean) {
+    const branch = await this.userService.getBranches(is_main_branch);
     const resposne = plainToInstance(BranchResponse, branch, {
       excludeExtraneousValues: true,
     });

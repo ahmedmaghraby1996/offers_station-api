@@ -17,13 +17,42 @@ import { Offer } from '../offer/offer.entity';
 import { Category } from '../category/category.entity';
 @Entity()
 export class Store extends OwnedEntity {
-  @Column({nullable: true })
+  @Column({ nullable: true })
   name: string;
 
   @ManyToOne(() => User)
   user: User;
   @Column({ nullable: true })
   logo: string;
+
+  @Column({ nullable: true })
+  catalogue: string;
+
+  @Column({ nullable: true })
+  first_phone: string;
+
+  @Column({ nullable: true })
+  second_phone: string;
+
+  @Column({ nullable: true })
+  facebook_link: string;
+
+  @Column({ nullable: true })
+  instagram_link: string;
+
+  @Column({ nullable: true })
+  x_link: string;
+
+  @Column({ nullable: true })
+  whatsapp_link: string;
+
+  @Column({ nullable: true })
+  snapchat_link: string;
+
+  @Column({ nullable: true })
+  youtube_link: string;
+  @Column({ nullable: true })
+  tiktok_link: string;
 
   @Column({ nullable: true })
   cover_image: string;
@@ -41,7 +70,7 @@ export class Store extends OwnedEntity {
   latitude: number;
 
   // longitude
-  @Column({ type: 'float', precision: 11, scale: 6 , nullable: true })
+  @Column({ type: 'float', precision: 11, scale: 6, nullable: true })
   longitude: number;
 
   @Column({
@@ -65,28 +94,28 @@ export class Store extends OwnedEntity {
   @ManyToMany(() => Offer, (offer) => offer.stores)
   offers: Offer[];
 
-
-  @ManyToOne(() => Category , )
+  @ManyToOne(() => Category)
   @JoinColumn({ name: 'category_id' })
   category: Category;
   @Column({ nullable: true })
   category_id: string;
 
-@BeforeInsert()
-saveLocation() {
-  if (this.latitude != null && this.longitude != null) {
-    this.location = `POINT(${this.latitude} ${this.longitude})`;
+  @BeforeInsert()
+  saveLocation() {
+    if (this.latitude != null && this.longitude != null) {
+      this.location = `POINT(${this.latitude} ${this.longitude})`;
+    }
   }
-}
 
-@BeforeUpdate()
-updateLocation() {
-  if (this.latitude != null && this.longitude != null) {
-    this.location = `POINT(${this.latitude} ${this.longitude})`;
+  @BeforeUpdate()
+  updateLocation() {
+    if (this.latitude != null && this.longitude != null) {
+      this.location = `POINT(${this.latitude} ${this.longitude})`;
+    }
   }
-}
 
-constructor(partial: Partial<Store>) {
-  super();
-  Object.assign(this, partial); }
+  constructor(partial: Partial<Store>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
