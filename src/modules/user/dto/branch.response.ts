@@ -1,5 +1,6 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import { toUrl } from 'src/core/helpers/file.helper';
+import { Category } from 'src/infrastructure/entities/category/category.entity';
 import { City } from 'src/infrastructure/entities/city/city.entity';
 
 export class BranchResponse {
@@ -27,6 +28,9 @@ export class BranchResponse {
   catalogue: string;
   @Expose()
   first_phone: string;
+  @Expose()
+  @Type(() => Category)
+  category: Category;
 
   @Expose()
   second_phone: string;

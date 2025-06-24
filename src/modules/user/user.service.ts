@@ -177,6 +177,7 @@ export class UserService extends BaseService<User> {
               is_main_branch: true,
             }
           : { user_id: this.request.user.id },
+          relations:{category:true}
     });
     return branches;
   }
