@@ -170,7 +170,13 @@ export class UserService extends BaseService<User> {
 
   async getBranches(is_main_branch?: boolean) {
     const branches = await this.storeRepo.find({
-      where: { user_id: this.request.user.id , is_main_branch: is_main_branch ?? false },
+      where:
+        is_main_branch == true
+          ? {
+              user_id: this.request.user.id,
+              is_main_branch: true,
+            }
+          : { user_id: this.request.user.id },
     });
     return branches;
   }

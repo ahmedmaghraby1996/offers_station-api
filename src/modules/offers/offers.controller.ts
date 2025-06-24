@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   NotFoundException,
+  Param,
   Post,
   Put,
   Query,
@@ -121,8 +122,8 @@ export class OffersController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
-  @Delete('delete')
-  async deleteOffer(@Body('id') id: string) {
+  @Delete('delete/:id')
+  async deleteOffer(@Param('id') id: string) {
     const offer = await this.offersService.findOne(id);
     if (!offer) {
       throw new NotFoundException('Offer not found');
