@@ -157,6 +157,7 @@ export class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('logo'))
+  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('catalogue'))
   @ApiConsumes('multipart/form-data')
   @Roles(Role.STORE)
   @Put('store-info')
