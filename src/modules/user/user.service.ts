@@ -101,7 +101,7 @@ export class UserService extends BaseService<User> {
     if (req.first_phone) store.first_phone = req.first_phone;
     if (req.second_phone) store.second_phone = req.second_phone;
 
-    if (req.logo) {
+    if (req?.logo) {
       const resizedImage = await this.imageManager.resize(req.logo, {
         size: { width: 300, height: 300 },
         options: {
@@ -115,19 +115,15 @@ export class UserService extends BaseService<User> {
       );
       store.logo = path;
     }
-    if (req.catalogue) {
-      const resizedImage = await this.imageManager.resize(req.catalogue, {
-        size: { width: 300, height: 300 },
-        options: {
-          fit: sharp.fit.cover,
-          position: sharp.strategy.entropy,
+    if (req?.catalogue) {
+      const file = await this.storageManager.store(
+        {
+          buffer: req.catalogue.buffer,
+          originalname: req.catalogue.originalname,
         },
-      });
-      const path = await this.storageManager.store(
-        { buffer: resizedImage, originalname: req.catalogue.originalname },
-        { path: 'catalogues' },
+        { path: 'stores' },
       );
-      store.catalogue = path;
+      store.catalogue = file;
     }
     console.log('store', store);
 
@@ -177,7 +173,7 @@ export class UserService extends BaseService<User> {
               is_main_branch: true,
             }
           : { user_id: this.request.user.id },
-          relations:{category:true}
+      relations: { category: true },
     });
     return branches;
   }

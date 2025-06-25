@@ -11,6 +11,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -156,23 +157,32 @@ export class UserController {
     );
   }
 
-  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('logo'))
-  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('catalogue'))
-  @ApiConsumes('multipart/form-data')
-  @Roles(Role.STORE)
-  @Put('store-info')
-  async updateStoreInfo(
-    @Body() req: UpdateStoreInfoRequest,
-    @UploadedFile(new UploadValidator().build())
-    logo: Express.Multer.File,
-    catalogue: Express.Multer.File,
-  ) {
-    if (logo) {
-      req.logo = logo;
-    }
-    if (catalogue) {
-      req.catalogue = catalogue;
-    }
+ @UseInterceptors(
+  ClassSerializerInterceptor,
+  FileFieldsInterceptor([
+    { name: 'logo', maxCount: 1 },
+    { name: 'catalogue', maxCount: 1 },
+  ])
+)
+@ApiConsumes('multipart/form-data')
+@Roles(Role.STORE)
+@Put('store-info')
+async updateStoreInfo(
+  @Body() req: UpdateStoreInfoRequest,
+  @UploadedFiles()
+  files: {
+    logo?: Express.Multer.File[];
+    catalogue?: Express.Multer.File[];
+  },
+) {
+  if( files.logo && files.logo.length > 0) {
+    req.logo = files.logo[0];
+  }
+  if( files.catalogue && files.catalogue.length > 0) {
+    req.catalogue = files.catalogue[0];}
+
+  // Now you can safely use `logo` and `catalogue`
+
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
