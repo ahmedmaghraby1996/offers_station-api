@@ -40,7 +40,7 @@ import { UserResponse } from './dto/response/user-response';
 import { Roles } from '../authentication/guards/roles.decorator';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { GetUserRequest } from './dto/get-user.request';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UploadValidator } from 'src/core/validators/upload.validator';
 import { RegisterResponse } from '../authentication/dto/responses/register.response';
 import { UpdateProfileRequest } from './dto/update-profile-request';
