@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsArray,
   IsDate,
+  IsBoolean,
 } from 'class-validator';
 
 export class UpdateOfferRequest {
@@ -73,4 +74,11 @@ export class UpdateOfferRequest {
   @IsOptional()
   @IsArray()
   images?: string[];
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => value === 'true' || value === true)
+    
+    is_active: boolean;
 }

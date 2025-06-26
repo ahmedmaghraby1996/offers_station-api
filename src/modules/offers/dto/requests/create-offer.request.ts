@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsDate, IsOptional } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional } from 'class-validator';
 
 export class CreateOfferRequest {
+
   @ApiProperty()
   title_ar: string;
   @ApiProperty()
@@ -35,4 +36,11 @@ export class CreateOfferRequest {
   @ApiProperty({ required: false })
   @IsOptional()
   images: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  
+  is_active: boolean;
 }

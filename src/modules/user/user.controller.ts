@@ -210,6 +210,7 @@ async updateStoreInfo(
   @Get('get-branches')
   async getBranch(@Query('is_main_branch') is_main_branch?: boolean) {
     const branch = await this.userService.getBranches(is_main_branch);
+    
     const resposne = plainToInstance(BranchResponse, branch, {
       excludeExtraneousValues: true,
     });

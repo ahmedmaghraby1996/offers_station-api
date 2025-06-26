@@ -50,6 +50,7 @@ export class UpdateOfferTransaction extends BaseTransaction<
         description_ar: req.description_ar,
         description_en: req.description_en,
         start_date: req.start_date,
+        is_active: req.is_active,
        
         end_date: req.end_date,
         code: req.code,

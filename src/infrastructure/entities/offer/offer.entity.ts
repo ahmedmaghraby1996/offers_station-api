@@ -60,6 +60,11 @@ export class Offer extends AuditableEntity {
   subcategory: SubCategory;
   @Column({ nullable: true })
   subcategory_id: number;
+
+
+  @Column({ default: true})
+  is_active: boolean;
+
   constructor(partial: Partial<Offer>) {
     super();
     Object.assign(this, partial);

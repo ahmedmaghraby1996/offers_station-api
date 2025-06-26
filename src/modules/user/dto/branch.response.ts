@@ -45,6 +45,10 @@ export class BranchResponse {
   x_link: string;
 
   @Expose()
+  @Transform((value) => value.obj?.offers?.length)
+  offers_count: number;
+
+  @Expose()
   whatsapp_link: string;
 
   @Expose()

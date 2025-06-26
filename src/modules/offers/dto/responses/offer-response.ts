@@ -35,4 +35,6 @@ export class OfferResponse {
   @Expose()
   @Type(()=>BranchResponse)
   stores:BranchResponse
+  @Expose()
+  is_active: boolean;
 }
