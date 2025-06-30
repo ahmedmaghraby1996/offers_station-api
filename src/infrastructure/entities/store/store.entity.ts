@@ -57,6 +57,9 @@ export class Store extends OwnedEntity {
   @Column({ nullable: true })
   cover_image: string;
 
+  @Column({default:0})
+  is_active:boolean
+
   @Column({ nullable: true })
   address: string;
 

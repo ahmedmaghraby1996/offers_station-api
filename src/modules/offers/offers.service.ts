@@ -50,8 +50,6 @@ export class OffersService extends BaseService<Offer> {
   }
 
 async findNearbyOffers(latitude: string, longitude: string, radiusMeters = 5000) {
-
-  
 return this._repo
   .createQueryBuilder('offer')
   .leftJoinAndSelect('offer.stores', 'stores')
@@ -68,6 +66,7 @@ return this._repo
     ))
   `, 'distance')
   .where(`
+    stores.is_active = true AND
     (6371000 * acos(
       cos(radians(:lat)) *
       cos(radians(stores.latitude)) *
@@ -83,6 +82,7 @@ return this._repo
   })
   .orderBy('distance', 'ASC')
   .getMany();
+
 
 }
 }

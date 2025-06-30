@@ -149,6 +149,7 @@ export class OffersController {
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'images');
+    applyQueryFilters(query, `stores.is_active=1`);
   
 
     const total = await this.offersService.count(query);

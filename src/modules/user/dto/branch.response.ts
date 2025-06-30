@@ -49,6 +49,9 @@ export class BranchResponse {
   offers_count: number;
 
   @Expose()
+  is_active: boolean;
+
+  @Expose()
   whatsapp_link: string;
 
   @Expose()
