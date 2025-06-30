@@ -36,6 +36,9 @@ import { OfferResponse } from './dto/responses/offer-response';
 import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
 import { SubCategoryService } from './sub_category.service';
 import { Not } from 'typeorm';
+import { StoreService } from './store.service';
+import { BranchResponse } from '../user/dto/branch.response';
+import { ActionResponse } from 'src/core/base/responses/action.response';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -48,6 +51,7 @@ export class OffersController {
     private readonly offersService: OffersService,
     private readonly categoryService: CategoryService,
     protected readonly subCategoryService: SubCategoryService,
+    private readonly storeService: StoreService,
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
@@ -81,6 +85,17 @@ export class OffersController {
     });
   }
 
+  @Get('store')
+  async getStore(@Query() query: PaginatedRequest) {
+    const total = await this.storeService.count(query);
+    const stores = await this.storeService.findAll(query);
+    const result = plainToInstance(BranchResponse, stores, {
+      excludeExtraneousValues: true,
+    });
+    const response = this._i18nResponse.entity(result);
+    return new PaginatedResponse(response, { meta: { total, ...query } });
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
@@ -95,6 +110,14 @@ export class OffersController {
   @Put('update')
   async updateOffer(@Body() req: UpdateOfferRequest) {
     const offer = await this.offersService.updateOffer(req);
+    return offer;
+  }
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLIENT)
+  @Post('view-increment/:id')
+  async viewCount(@Param('id') offer_id: string) {
+    const offer = await this.offersService.viewIncrement(offer_id);
     return offer;
   }
 
@@ -113,10 +136,47 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-  
+
     return new PaginatedResponse(result, {
       meta: { total, ...query },
     });
+  }
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLIENT)
+  @Get('all-offers')
+  async getClientOffers(@Query() query: PaginatedRequest) {
+    applyQueryIncludes(query, 'stores');
+    applyQueryIncludes(query, 'subcategory');
+    applyQueryIncludes(query, 'images');
+  
+
+    const total = await this.offersService.count(query);
+    const offers = await this.offersService.findAll(query);
+    const result = plainToInstance(OfferResponse, offers, {
+      excludeExtraneousValues: true,
+    });
+
+    return new PaginatedResponse(result, {
+      meta: { total, ...query },
+    });
+  }
+
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLIENT)
+  @Get('nearby-offers')
+  async getNearbyOffers(@Query('lat') lat: number, @Query('lng') lng: number) {
+    
+
+  
+    const offers = await this.offersService.findNearbyOffers(lat, lng);
+    const result = plainToInstance(OfferResponse, offers, {
+      excludeExtraneousValues: true,
+    });
+
+    return new ActionResponse(result
+    );
   }
   //DELETE OFFER
   @ApiBearerAuth()
@@ -130,4 +190,6 @@ export class OffersController {
     }
     return await this.offersService.softDelete(id);
   }
+
+
 }

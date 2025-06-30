@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AuthenticationModule } from 'src/modules/authentication/authentication.module';
+import { BanarModule } from 'src/modules/banar/banar.module';
 import { ContactUsModule } from 'src/modules/contact-us/contact-us.module';
 import { FaqModule } from 'src/modules/faq/faq.module';
 import { FileModule } from 'src/modules/file/file.module';
@@ -48,6 +49,7 @@ export default (app: INestApplication, config: ConfigService) => {
       SendEmailModule,
       OffersModule,
       FileModule,
+      BanarModule,
       // TransactionModule,
     ],
     operationIdFactory,

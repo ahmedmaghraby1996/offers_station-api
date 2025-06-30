@@ -19,6 +19,8 @@ import { Offer } from '../entities/offer/offer.entity';
 import { OfferImages } from '../entities/offer/offer-images.entity';
 import { Category } from '../entities/category/category.entity';
 import { SubCategory } from '../entities/category/subcategory.entity';
+import { Banar } from '../entities/banar/banar.entity';
+import { OfferView } from '../entities/offer/offer-view.entity';
 
 
 
@@ -31,7 +33,8 @@ Country,
   Transaction,
   Wallet,
   NotificationEntity,
-
+  Banar,
+OfferView,
   SuggestionsComplaints,
   FaqQuestion,
   StaticPage,

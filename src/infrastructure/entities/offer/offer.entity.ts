@@ -64,6 +64,8 @@ export class Offer extends AuditableEntity {
 
   @Column({ default: true})
   is_active: boolean;
+  @Column({ default: 0})
+  views: number;
 
   constructor(partial: Partial<Offer>) {
     super();
