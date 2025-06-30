@@ -166,7 +166,7 @@ export class OffersController {
   @UseGuards(JwtAuthGuard)
   @Roles(Role.CLIENT)
   @Get('nearby-offers')
-  async getNearbyOffers(@Query('lat') lat: number, @Query('lng') lng: number) {
+  async getNearbyOffers(@Query('lat') lat: string, @Query('lng') lng: string) {
     
 
   

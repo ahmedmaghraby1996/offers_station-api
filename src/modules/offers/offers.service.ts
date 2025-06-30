@@ -49,7 +49,7 @@ export class OffersService extends BaseService<Offer> {
     return true;
   }
 
-async findNearbyOffers(latitude: number, longitude: number, radiusMeters = 5000) {
+async findNearbyOffers(latitude: string, longitude: string, radiusMeters = 5000) {
   return this._repo
     .createQueryBuilder('offer')
     .leftJoinAndSelect('offer.stores', 'stores')

@@ -37,4 +37,6 @@ export class OfferResponse {
   stores:BranchResponse
   @Expose()
   is_active: boolean;
+  @Expose()
+  views: number;
 }
