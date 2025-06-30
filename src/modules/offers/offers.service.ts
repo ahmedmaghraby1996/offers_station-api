@@ -50,37 +50,39 @@ export class OffersService extends BaseService<Offer> {
   }
 
 async findNearbyOffers(latitude: string, longitude: string, radiusMeters = 5000) {
-  return this._repo
-    .createQueryBuilder('offer')
-    .leftJoinAndSelect('offer.stores', 'stores')
-    .leftJoinAndSelect('offer.images', 'images')
-    .leftJoinAndSelect('offer.user', 'user')
-    .leftJoinAndSelect('offer.subcategory', 'subcategory')
-    .addSelect(`
-      (6371000 * acos(
-        cos(radians(:lat)) *
-        cos(radians(store.latitude)) *
-        cos(radians(store.longitude) - radians(:lng)) +
-        sin(radians(:lat)) *
-        sin(radians(store.latitude))
-      ))
-    `, 'distance')
-    .where(`
-      (6371000 * acos(
-        cos(radians(:lat)) *
-        cos(radians(store.latitude)) *
-        cos(radians(store.longitude) - radians(:lng)) +
-        sin(radians(:lat)) *
-        sin(radians(store.latitude))
-      )) <= :radius
-    `)
-    .setParameters({
-      lat: latitude,
-      lng: longitude,
-      radius: radiusMeters
-    })
-    .orderBy('distance', 'ASC')
-    .getMany();
-}
 
+  
+return this._repo
+  .createQueryBuilder('offer')
+  .leftJoinAndSelect('offer.stores', 'stores')
+  .leftJoinAndSelect('offer.images', 'images')
+  .leftJoinAndSelect('offer.user', 'user')
+  .leftJoinAndSelect('offer.subcategory', 'subcategory')
+  .addSelect(`
+    (6371000 * acos(
+      cos(radians(:lat)) *
+      cos(radians(stores.latitude)) *
+      cos(radians(stores.longitude) - radians(:lng)) +
+      sin(radians(:lat)) *
+      sin(radians(stores.latitude))
+    ))
+  `, 'distance')
+  .where(`
+    (6371000 * acos(
+      cos(radians(:lat)) *
+      cos(radians(stores.latitude)) *
+      cos(radians(stores.longitude) - radians(:lng)) +
+      sin(radians(:lat)) *
+      sin(radians(stores.latitude))
+    )) <= :radius
+  `)
+  .setParameters({
+    lat: latitude,
+    lng: longitude,
+    radius: radiusMeters,
+  })
+  .orderBy('distance', 'ASC')
+  .getMany();
+
+}
 }
