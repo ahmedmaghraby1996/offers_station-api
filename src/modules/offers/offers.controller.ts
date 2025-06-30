@@ -87,6 +87,7 @@ export class OffersController {
 
   @Get('store')
   async getStore(@Query() query: PaginatedRequest) {
+    applyQueryFilters(query, `is_active=1`);
     const total = await this.storeService.count(query);
     const stores = await this.storeService.findAll(query);
     const result = plainToInstance(BranchResponse, stores, {
