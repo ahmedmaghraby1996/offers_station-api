@@ -12,6 +12,7 @@ export class Category extends AuditableEntity {
   @Expose()
   name_en: string;
   @Column({ nullable: true })
+  @Expose()
   @Transform(({ value }) => {
     toUrl(value);
   })
