@@ -46,7 +46,7 @@ export class OfferResponse {
   subcategory: SubCategory;
   @Expose()
   @Transform((value) => {
-    return plainToInstance(Category, value.obj.subcategory?.category);
+    return plainToInstance(Category, value.obj?.subcategory?.category);
   })
   category: Category;
 }

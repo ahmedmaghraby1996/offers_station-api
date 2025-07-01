@@ -156,11 +156,12 @@ export class OffersController {
 
     const total = await this.offersService.count(query);
     const offers = await this.offersService.findAll(query);
+    
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-
-    return new PaginatedResponse(result, {
+ const response = this._i18nResponse.entity(result);
+    return new PaginatedResponse(response, {
       meta: { total, ...query },
     });
   }
