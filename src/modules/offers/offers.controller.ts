@@ -149,6 +149,7 @@ export class OffersController {
   async getClientOffers(@Query() query: PaginatedRequest) {
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
+    applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     applyQueryFilters(query, `stores.is_active=1`);
   

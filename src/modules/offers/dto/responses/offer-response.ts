@@ -1,5 +1,7 @@
-import { Expose, Transform, Type } from 'class-transformer';
+import { Expose, plainToInstance, Transform, Type } from 'class-transformer';
 import { toUrl } from 'src/core/helpers/file.helper';
+import { Category } from 'src/infrastructure/entities/category/category.entity';
+import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
 import { BranchResponse } from 'src/modules/user/dto/branch.response';
 
 export class OfferResponse {
@@ -33,10 +35,18 @@ export class OfferResponse {
   })
   images: any;
   @Expose()
-  @Type(()=>BranchResponse)
-  stores:BranchResponse
+  @Type(() => BranchResponse)
+  stores: BranchResponse;
   @Expose()
   is_active: boolean;
   @Expose()
   views: number;
+  @Expose()
+  @Type(() => SubCategory)
+  subcategory: SubCategory;
+  @Expose()
+  @Transform((value) => {
+    return plainToInstance(Category, value.obj.subcategory?.category);
+  })
+  category: Category;
 }
