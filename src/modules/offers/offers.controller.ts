@@ -142,6 +142,7 @@ export class OffersController {
       meta: { total, ...query },
     });
   }
+  // 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.CLIENT)
