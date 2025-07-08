@@ -166,6 +166,7 @@ export class OffersController {
       offer.is_favorite = offer.favorites?.some(
         (favorite) => favorite.user_id == this.request.user.id,
       ) ? true : false;
+      return offer;
     });
     const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, {
@@ -224,10 +225,10 @@ export class OffersController {
   @Roles(Role.CLIENT)
   @Get('favorite-offers')
   async getFavoriteOffers(@Query() query: PaginatedRequest) {
-    applyQueryIncludes(query, 'offer.stores');
-    applyQueryIncludes(query, 'offer.subcategory');
-    applyQueryIncludes(query, 'offer.images');
-    applyQueryIncludes(query, 'offer.stores');
+    applyQueryIncludes(query, 'offer#stores.subcategory.images');
+    applyQueryIncludes(query, 'subcategory.category');
+    applyQueryFilters(query, `offer.stores.is_active=1`);
+   
    
     applyQueryFilters(query, `user_id=${this.request.user.id}`);
     const total = await this.favoriteOfferService.count(query);
