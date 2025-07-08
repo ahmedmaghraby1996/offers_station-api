@@ -226,7 +226,7 @@ export class OffersController {
   @Get('favorite-offers')
   async getFavoriteOffers(@Query() query: PaginatedRequest) {
     applyQueryIncludes(query, 'offer#stores.subcategory.images');
-    applyQueryIncludes(query, 'subcategory.category');
+    applyQueryIncludes(query, 'offer.subcategory.category');
     applyQueryFilters(query, `offer.stores.is_active=1`);
    
    
