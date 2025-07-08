@@ -49,4 +49,7 @@ export class OfferResponse {
     return plainToInstance(Category, value.obj?.subcategory?.category);
   })
   category: Category;
+
+  @Expose()
+  is_special: boolean;
 }
