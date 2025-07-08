@@ -26,6 +26,8 @@ export class Offer extends AuditableEntity {
   @Column({ default: false })
   is_special: boolean;
 
+  is_favorite: boolean;
+
   @OneToMany(() => FavoriteOffer, (favoriteOffer) => favoriteOffer.offer, {
     onDelete: 'CASCADE',
   })

@@ -17,7 +17,7 @@ export class OfferResponse {
   @Expose()
   description_en: string;
 
-  favorites:FavoriteOffer[]
+ 
   @Expose()
   start_date: Date;
   @Expose()

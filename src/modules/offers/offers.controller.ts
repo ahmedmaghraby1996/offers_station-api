@@ -158,25 +158,18 @@ export class OffersController {
 
     const total = await this.offersService.count(query);
     const offers = await this.offersService.findAll(query);
+    offers.map((offer) => {
+      offer.is_favorite =
+        offer.favorites?.some(
+          (favorite) =>
+            String(favorite.user_id) === String(this.request.user.id),
+        ) ?? false;
 
+      return offer;
+    });
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-    
-result.map((offer) => {
-  console.log('Offer ID:', offer.id);
-  console.log('Favorites:', offer.favorites);
-
-  offer.is_favorite =
-    offer.favorites?.some(
-      (favorite) =>
-        String(favorite.user_id) === String(this.request.user.id),
-    ) ?? false;
-
-  console.log('Is Favorite:', offer.is_favorite);
-
-  return offer;
-});
 
     const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, {
@@ -228,7 +221,6 @@ result.map((offer) => {
     return offer;
   }
 
-
   //get favorite offers
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -238,16 +230,20 @@ result.map((offer) => {
     applyQueryIncludes(query, 'offer#stores.subcategory.images');
     // applyQueryIncludes(query, 'offer.subcategory.category');
     applyQueryFilters(query, `offer.stores.is_active=1`);
-   
-   
+
     applyQueryFilters(query, `user_id=${this.request.user.id}`);
     const total = await this.favoriteOfferService.count(query);
     const offers = await this.favoriteOfferService.findAll(query);
-    const result = plainToInstance(OfferResponse, offers.map((offer) => offer.offer), {
-      excludeExtraneousValues: true,
-    });
+    const result = plainToInstance(
+      OfferResponse,
+      offers.map((offer) => offer.offer),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+    const response = this._i18nResponse.entity(result);
 
-    return new PaginatedResponse(result, {
+    return new PaginatedResponse(response, {
       meta: { total, ...query },
     });
   }
