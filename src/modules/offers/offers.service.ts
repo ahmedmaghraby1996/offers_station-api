@@ -9,7 +9,7 @@ import { UpdateOfferTransaction } from './util/update-offer.transaction';
 import { UpdateOfferRequest } from './dto/requests/update-offer.request';
 import { OfferView } from 'src/infrastructure/entities/offer/offer-view.entity';
 import { Request } from 'express';
-import{REQUEST} from '@nestjs/core'
+import { REQUEST } from '@nestjs/core';
 @Injectable()
 export class OffersService extends BaseService<Offer> {
   constructor(
@@ -32,6 +32,16 @@ export class OffersService extends BaseService<Offer> {
     return offer;
   }
 
+  async makeSepcial(offer_id: string) {
+    // make all offers not special
+    await this.repo.update(
+      { user_id: this.request.user.id },
+      { is_special: false },
+    );
+    await this.repo.update(offer_id, { is_special: true });
+    return true;
+  }
+
   async viewIncrement(offer_id: string) {
     const is_viewed = await this.offerViewRepo.findOne({
       where: {
@@ -49,14 +59,19 @@ export class OffersService extends BaseService<Offer> {
     return true;
   }
 
-async findNearbyOffers(latitude: string, longitude: string, radiusMeters = 5000) {
-return this._repo
-  .createQueryBuilder('offer')
-  .leftJoinAndSelect('offer.stores', 'stores')
-  .leftJoinAndSelect('offer.images', 'images')
-  .leftJoinAndSelect('offer.user', 'user')
-  .leftJoinAndSelect('offer.subcategory', 'subcategory')
-  .addSelect(`
+  async findNearbyOffers(
+    latitude: string,
+    longitude: string,
+    radiusMeters = 5000,
+  ) {
+    return this._repo
+      .createQueryBuilder('offer')
+      .leftJoinAndSelect('offer.stores', 'stores')
+      .leftJoinAndSelect('offer.images', 'images')
+      .leftJoinAndSelect('offer.user', 'user')
+      .leftJoinAndSelect('offer.subcategory', 'subcategory')
+      .addSelect(
+        `
     (6371000 * acos(
       cos(radians(:lat)) *
       cos(radians(stores.latitude)) *
@@ -64,8 +79,11 @@ return this._repo
       sin(radians(:lat)) *
       sin(radians(stores.latitude))
     ))
-  `, 'distance')
-  .where(`
+  `,
+        'distance',
+      )
+      .where(
+        `
     stores.is_active = true AND
     (6371000 * acos(
       cos(radians(:lat)) *
@@ -74,15 +92,14 @@ return this._repo
       sin(radians(:lat)) *
       sin(radians(stores.latitude))
     )) <= :radius
-  `)
-  .setParameters({
-    lat: latitude,
-    lng: longitude,
-    radius: radiusMeters,
-  })
-  .orderBy('distance', 'ASC')
-  .getMany();
-
-
-}
+  `,
+      )
+      .setParameters({
+        lat: latitude,
+        lng: longitude,
+        radius: radiusMeters,
+      })
+      .orderBy('distance', 'ASC')
+      .getMany();
+  }
 }

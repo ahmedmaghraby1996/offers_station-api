@@ -78,7 +78,7 @@ export class OffersController {
     const response = plainToInstance(Category, categories, {
       excludeExtraneousValues: true,
     });
-// 
+    //
     const result = this._i18nResponse.entity(response);
     return new PaginatedResponse(result, {
       meta: { total, ...PaginatedRequest },
@@ -142,7 +142,7 @@ export class OffersController {
       meta: { total, ...query },
     });
   }
-  // 
+  //
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.CLIENT)
@@ -153,35 +153,30 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     applyQueryFilters(query, `stores.is_active=1`);
-  
 
     const total = await this.offersService.count(query);
     const offers = await this.offersService.findAll(query);
-    
+
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
- const response = this._i18nResponse.entity(result);
+    const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, {
       meta: { total, ...query },
     });
   }
 
-    @ApiBearerAuth()
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.CLIENT)
   @Get('nearby-offers')
   async getNearbyOffers(@Query('lat') lat: string, @Query('lng') lng: string) {
-    
-
-  
     const offers = await this.offersService.findNearbyOffers(lat, lng);
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
 
-    return new ActionResponse(result
-    );
+    return new ActionResponse(result);
   }
   //DELETE OFFER
   @ApiBearerAuth()
@@ -196,5 +191,13 @@ export class OffersController {
     return await this.offersService.softDelete(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.STORE)
+  @Delete('make-special/:id')
+  async makeSpecialOffer(@Param('id') id: string) {
+    const offer = await this.offersService.makeSepcial(id);
 
+    return offer;
+  }
 }

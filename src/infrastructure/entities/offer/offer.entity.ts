@@ -22,6 +22,9 @@ export class Offer extends AuditableEntity {
   @Column()
   title_ar: string;
 
+  @Column({ default: false })
+  is_special: boolean;
+
   @Column()
   title_en: string;
 
@@ -61,10 +64,9 @@ export class Offer extends AuditableEntity {
   @Column({ nullable: true })
   subcategory_id: number;
 
-
-  @Column({ default: true})
+  @Column({ default: true })
   is_active: boolean;
-  @Column({ default: 0})
+  @Column({ default: 0 })
   views: number;
 
   constructor(partial: Partial<Offer>) {
