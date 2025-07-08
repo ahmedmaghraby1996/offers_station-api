@@ -165,7 +165,8 @@ export class OffersController {
     result.map((offer) => {
       offer.is_favorite = offer.favorites?.some(
         (favorite) => favorite.user_id == this.request.user.id,
-      )
+      ) ? true : false;
+    });
     const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, {
       meta: { total, ...query },
