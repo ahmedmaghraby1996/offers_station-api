@@ -164,7 +164,7 @@ export class OffersController {
     });
     result.map((offer) => {
       offer.is_favorite =
-        offer.favorites.length > 0
+        offer.favorites?.length > 0
           ? offer.favorites[0].user_id === this.request.user.id
           : false;
     })
