@@ -162,12 +162,12 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-    result.map((offer) => {
-      offer.is_favorite = offer.favorites?.some(
-        (favorite) => favorite.user_id == this.request.user.id,
-      ) ? true : false;
-      return offer;
-    });
+  result.map((offer) => {
+  offer.is_favorite = offer.favorites?.some(
+    (favorite) => favorite.user_id === this.request.user.id,
+  ) ?? false;
+  return offer;
+});
     const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, {
       meta: { total, ...query },
