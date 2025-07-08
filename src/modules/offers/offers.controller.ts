@@ -162,6 +162,8 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
+    console.log(this.request.user.id);
+    console.log(offers[0].favorites);
   result.map((offer) => {
   offer.is_favorite = offer.favorites?.some(
     (favorite) => favorite.user_id === this.request.user.id,
@@ -226,7 +228,7 @@ export class OffersController {
   @Get('favorite-offers')
   async getFavoriteOffers(@Query() query: PaginatedRequest) {
     applyQueryIncludes(query, 'offer#stores.subcategory.images');
-    applyQueryIncludes(query, 'offer.subcategory.category');
+    // applyQueryIncludes(query, 'offer.subcategory.category');
     applyQueryFilters(query, `offer.stores.is_active=1`);
    
    
