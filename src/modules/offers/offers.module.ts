@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { OffersController } from './offers.controller';
-import { OffersService } from './offers.service';
+import { FavoriteOfferService, OffersService } from './offers.service';
 import { CreateOfferTransaction } from './util/create-offer.transaction';
 import { CategoryService } from './category.service';
 import { UpdateOfferTransaction } from './util/update-offer.transaction';
@@ -15,7 +15,8 @@ import { StoreService } from './store.service';
     CategoryService,
     UpdateOfferTransaction,
     SubCategoryService,
-    StoreService
+    StoreService,
+    FavoriteOfferService
   ],
 })
 export class OffersModule {}

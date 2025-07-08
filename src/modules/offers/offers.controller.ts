@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { OffersService } from './offers.service';
+import { FavoriteOfferService, OffersService } from './offers.service';
 import { CreateOfferRequest } from './dto/requests/create-offer.request';
 import { CategoryService } from './category.service';
 import { PaginatedRequest } from 'src/core/base/requests/paginated.request';
@@ -52,6 +52,7 @@ export class OffersController {
     private readonly categoryService: CategoryService,
     protected readonly subCategoryService: SubCategoryService,
     private readonly storeService: StoreService,
+    private readonly favoriteOfferService: FavoriteOfferService,
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
@@ -153,6 +154,7 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     applyQueryFilters(query, `stores.is_active=1`);
+    applyQueryIncludes(query, 'favorites');
 
     const total = await this.offersService.count(query);
     const offers = await this.offersService.findAll(query);
@@ -160,6 +162,12 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
+    result.map((offer) => {
+      offer.is_favorite =
+        offer.favorites.length > 0
+          ? offer.favorites[0].user_id === this.request.user.id
+          : false;
+    })
     const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, {
       meta: { total, ...query },
@@ -199,5 +207,38 @@ export class OffersController {
     const offer = await this.offersService.makeSepcial(id);
 
     return offer;
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLIENT)
+  @Post('add-remove-favorite/:id')
+  async addRemoveFavorite(@Param('id') id: string) {
+    const offer = await this.offersService.addRemoveFavorite(id);
+    return offer;
+  }
+
+
+  //get favorite offers
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLIENT)
+  @Get('favorite-offers')
+  async getFavoriteOffers(@Query() query: PaginatedRequest) {
+    applyQueryIncludes(query, 'offer.stores');
+    applyQueryIncludes(query, 'offer.subcategory');
+    applyQueryIncludes(query, 'offer.images');
+    applyQueryIncludes(query, 'offer.stores');
+   
+    applyQueryFilters(query, `user_id=${this.request.user.id}`);
+    const total = await this.favoriteOfferService.count(query);
+    const offers = await this.favoriteOfferService.findAll(query);
+    const result = plainToInstance(OfferResponse, offers.map((offer) => offer.offer), {
+      excludeExtraneousValues: true,
+    });
+
+    return new PaginatedResponse(result, {
+      meta: { total, ...query },
+    });
   }
 }

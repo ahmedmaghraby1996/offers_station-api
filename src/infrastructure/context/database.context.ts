@@ -21,6 +21,8 @@ import { Category } from '../entities/category/category.entity';
 import { SubCategory } from '../entities/category/subcategory.entity';
 import { Banar } from '../entities/banar/banar.entity';
 import { OfferView } from '../entities/offer/offer-view.entity';
+import { OffersService } from 'src/modules/offers/offers.service';
+import { FavoriteOffer } from '../entities/offer/favorite-offer.entity';
 
 
 
@@ -35,6 +37,7 @@ Country,
   NotificationEntity,
   Banar,
 OfferView,
+FavoriteOffer,
   SuggestionsComplaints,
   FaqQuestion,
   StaticPage,

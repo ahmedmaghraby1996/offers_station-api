@@ -10,6 +10,7 @@ import { UpdateOfferRequest } from './dto/requests/update-offer.request';
 import { OfferView } from 'src/infrastructure/entities/offer/offer-view.entity';
 import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
+import { FavoriteOffer } from 'src/infrastructure/entities/offer/favorite-offer.entity';
 @Injectable()
 export class OffersService extends BaseService<Offer> {
   constructor(
@@ -18,6 +19,8 @@ export class OffersService extends BaseService<Offer> {
     private readonly offerViewRepo: Repository<OfferView>,
     @Inject(REQUEST) private readonly request: Request,
     private readonly createOfferTransaction: CreateOfferTransaction,
+    @InjectRepository(FavoriteOffer)
+    private readonly favoriteOfferRepo: Repository<FavoriteOffer>,
     private readonly updateOfferTransaction: UpdateOfferTransaction, // Reusing the same transaction for update
   ) {
     super(repo);
@@ -101,5 +104,33 @@ export class OffersService extends BaseService<Offer> {
       })
       .orderBy('distance', 'ASC')
       .getMany();
+  }
+
+  async addRemoveFavorite(offer_id: string) {
+    const favorite = await this.favoriteOfferRepo.findOne({
+      where: {
+        offer_id: offer_id,
+        user_id: this.request.user.id,
+      },
+    });
+    if (favorite) {
+      await this.favoriteOfferRepo.remove(favorite);
+    } else {
+      await this.favoriteOfferRepo.save({
+        offer_id: offer_id,
+        user_id: this.request.user.id,
+      });
+    }
+    return true;
+  }
+}
+
+
+export class FavoriteOfferService extends BaseService<FavoriteOffer> {
+  constructor(
+    @InjectRepository(FavoriteOffer)
+    private readonly repo: Repository<FavoriteOffer>,
+  ) {
+    super(repo);
   }
 }

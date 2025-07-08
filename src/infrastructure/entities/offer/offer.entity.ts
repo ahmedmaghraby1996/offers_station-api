@@ -11,6 +11,7 @@ import { Store } from '../store/store.entity';
 import { OfferImages } from './offer-images.entity';
 import { SubCategory } from '../category/subcategory.entity';
 import { User } from '../user/user.entity';
+import { FavoriteOffer } from './favorite-offer.entity';
 @Entity()
 export class Offer extends AuditableEntity {
   @ManyToOne(() => User)
@@ -24,6 +25,11 @@ export class Offer extends AuditableEntity {
 
   @Column({ default: false })
   is_special: boolean;
+
+  @OneToMany(() => FavoriteOffer, (favoriteOffer) => favoriteOffer.offer, {
+    onDelete: 'CASCADE',
+  })
+  favorites: FavoriteOffer[];
 
   @Column()
   title_en: string;

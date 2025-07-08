@@ -2,6 +2,7 @@ import { Expose, plainToInstance, Transform, Type } from 'class-transformer';
 import { toUrl } from 'src/core/helpers/file.helper';
 import { Category } from 'src/infrastructure/entities/category/category.entity';
 import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
+import { FavoriteOffer } from 'src/infrastructure/entities/offer/favorite-offer.entity';
 import { BranchResponse } from 'src/modules/user/dto/branch.response';
 
 export class OfferResponse {
@@ -15,8 +16,12 @@ export class OfferResponse {
   description_ar: string;
   @Expose()
   description_en: string;
+
+  favorites:FavoriteOffer[]
   @Expose()
   start_date: Date;
+  @Expose()
+  is_favorite: boolean;
   @Expose()
   end_date: Date;
   @Expose()
