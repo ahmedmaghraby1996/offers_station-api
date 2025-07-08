@@ -194,7 +194,7 @@ export class OffersController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
-  @Delete('make-special/:id')
+  @Post('make-special/:id')
   async makeSpecialOffer(@Param('id') id: string) {
     const offer = await this.offersService.makeSepcial(id);
 
