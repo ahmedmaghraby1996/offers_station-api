@@ -58,11 +58,22 @@ export class ChatController {
     description: 'ID of the chat',
   })
   async getMessages(@Param('chat_id') chat_id: string) {
-    return new ActionResponse(plainToInstance(MessageRespone, await this.chatService.getMessages(chat_id)));
+    return new ActionResponse(
+      plainToInstance(
+        MessageRespone,
+        await this.chatService.getMessages(chat_id),{
+          excludeExtraneousValues: true,}
+      ),
+      
+    );
   }
 
   @Get('all')
   async getChats() {
-    return new ActionResponse( plainToInstance(ChatResponse, await this.chatService.getUserChats()));
+    return new ActionResponse(
+      plainToInstance(ChatResponse, await this.chatService.getUserChats(),{
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 }

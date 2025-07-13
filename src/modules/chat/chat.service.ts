@@ -57,8 +57,8 @@ export class ChatService {
     const userId = this.request.user.id;
 
     const whereClause = roles.includes(Role.CLIENT)
-      ? 'chat.clientId = :userId'
-      : 'chat.storeId = :userId';
+      ? 'chat.client_id = :userId'
+      : 'chat.store_id = :userId';
 
     return await this.chatRepo
       .createQueryBuilder('chat')
@@ -68,11 +68,11 @@ export class ChatService {
         (qb) =>
           qb
             .from('message', 'message')
-            .select('DISTINCT ON (message.chatId) message.*')
-            .where('message.chatId = chat.id')
-            .orderBy('message.chatId, message.created_at', 'DESC'),
+            .select('DISTINCT ON (message.chat_id) message.*')
+            .where('message.chat_id = chat.id')
+            .orderBy('message.chat_id, message.created_at', 'DESC'),
         'last_message',
-        'last_message.chatId = chat.id',
+        'last_message.chat_id = chat.id',
       )
       .addSelect('last_message.content', 'last_message_content')
       .addSelect('last_message.created_at', 'last_message_created_at')
