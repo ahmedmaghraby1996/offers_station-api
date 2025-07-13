@@ -6,6 +6,7 @@ import {
   OneToMany,
   CreateDateColumn,
   Column,
+  JoinColumn,
 } from 'typeorm';
 
 
@@ -18,12 +19,14 @@ export class Chat extends AuditableEntity {
   
 
   @ManyToOne(() => User, (user) => user.client_chats)
+  @JoinColumn({ name: 'client_id' })
   client: User;
 
   @Column({ nullable: true })
   client_id: string;
 
   @ManyToOne(() => User, (user) => user.store_chats)
+  @JoinColumn({ name: 'store_id' })
   store: User;
 
   @Column({ nullable: true })
