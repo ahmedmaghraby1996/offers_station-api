@@ -25,7 +25,11 @@ export class ChatService {
 
     if (existing) return existing;
 
-    return await this.chatRepo.save({ client_id: clientId, store_id: storeId });
+   const newChat = this.chatRepo.create({
+    client: { id: clientId } as any,
+    store: { id: storeId } as any,
+  });
+  return await this.chatRepo.save(newChat);
   }
 
   async sendMessage(chatId: string, content: string): Promise<Message> {
@@ -52,53 +56,46 @@ export class ChatService {
   }
 
   // chat.service.ts (continued)
-  async getUserChats() {
-    const roles = this.request.user.roles;
-    const userId = this.request.user.id;
+ async getUserChats() {
+  const roles = this.request.user.roles;
+  const userId = this.request.user.id;
 
-    const roleColumn = roles.includes(Role.CLIENT)
-      ? 'chat.client_id'
-      : 'chat.store_id';
+  const roleColumn = roles.includes(Role.CLIENT)
+    ? 'chat.client_id'
+    : 'chat.store_id';
 
-    // Subquery: get last sentAt per chat_id
-    const subQuery = this.chatRepo
-      .createQueryBuilder('chat')
-      .leftJoin('chat.messages', 'm')
-      .select('m.chat_id', 'chat_id')
-      .addSelect('MAX(m.sent_at)', 'last_sent_at')
-      .groupBy('m.chat_id');
+  // Subquery: Get latest message per chat
+  const subQuery = this.chatRepo
+    .createQueryBuilder('chat')
+    .leftJoin('chat.messages', 'm')
+    .select('m.chat_id', 'chat_id')
+    .addSelect('MAX(m.created_at)', 'last_created_at')
+    .groupBy('m.chat_id');
 
-    // Main query
-    const chats = await this.chatRepo
-      .createQueryBuilder('chat')
-      .leftJoinAndSelect('chat.client', 'client')
-      .leftJoinAndSelect('chat.store', 'store')
-      .leftJoinAndSelect('chat.messages', 'message')
-      .leftJoin(
-        `(${subQuery.getQuery()})`,
-        'latest',
-        'latest.chat_id = chat.id AND message.sent_at = latest.last_sent_at',
-      )
-      .where(`${roleColumn} = :userId`, { userId })
-      .orderBy('chat.created_at', 'DESC')
-      .setParameters(subQuery.getParameters())
-      .getMany();
+  // Main query: Join latest message for each chat
+  const chats = await this.chatRepo
+    .createQueryBuilder('chat')
+    .leftJoinAndSelect('chat.client', 'client')
+    .leftJoinAndSelect('chat.store', 'store')
+    .leftJoinAndSelect('chat.messages', 'message')
+    .leftJoin(
+      `(${subQuery.getQuery()})`,
+      'latest',
+      'latest.chat_id = chat.id AND message.created_at = latest.last_created_at',
+    )
+    .where(`${roleColumn} = :userId`, { userId })
+    .orderBy('latest.last_created_at', 'DESC')
+    .setParameters(subQuery.getParameters())
+    .getMany();
 
-    // Optional: simplify last message
-    return chats.map((chat) => {
-      const lastMessage =
-        chat.messages.length > 0
-          ? chat.messages.sort(
-              (a, b) =>
-                new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime(),
-            )[0]
-          : null;
+  // Simplify the last message
+  return chats.map((chat) => {
+    const lastMessage = chat.messages?.[0] ?? null;
+    return {
+      ...chat,
+      lastMessage,
+    };
+  });
+}
 
-      return {
-        ...chat,
-        lastMessage,
-      };
-    });
-  }
 }
