@@ -34,5 +34,10 @@ export class Chat extends AuditableEntity {
 
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
+
+  constructor(partial: Partial<Chat>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
 

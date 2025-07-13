@@ -25,10 +25,10 @@ export class ChatService {
 
     if (existing) return existing;
 
-   const newChat = this.chatRepo.create({
-    client: { id: clientId } as any,
-    store: { id: storeId } as any,
-  });
+   const newChat = new Chat({
+     client_id: clientId,
+     store_id: storeId
+   })
   return await this.chatRepo.save(newChat);
   }
 
