@@ -24,7 +24,5 @@ export class Chat extends AuditableEntity {
 
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
-
-  @CreateDateColumn()
-  createdAt: Date;
 }
+
