@@ -222,6 +222,10 @@ export class OffersController {
   }
 
   //get favorite offers
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLIENT)
+  @Get('favorite-offers')
   async getClientFavoriteOffers(@Query() query: PaginatedRequest) {
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');

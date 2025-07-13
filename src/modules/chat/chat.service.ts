@@ -26,16 +26,16 @@ export class ChatService {
     if (existing) return existing;
 
     const chat = this.chatRepo.create({
-      client: { id: clientId } as User,
-      store: { id: storeId } as User,
+      client_id: clientId,
+      store_id: storeId,
     });
     return this.chatRepo.save(chat);
   }
 
   async sendMessage(chatId: string, senderId: string, content: string): Promise<Message> {
     const message = this.msgRepo.create({
-      chat: { id: chatId } as Chat,
-      sender: { id: senderId } as User,
+      chat_id: chatId,
+      sender_id: senderId,
       content,
     });
     return this.msgRepo.save(message);
