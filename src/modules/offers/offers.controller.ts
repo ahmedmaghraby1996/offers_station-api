@@ -222,27 +222,23 @@ export class OffersController {
   }
 
   //get favorite offers
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @Roles(Role.CLIENT)
-  @Get('favorite-offers')
-  async getFavoriteOffers(@Query() query: PaginatedRequest) {
-    applyQueryIncludes(query, 'offer#stores.subcategory.images');
-    // applyQueryIncludes(query, 'offer.subcategory.category');
-    applyQueryFilters(query, `offer.stores.is_active=1`);
+  async getClientFavoriteOffers(@Query() query: PaginatedRequest) {
+    applyQueryIncludes(query, 'stores');
+    applyQueryIncludes(query, 'subcategory');
+    applyQueryIncludes(query, 'subcategory.category');
+    applyQueryIncludes(query, 'images');
+    applyQueryFilters(query, `stores.is_active=1`);
+    applyQueryIncludes(query, 'favorites');
+    applyQueryFilters(query, `favorites.user_id=${this.request.user.id}`);
 
-    applyQueryFilters(query, `user_id=${this.request.user.id}`);
-    const total = await this.favoriteOfferService.count(query);
-    const offers = await this.favoriteOfferService.findAll(query);
-    const result = plainToInstance(
-      OfferResponse,
-      offers.map((offer) => offer.offer),
-      {
-        excludeExtraneousValues: true,
-      },
-    );
+    const total = await this.offersService.count(query);
+    const offers = await this.offersService.findAll(query);
+  
+    const result = plainToInstance(OfferResponse, offers, {
+      excludeExtraneousValues: true,
+    });
+
     const response = this._i18nResponse.entity(result);
-
     return new PaginatedResponse(response, {
       meta: { total, ...query },
     });
