@@ -35,7 +35,7 @@ export class ChatController {
     @Param('chat_id') chat_id: string,
     @Body() body: { sender_id: string; content: string },
   ) {
-    return new ActionResponse(await this.chatService.sendMessage(chat_id, body.sender_id, body.content));
+    return new ActionResponse(await this.chatService.sendMessage(chat_id, body.content));
   }
 
   @Get(':chat_id/messages')

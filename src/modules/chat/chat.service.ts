@@ -15,30 +15,27 @@ export class ChatService {
   constructor(
     @InjectRepository(Chat) private chatRepo: Repository<Chat>,
     @InjectRepository(Message) private msgRepo: Repository<Message>,
-    @Inject(REQUEST) private readonly request: Request
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   async startChat(clientId: string, storeId: string): Promise<Chat> {
     const existing = await this.chatRepo.findOne({
       where: { client: { id: clientId }, store: { id: storeId } },
     });
-
+    
     if (existing) return existing;
 
-    const chat = this.chatRepo.create({
-      client_id: clientId,
-      store_id: storeId,
-    });
-    return await this.chatRepo.save(chat);
+    return await this.chatRepo.save({ client_id: clientId, store_id: storeId });
   }
 
-  async sendMessage(chatId: string, senderId: string, content: string): Promise<Message> {
+  async sendMessage(chatId: string, content: string): Promise<Message> {
+    const senderId = this.request.user.id;
     const message = this.msgRepo.create({
       chat_id: chatId,
       sender_id: senderId,
       content,
     });
-    return  await this.msgRepo.save(message);
+    return await this.msgRepo.save(message);
   }
 
   async getMessages(chatId: string): Promise<Message[]> {
@@ -50,17 +47,15 @@ export class ChatService {
   }
 
   // chat.service.ts (continued)
-async getUserChats() {
-  const roles = this.request.user.roles;
-  const whereClause = roles.includes(Role.CLIENT)
-    ? { client: { id: this.request.user.id } }
-    : { store: { id: this.request.user.id } };
-  return await this.chatRepo.find({
-    where: whereClause,
-    relations: ['client', 'store'],
-    order: { created_at: 'DESC' },
-  });
+  async getUserChats() {
+    const roles = this.request.user.roles;
+    const whereClause = roles.includes(Role.CLIENT)
+      ? { client: { id: this.request.user.id } }
+      : { store: { id: this.request.user.id } };
+    return await this.chatRepo.find({
+      where: whereClause,
+      relations: ['client', 'store'],
+      order: { created_at: 'DESC' },
+    });
+  }
 }
-
-}
-
