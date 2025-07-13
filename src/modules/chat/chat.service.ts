@@ -22,7 +22,7 @@ export class ChatService {
     const existing = await this.chatRepo.findOne({
       where: { client: { id: clientId }, store: { id: storeId } },
     });
-    
+
     if (existing) return existing;
 
     return await this.chatRepo.save({ client_id: clientId, store_id: storeId });
@@ -39,6 +39,11 @@ export class ChatService {
   }
 
   async getMessages(chatId: string): Promise<Message[]> {
+    await this.msgRepo.update(
+      { chat_id: chatId, is_seen: false },
+      { is_seen: true },
+    );
+
     return await this.msgRepo.find({
       where: { chat: { id: chatId } },
       relations: ['sender'],
@@ -49,13 +54,30 @@ export class ChatService {
   // chat.service.ts (continued)
   async getUserChats() {
     const roles = this.request.user.roles;
+    const userId = this.request.user.id;
+
     const whereClause = roles.includes(Role.CLIENT)
-      ? { client: { id: this.request.user.id } }
-      : { store: { id: this.request.user.id } };
-    return await this.chatRepo.find({
-      where: whereClause,
-      relations: ['client', 'store'],
-      order: { created_at: 'DESC' },
-    });
+      ? 'chat.clientId = :userId'
+      : 'chat.storeId = :userId';
+
+    return await this.chatRepo
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.client', 'client')
+      .leftJoinAndSelect('chat.store', 'store')
+      .leftJoinAndSelect(
+        (qb) =>
+          qb
+            .from('message', 'message')
+            .select('DISTINCT ON (message.chatId) message.*')
+            .where('message.chatId = chat.id')
+            .orderBy('message.chatId, message.created_at', 'DESC'),
+        'last_message',
+        'last_message.chatId = chat.id',
+      )
+      .addSelect('last_message.content', 'last_message_content')
+      .addSelect('last_message.created_at', 'last_message_created_at')
+      .where(whereClause, { userId })
+      .orderBy('chat.created_at', 'DESC')
+      .getRawAndEntities(); // or use getMany if you need only entities
   }
 }

@@ -13,20 +13,19 @@ import { User } from '../user/user.entity';
 
 @Entity()
 export class Message extends AuditableEntity {
-
-
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat: Chat;
-  @Column({nullable:true})
-  chat_id: string
+  @Column({ nullable: true })
+  chat_id: string;
 
   @ManyToOne(() => User)
   sender: User;
-  @Column({nullable:true})
-  sender_id: string
+  @Column({ nullable: true })
+  sender_id: string;
 
   @Column()
   content: string;
 
- 
+  @Column({ default: false })
+  is_seen: boolean;
 }
