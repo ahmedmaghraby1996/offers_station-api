@@ -1,9 +1,13 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ActionResponse } from 'src/core/base/responses/action.response';
+import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
+import { RolesGuard } from '../authentication/guards/roles.guard';
 
 @ApiTags('Chat')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller('chat')
 export class ChatController {
   constructor(private chatService: ChatService) {}
@@ -17,6 +21,16 @@ export class ChatController {
 
   @Post(':chat_id/send')
   @ApiParam({ name: 'chat_id', required: true, type: String, description: 'ID of the chat' })
+    @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        sender_id: { type: 'string', example: '123' },
+        content: { type: 'string', example: 'Hello, how can I help you?' },
+      },
+      required: ['sender_id', 'content'],
+    },
+  })
   async sendMessage(
     @Param('chat_id') chat_id: string,
     @Body() body: { sender_id: string; content: string },
@@ -30,6 +44,7 @@ export class ChatController {
     return new ActionResponse(await this.chatService.getMessages(chat_id));
   }
 
+  
   @Get('all')
 
   async getChats(
