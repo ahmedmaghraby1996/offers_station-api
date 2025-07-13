@@ -58,7 +58,7 @@ async getUserChats() {
   return this.chatRepo.find({
     where: whereClause,
     relations: ['client', 'store'],
-    order: { createdAt: 'DESC' },
+    order: { created_at: 'DESC' },
   });
 }
 
