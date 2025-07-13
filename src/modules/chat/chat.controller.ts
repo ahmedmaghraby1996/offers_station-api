@@ -20,15 +20,14 @@ export class ChatController {
   schema: {
     type: 'object',
     properties: {
-      client_id: { type: 'string', example: 'client-uuid-123' },
       store_id: { type: 'string', example: 'store-uuid-456' },
     },
-    required: ['client_id', 'store_id'],
+    required: ['store_id'],
   },
 })
-  async startChat(@Body() body: { client_id: string; store_id: string }) {
+  async startChat(@Body() body: {  store_id: string }) {
     return new ActionResponse(
-      await this.chatService.startChat(body.client_id, body.store_id),
+      await this.chatService.startChat( body.store_id),
     );
   }
 
@@ -43,7 +42,6 @@ export class ChatController {
     schema: {
       type: 'object',
       properties: {
-        sender_id: { type: 'string', example: '123' },
         content: { type: 'string', example: 'Hello, how can I help you?' },
       },
       required: ['sender_id', 'content'],

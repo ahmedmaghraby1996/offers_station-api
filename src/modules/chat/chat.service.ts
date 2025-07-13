@@ -18,7 +18,8 @@ export class ChatService {
     @Inject(REQUEST) private readonly request: Request,
   ) {}
 
-  async startChat(clientId: string, storeId: string): Promise<Chat> {
+  async startChat(storeId: string): Promise<Chat> {
+    const clientId = this.request.user.id;
     const existing = await this.chatRepo.findOne({
       where: { client: { id: clientId }, store: { id: storeId } },
     });
@@ -93,7 +94,7 @@ export class ChatService {
     const lastMessage = chat.messages?.[0] ?? null;
     return {
       ...chat,
-      lastMessage,
+      last_message: lastMessage,
     };
   });
 }
