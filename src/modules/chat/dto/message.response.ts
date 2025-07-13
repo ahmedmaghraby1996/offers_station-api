@@ -7,4 +7,5 @@ export class MessageRespone {
     @Expose() content: string;
     @Expose() created_at: Date;
     @Expose() chat_id: string;
+    @Expose() is_seen: boolean;
 }

@@ -56,28 +56,49 @@ export class ChatService {
     const roles = this.request.user.roles;
     const userId = this.request.user.id;
 
-    const whereClause = roles.includes(Role.CLIENT)
-      ? 'chat.client_id = :userId'
-      : 'chat.store_id = :userId';
+    const roleColumn = roles.includes(Role.CLIENT)
+      ? 'chat.client_id'
+      : 'chat.store_id';
 
-    return await this.chatRepo
+    // Subquery: get last sentAt per chat_id
+    const subQuery = this.chatRepo
+      .createQueryBuilder('chat')
+      .leftJoin('chat.messages', 'm')
+      .select('m.chat_id', 'chat_id')
+      .addSelect('MAX(m.sent_at)', 'last_sent_at')
+      .groupBy('m.chat_id');
+
+    // Main query
+    const chats = await this.chatRepo
       .createQueryBuilder('chat')
       .leftJoinAndSelect('chat.client', 'client')
       .leftJoinAndSelect('chat.store', 'store')
-      .leftJoinAndSelect(
-        (qb) =>
-          qb
-            .from('message', 'message')
-            .select('DISTINCT ON (message.chat_id) message.*')
-            .where('message.chat_id = chat.id')
-            .orderBy('message.chat_id, message.created_at', 'DESC'),
-        'last_message',
-        'last_message.chat_id = chat.id',
+      .leftJoinAndSelect('chat.messages', 'message')
+      .leftJoin(
+        `(${subQuery.getQuery()})`,
+        'latest',
+        'latest.chat_id = chat.id AND message.sent_at = latest.last_sent_at',
       )
-      .addSelect('last_message.content', 'last_message_content')
-      .addSelect('last_message.created_at', 'last_message_created_at')
-      .where(whereClause, { userId })
+      .where(`${roleColumn} = :userId`, { userId })
       .orderBy('chat.created_at', 'DESC')
-      .getRawAndEntities(); // or use getMany if you need only entities
+      .setParameters(subQuery.getParameters())
+      .getMany();
+
+    // Optional: simplify last message
+    return chats.map((chat) => {
+      const lastMessage =
+        chat.messages.length > 0
+          ? chat.messages.sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
+            )[0]
+          : null;
+
+      return {
+        ...chat,
+        lastMessage,
+      };
+    });
   }
 }
