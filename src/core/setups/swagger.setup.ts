@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AuthenticationModule } from 'src/modules/authentication/authentication.module';
 import { BanarModule } from 'src/modules/banar/banar.module';
+import { ChatModule } from 'src/modules/chat/chat.module';
 import { ContactUsModule } from 'src/modules/contact-us/contact-us.module';
 import { FaqModule } from 'src/modules/faq/faq.module';
 import { FileModule } from 'src/modules/file/file.module';
@@ -50,6 +51,7 @@ export default (app: INestApplication, config: ConfigService) => {
       OffersModule,
       FileModule,
       BanarModule,
+      ChatModule
       // TransactionModule,
     ],
     operationIdFactory,

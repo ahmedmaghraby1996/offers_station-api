@@ -23,6 +23,8 @@ import { Banar } from '../entities/banar/banar.entity';
 import { OfferView } from '../entities/offer/offer-view.entity';
 import { OffersService } from 'src/modules/offers/offers.service';
 import { FavoriteOffer } from '../entities/offer/favorite-offer.entity';
+import { Chat } from '../entities/chat/chat.entity';
+import { Message } from '../entities/chat/messages.entity';
 
 
 
@@ -48,7 +50,9 @@ FavoriteOffer,
     Offer,
     OfferImages,
     Category,
-    SubCategory
+    SubCategory,
+    Chat,
+    Message
 
 ];
 

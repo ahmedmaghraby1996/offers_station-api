@@ -23,6 +23,7 @@ import { Transaction } from '../wallet/transaction.entity';
 
 import { SuggestionsComplaints } from '../suggestions-complaints/suggestions-complaints.entity';
 import { City } from '../city/city.entity';
+import { Chat } from '../chat/chat.entity';
 
 
 @Entity()
@@ -36,6 +37,12 @@ export class User extends AuditableEntity {
   city:City
   @Column({nullable:true})
   city_id:string
+
+  @OneToMany(()=>Chat, (chat) => chat.client)
+  client_chats: Chat[]
+
+  @OneToMany(()=>Chat, (chat) => chat.store)
+  store_chats: Chat[]
 
   @OneToMany(() => NotificationEntity, (notification) => notification.user)
   notifications: NotificationEntity[];

@@ -13,6 +13,7 @@ import { SendEmailModule } from './send-email/send-email.module';
 import { OffersModule } from './offers/offers.module';
 import { FileModule } from './file/file.module';
 import { BanarModule } from './banar/banar.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { BanarModule } from './banar/banar.module';
     TransactionModule,
     OffersModule,
     FileModule,
-    BanarModule
+    BanarModule,
+    ChatModule
   ],
   exports: [],
 })
