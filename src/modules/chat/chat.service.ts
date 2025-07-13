@@ -29,7 +29,7 @@ export class ChatService {
       client_id: clientId,
       store_id: storeId,
     });
-    return this.chatRepo.save(chat);
+    return await this.chatRepo.save(chat);
   }
 
   async sendMessage(chatId: string, senderId: string, content: string): Promise<Message> {
@@ -38,11 +38,11 @@ export class ChatService {
       sender_id: senderId,
       content,
     });
-    return this.msgRepo.save(message);
+    return  await this.msgRepo.save(message);
   }
 
   async getMessages(chatId: string): Promise<Message[]> {
-    return this.msgRepo.find({
+    return await this.msgRepo.find({
       where: { chat: { id: chatId } },
       relations: ['sender'],
       order: { created_at: 'ASC' },
@@ -55,7 +55,7 @@ async getUserChats() {
   const whereClause = roles.includes(Role.CLIENT)
     ? { client: { id: this.request.user.id } }
     : { store: { id: this.request.user.id } };
-  return this.chatRepo.find({
+  return await this.chatRepo.find({
     where: whereClause,
     relations: ['client', 'store'],
     order: { created_at: 'DESC' },
