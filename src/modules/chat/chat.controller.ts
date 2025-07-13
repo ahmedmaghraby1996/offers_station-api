@@ -16,8 +16,16 @@ export class ChatController {
   constructor(private chatService: ChatService) {}
 
   @Post('start')
-  @ApiParam({ name: 'client_id', required: true, type: String })
-  @ApiParam({ name: 'store_id', required: true, type: String })
+ @ApiBody({
+  schema: {
+    type: 'object',
+    properties: {
+      client_id: { type: 'string', example: 'client-uuid-123' },
+      store_id: { type: 'string', example: 'store-uuid-456' },
+    },
+    required: ['client_id', 'store_id'],
+  },
+})
   async startChat(@Body() body: { client_id: string; store_id: string }) {
     return new ActionResponse(
       await this.chatService.startChat(body.client_id, body.store_id),
