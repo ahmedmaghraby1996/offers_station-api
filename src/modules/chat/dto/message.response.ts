@@ -1,4 +1,4 @@
-import { Expose, Type } from "class-transformer";
+import { Expose, Transform, Type } from "class-transformer";
 import { UserResponse } from "src/modules/user/dto/response/user-response";
 
 export class MessageRespone {
@@ -8,4 +8,5 @@ export class MessageRespone {
     @Expose() created_at: Date;
     @Expose() chat_id: string;
     @Expose() is_seen: boolean;
+    
 }

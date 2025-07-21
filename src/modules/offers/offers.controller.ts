@@ -186,8 +186,8 @@ export class OffersController {
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });
-
-    return new ActionResponse(result);
+  const response = this._i18nResponse.entity(result);
+    return new ActionResponse(response);
   }
   //DELETE OFFER
   @ApiBearerAuth()
