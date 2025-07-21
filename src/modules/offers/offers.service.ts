@@ -1,4 +1,4 @@
-import { Inject, Injectable, Req } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/core/base/service/service.base';
 import { Offer } from 'src/infrastructure/entities/offer/offer.entity';
@@ -123,7 +123,19 @@ export class OffersService extends BaseService<Offer> {
     }
     return true;
   }
+
+  async findOne(id: string) {
+    const offer = await this.repo.findOne({
+      where: { id: id },
+      relations: { user: true, subcategory: { category: true }, images: true ,favorites: true, stores: true},
+    });
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+    return offer;
+  }
 }
+
 
 
 export class FavoriteOfferService extends BaseService<FavoriteOffer> {
