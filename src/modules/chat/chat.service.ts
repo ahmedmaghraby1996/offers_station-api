@@ -27,7 +27,7 @@ export class ChatService {
 
   async startChat(storeId: string): Promise<Chat> {
     const clientId = this.request.user.id;
-    const store=await this.storeRepo.findOne({ where: { user_id: storeId, is_main_branch: true } });
+    const store=await this.storeRepo.findOne({ where: { user_id: storeId,  } });
     if (!store) {
       throw new NotFoundException('Store not found or is not a main branch');
     }
