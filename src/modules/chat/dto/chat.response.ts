@@ -18,6 +18,7 @@ export class ChatResponse {
         )
       : null;
   })
+    store: any;
   @Expose()
   @Type(() => MessageRespone)
   last_message: MessageRespone;
