@@ -44,14 +44,12 @@ export class ChatService {
       sender_id: senderId,
       content,
     });
-    this.chatGateway.server
-      .to(chatId)
-      .emit(
-        'new-message',
-        plainToInstance(MessageRespone, message, {
-          excludeExtraneousValues: true,
-        }),
-      );
+    this.chatGateway.server.emit(
+      'new-message-' + chatId,
+      plainToInstance(MessageRespone, message, {
+        excludeExtraneousValues: true,
+      }),
+    );
     return await this.msgRepo.save(message);
   }
 
