@@ -22,11 +22,11 @@ export abstract class Gateways {
    * @example order
    * @example order-offer
    */
-  static watch = class {
+  static chat = class {
  
-    static Namespace = 'watch';
+    static Namespace = 'chat';
    
-    static watchRequest = 'watch-request';
+
    
   }
 

@@ -7,13 +7,14 @@ import { RolesGuard } from '../authentication/guards/roles.guard';
 import { plainToInstance } from 'class-transformer';
 import { ChatResponse } from './dto/chat.response';
 import { MessageRespone } from './dto/message.response';
+import { ChatGateway } from 'src/integration/gateways/chat.gateway';
 
 @ApiTags('Chat')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('chat')
 export class ChatController {
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService,) {}
 
   @Post('start')
  @ApiBody({

@@ -7,15 +7,15 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Gateways } from 'src/core/base/gateways';
-@WebSocketGateway({ namespace: Gateways.watch.Namespace, cors: { origin: '*' } })
-export class WatchGateway
+@WebSocketGateway({ namespace: Gateways.chat.Namespace, cors: { origin: '*' } })
+export class ChatGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer()
   server: Server;
 
   handleConnection(client: any) {
-    console.log('watch connected', client.id);
+    console.log('chat connected', client.id);
 
   }
 
@@ -28,7 +28,5 @@ export class WatchGateway
     console.log(`Socket is live ${server.name}`);
   }
 
- newRequest(users:string[],data: any) {
-    this.server.to(users).emit('new-request', data);
-  }
+
 }
