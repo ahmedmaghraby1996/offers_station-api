@@ -24,7 +24,7 @@ export class ChatService {
     @InjectRepository(Store) private storeRepo: Repository<Store>,
     private readonly chatGateway: ChatGateway,
   ) {}
-
+// 
   async startChat(storeId: string): Promise<Chat> {
     const clientId = this.request.user.id;
     const store=await this.storeRepo.findOne({ where: { id: storeId,  } });
