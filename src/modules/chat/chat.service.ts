@@ -94,7 +94,7 @@ async getUserChats() {
     .createQueryBuilder('chat')
     .leftJoinAndSelect('chat.client', 'client')
     .leftJoinAndSelect('chat.store', 'store')
-    .leftJoinAndSelect('store.stores', 'store_sub', 'store_sub.is_main = true') // join sub store with is_main = true
+    .leftJoinAndSelect('store.stores', 'store_sub', 'store_sub.is_main_branch = true') // join sub store with is_main = true
     .leftJoinAndSelect('chat.messages', 'message')
     .leftJoin(
       `(${subQuery.getQuery()})`,
