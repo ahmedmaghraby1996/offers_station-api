@@ -11,7 +11,7 @@ export class ChatResponse {
     return value.obj?.store
       ? plainToInstance(
           UserResponse,
-          { ...value.obj.store, avatar: value.obj?.store?.store_sub[0]?.logo },
+          { ...value.obj.store, avatar: value.obj?.store?.store_sub?.logo },
           {
             excludeExtraneousValues: true,
           },
