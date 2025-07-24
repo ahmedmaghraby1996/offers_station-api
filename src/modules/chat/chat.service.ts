@@ -1,5 +1,5 @@
 // chat.service.ts
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Chat } from 'src/infrastructure/entities/chat/chat.entity';
@@ -13,26 +13,33 @@ import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { ChatGateway } from 'src/integration/gateways/chat.gateway';
 import { plainToInstance } from 'class-transformer';
 import { MessageRespone } from './dto/message.response';
+
+import {  Store } from 'src/infrastructure/entities/store/store.entity';
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(Chat) private chatRepo: Repository<Chat>,
     @InjectRepository(Message) private msgRepo: Repository<Message>,
     @Inject(REQUEST) private readonly request: Request,
+    @InjectRepository(Store) private storeRepo: Repository<Store>,
     private readonly chatGateway: ChatGateway,
   ) {}
 
   async startChat(storeId: string): Promise<Chat> {
     const clientId = this.request.user.id;
+    const store=await this.storeRepo.findOne({ where: { user_id: storeId, is_main_branch: true } });
+    if (!store) {
+      throw new NotFoundException('Store not found or is not a main branch');
+    }
     const existing = await this.chatRepo.findOne({
-      where: { client: { id: clientId }, store: { id: storeId } },
+      where: { client: { id: clientId }, store: { id: store.id } },
     });
 
     if (existing) return existing;
 
     const newChat = new Chat({
       client_id: clientId,
-      store_id: storeId,
+      store_id: store.id,
     });
     return await this.chatRepo.save(newChat);
   }
