@@ -24,6 +24,7 @@ import { Transaction } from '../wallet/transaction.entity';
 import { SuggestionsComplaints } from '../suggestions-complaints/suggestions-complaints.entity';
 import { City } from '../city/city.entity';
 import { Chat } from '../chat/chat.entity';
+import { Store } from '../store/store.entity';
 
 
 @Entity()
@@ -32,7 +33,8 @@ export class User extends AuditableEntity {
   @Factory((faker) => faker.phone.number('########'))
   @Column({ length: 8, unique: true })
   account: string;
-
+@OneToMany(()=>Store, (store) => store.user)
+  stores: Store[];
   @ManyToOne(()=>City,)
   city:City
   @Column({nullable:true})

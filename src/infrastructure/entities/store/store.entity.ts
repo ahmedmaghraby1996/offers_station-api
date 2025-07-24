@@ -20,7 +20,8 @@ export class Store extends OwnedEntity {
   @Column({ nullable: true })
   name: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.stores, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
   user: User;
   @Column({ nullable: true })
   logo: string;
