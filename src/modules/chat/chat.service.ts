@@ -44,13 +44,19 @@ export class ChatService {
       sender_id: senderId,
       content,
     });
-    this.chatGateway.server.emit(
+
+    await this.msgRepo.save(message);
+    const chat = await this.chatRepo.findOne({
+      where: { id: chatId },
+      relations: ['client', 'store'],
+    });
+        this.chatGateway.server.emit(
       'new-message-' + chatId,
       plainToInstance(MessageRespone, message, {
         excludeExtraneousValues: true,
       }),
     );
-    return await this.msgRepo.save(message);
+    return message;
   }
 
   async getMessages(chatId: string): Promise<Message[]> {
