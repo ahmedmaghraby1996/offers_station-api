@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsLatitude,
   IsLongitude,
   IsNotEmpty,
@@ -236,4 +237,15 @@ export class UpdateBranchInfoRequest {
   @IsNotEmpty()
   @IsString()
   city_id: string;
+
+  // is_active
+  @ApiProperty({
+    required: true,
+    description: 'Store is_active',
+    example: true,
+    default: true,
+  })
+  @IsNotEmpty()
+  @IsBoolean()
+  is_active: boolean;
 }

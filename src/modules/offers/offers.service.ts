@@ -11,6 +11,7 @@ import { OfferView } from 'src/infrastructure/entities/offer/offer-view.entity';
 import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
 import { FavoriteOffer } from 'src/infrastructure/entities/offer/favorite-offer.entity';
+import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 @Injectable()
 export class OffersService extends BaseService<Offer> {
   constructor(
@@ -62,49 +63,51 @@ export class OffersService extends BaseService<Offer> {
     return true;
   }
 
-  async findNearbyOffers(
-    latitude: string,
-    longitude: string,
-    radiusMeters = 500,
-  ) {
-    return this._repo
-      .createQueryBuilder('offer')
-      .leftJoinAndSelect('offer.stores', 'stores')
-      .leftJoinAndSelect('offer.images', 'images')
-      .leftJoinAndSelect('offer.user', 'user')
-      .leftJoinAndSelect('offer.subcategory', 'subcategory')
-      .addSelect(
-        `
-    (6371000 * acos(
-      cos(radians(:lat)) *
-      cos(radians(stores.latitude)) *
-      cos(radians(stores.longitude) - radians(:lng)) +
-      sin(radians(:lat)) *
-      sin(radians(stores.latitude))
-    ))
-  `,
-        'distance',
-      )
-      .where(
-        `
-    stores.is_active = true AND
-    (6371000 * acos(
-      cos(radians(:lat)) *
-      cos(radians(stores.latitude)) *
-      cos(radians(stores.longitude) - radians(:lng)) +
-      sin(radians(:lat)) *
-      sin(radians(stores.latitude))
-    )) <= :radius
-  `,
-      )
-      .setParameters({
-        lat: latitude,
-        lng: longitude,
-        radius: radiusMeters,
-      })
-      .orderBy('distance', 'ASC')
-      .getMany();
-  }
+async findNearbyOffers(
+  latitude: string,
+  longitude: string,
+  radiusMeters = 500,
+) {
+  return this._repo
+    .createQueryBuilder('offer')
+    .leftJoinAndSelect('offer.stores', 'stores')
+    .leftJoinAndSelect('offer.images', 'images')
+    .leftJoinAndSelect('offer.user', 'user')
+    .leftJoinAndSelect('offer.subcategory', 'subcategory')
+    .addSelect(
+      `
+      (6371000 * acos(
+        cos(radians(:lat)) *
+        cos(radians(stores.latitude)) *
+        cos(radians(stores.longitude) - radians(:lng)) +
+        sin(radians(:lat)) *
+        sin(radians(stores.latitude))
+      ))
+    `,
+      'distance',
+    )
+    .where(
+      `
+      stores.is_active = true AND
+      stores.status = :approvedStatus AND
+      (6371000 * acos(
+        cos(radians(:lat)) *
+        cos(radians(stores.latitude)) *
+        cos(radians(stores.longitude) - radians(:lng)) +
+        sin(radians(:lat)) *
+        sin(radians(stores.latitude))
+      )) <= :radius
+    `,
+    )
+    .setParameters({
+      lat: latitude,
+      lng: longitude,
+      radius: radiusMeters,
+      approvedStatus: StoreStatus.APPROVED,
+    })
+    .orderBy('distance', 'ASC')
+    .getMany();
+}
 
   async addRemoveFavorite(offer_id: string) {
     const favorite = await this.favoriteOfferRepo.findOne({

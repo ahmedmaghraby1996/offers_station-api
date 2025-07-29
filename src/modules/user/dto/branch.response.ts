@@ -1,7 +1,9 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import { toUrl } from 'src/core/helpers/file.helper';
+import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 import { Category } from 'src/infrastructure/entities/category/category.entity';
 import { City } from 'src/infrastructure/entities/city/city.entity';
+import { Store } from 'src/infrastructure/entities/store/store.entity';
 
 export class BranchResponse {
   @Expose()
@@ -50,6 +52,9 @@ export class BranchResponse {
 
   @Expose()
   is_active: boolean;
+
+  @Expose()
+  status: StoreStatus;
 
   @Expose()
   whatsapp_link: string;

@@ -39,6 +39,8 @@ import { Not } from 'typeorm';
 import { StoreService } from './store.service';
 import { BranchResponse } from '../user/dto/branch.response';
 import { ActionResponse } from 'src/core/base/responses/action.response';
+import { Store } from 'src/infrastructure/entities/store/store.entity';
+import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -154,6 +156,7 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     applyQueryFilters(query, `stores.is_active=1`);
+    applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED}`);
     applyQueryIncludes(query, 'favorites');
 
     const total = await this.offersService.count(query);
@@ -181,8 +184,12 @@ export class OffersController {
   @UseGuards(JwtAuthGuard)
   @Roles(Role.CLIENT)
   @Get('nearby-offers')
-  async getNearbyOffers(@Query('lat') lat: string, @Query('lng') lng: string) {
-    const offers = await this.offersService.findNearbyOffers(lat, lng);
+  async getNearbyOffers(
+    @Query('lat') lat: string,
+    @Query('lng') lng: string,
+    @Query('radius') radius?: number,
+  ) {
+    const offers = await this.offersService.findNearbyOffers(lat, lng, radius);
     const result = plainToInstance(OfferResponse, offers, {
       excludeExtraneousValues: true,
     });

@@ -21,6 +21,7 @@ import { Request } from 'express';
 import { where } from 'sequelize';
 import { City } from 'src/infrastructure/entities/city/city.entity';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
+import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 @Injectable()
 export class RegisterUserTransaction extends BaseTransaction<
   RegisterRequest,
@@ -89,7 +90,7 @@ export class RegisterUserTransaction extends BaseTransaction<
    
        
         if(req.role == Role.STORE){
-          const store = new Store({});
+          const store = new Store({status:StoreStatus.APPROVED,is_active:true});
           store.user_id = savedUser.id;
          store.is_main_branch = true
           await context.save(store);

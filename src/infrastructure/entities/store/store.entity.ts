@@ -15,10 +15,14 @@ import { OwnedEntity } from 'src/infrastructure/base/owned.entity';
 import { User } from '../user/user.entity';
 import { Offer } from '../offer/offer.entity';
 import { Category } from '../category/category.entity';
+import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 @Entity()
 export class Store extends OwnedEntity {
   @Column({ nullable: true })
   name: string;
+
+  @Column({ type: 'enum', enum: StoreStatus, default: StoreStatus.PENDING })
+  status: StoreStatus;
 
   @ManyToOne(() => User, (user) => user.stores, { nullable: true })
   @JoinColumn({ name: 'user_id' })
@@ -58,8 +62,8 @@ export class Store extends OwnedEntity {
   @Column({ nullable: true })
   cover_image: string;
 
-  @Column({default:0})
-  is_active:boolean
+  @Column({ default: 0 })
+  is_active: boolean;
 
   @Column({ nullable: true })
   address: string;
