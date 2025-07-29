@@ -65,7 +65,7 @@ export class OffersService extends BaseService<Offer> {
   async findNearbyOffers(
     latitude: string,
     longitude: string,
-    radiusMeters = 5000,
+    radiusMeters = 500,
   ) {
     return this._repo
       .createQueryBuilder('offer')
