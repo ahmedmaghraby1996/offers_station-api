@@ -179,73 +179,73 @@ export class UpdateStoreInfoRequest {
 
 export class UpdateBranchInfoRequest {
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Branch ID',
     example: '1',
     default: '1',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   branch_id: string;
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Store name',
     example: 'My Store',
     default: 'My Store',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Store address',
     example: 'My Address',
     default: 'My Address',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   address: string;
   // LATITUDE AND LONGITUDE
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Store latitude',
     example: '24.7136',
     default: '24.7136',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsLatitude()
   latitude: number;
 
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Store longitude',
     example: '46.6758',
     default: '46.6758',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsLongitude()
   longitude: number;
 
   // city_id
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Store city_id',
     example: '1',
     default: '1',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   city_id: string;
 
   // is_active
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Store is_active',
     example: true,
     default: true,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
   is_active: boolean;
 }
