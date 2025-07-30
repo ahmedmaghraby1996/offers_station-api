@@ -87,6 +87,7 @@ export class UserService extends BaseService<User> {
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
     if (req.address) store.address = req.address;
+    
     if (req.latitude) store.latitude = req.latitude;
     if (req.longitude) store.longitude = req.longitude;
     if (req.city_id) store.city_id = req.city_id;
@@ -139,6 +140,7 @@ export class UserService extends BaseService<User> {
     });
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
+    if(req.is_active ) store.is_active = req.is_active
     if (req.address) store.address = req.address;
     if (req.latitude) store.latitude = req.latitude;
     if (req.longitude) store.longitude = req.longitude;
