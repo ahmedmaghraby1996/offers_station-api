@@ -42,7 +42,7 @@ export class UpdateProfileRequest {
   email?: string;
   @ApiPropertyOptional()
   @IsOptional()
-  @IsNotEmpty()
+ 
   birth_date: string;
 
   @ApiPropertyOptional()
@@ -60,7 +60,7 @@ export class UpdateProfileRequest {
   avatarFile: Express.Multer.File;
 
   @ApiProperty({ type: 'enum', required: false,enum:[Language.EN,Language.AR] })
-  @IsEnum(Language)
+  // @IsEnum(Language)
   @IsOptional()
   language: Language;
 
