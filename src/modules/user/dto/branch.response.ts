@@ -68,7 +68,8 @@ export class BranchResponse {
   @Expose()
   twitter_link: string;
   
-
+@Expose()
+city_id: string;
 @Expose()
   @Transform((value) =>value.obj?.city)
   city: City;
