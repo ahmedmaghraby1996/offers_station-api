@@ -70,8 +70,7 @@ export class BranchResponse {
   
 
 @Expose()
-  @Type(() => City)
-   @Expose()
+  @Transform((value) =>value.obj?.city)
   city: City;
   
 }
