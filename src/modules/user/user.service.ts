@@ -98,8 +98,8 @@ export class UserService extends BaseService<User> {
     if (req.tiktok_link) store.tiktok_link = req.tiktok_link;
     if (req.instagram_link) store.instagram_link = req.instagram_link;
     if (req.facebook_link) store.facebook_link = req.facebook_link;
-    if (req.first_phone) store.first_phone = req.first_phone;
-    if (req.second_phone) store.second_phone = req.second_phone;
+   store.first_phone = req.first_phone;
+  store.second_phone = req.second_phone;
 
     if (req?.logo) {
       const resizedImage = await this.imageManager.resize(req.logo, {
