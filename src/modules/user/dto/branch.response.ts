@@ -72,4 +72,5 @@ export class BranchResponse {
   @Expose()
   @Type(() => City)
   city: City;
+  
 }

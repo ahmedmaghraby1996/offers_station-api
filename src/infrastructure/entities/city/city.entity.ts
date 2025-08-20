@@ -9,14 +9,17 @@ import {
 } from 'typeorm';
 import { Country } from '../country/country.entity';
 import { Store } from '../store/store.entity';
+import { Expose } from 'class-transformer';
 
 
 @Entity()
 export class City extends AuditableEntity {
   @Column()
+  @Expose()
   name_ar: string;
 
   @Column()
+  @Expose()
   name_en: string;
 
   @ManyToOne(() => Country, (country) => country.cities, {
