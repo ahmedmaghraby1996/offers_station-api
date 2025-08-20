@@ -41,7 +41,7 @@ export class UserService extends BaseService<User> {
   ) {
     super(userRepo);
   }
-
+// 
   async deleteUser(id: string) {
     const user = await this._repo.findOne({
       where: { id: id },
