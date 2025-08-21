@@ -47,6 +47,7 @@ export class SuggestionsComplaintsController {
       }),
     );
   }
+  @Roles(Role.CLIENT, Role.STORE)
   @Post()
   async createSuggestionsComplaints(
     @Body() suggestionsComplaintsRequest: SuggestionsComplaintsRequest,
