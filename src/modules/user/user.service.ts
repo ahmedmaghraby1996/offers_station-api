@@ -213,7 +213,8 @@ return await this.packageRepo.find({where:{is_active:true},order:{price:'ASC'}})
     currency: string,
   ): string {
     const data = `${trackid}|${this.terminalId}|${this.password}|${this.secretKey}|${amount}|${currency}`;
-    return createHash('sha256').update(data, 'utf8').digest('hex').toUpperCase();
+    console.log('hash_data',data);
+    return createHash('sha256').update(data).digest('hex');
   }
 
   /**
@@ -222,7 +223,7 @@ return await this.packageRepo.find({where:{is_active:true},order:{price:'ASC'}})
   async makePayment( amount: string, currency = 'SAR') {
     const trackid =   Math.random().toString(36).substring(2, 12);
     const requestHash = this.generateHash(trackid, amount, currency);
-
+console.log('requestHash',requestHash);
     const payload = {
       trackid,
       terminalId: this.terminalId,
