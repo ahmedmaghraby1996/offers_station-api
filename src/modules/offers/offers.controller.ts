@@ -152,7 +152,8 @@ export class OffersController {
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
     const storeId = this.getFilterValue(query.filters,'stores.id');
-    if (storeId) {
+    console.log("storeId",storeId)
+    if (storeId!==null) {
       applyQueryFilters(query, `stores.is_active=1,stores.id=${storeId}`);
     }
  
