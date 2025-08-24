@@ -152,9 +152,9 @@ export class OffersController {
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
     console.log("query.filters",query.filters)
-    const storeId = (query.filters as unknown as string).startsWith('stores.id=');
+    
+    const storeId = (query.filters as unknown as string).split("store_id/")[1]?.split(",")[0]??null;
     console.log("storeId",storeId)
-   
     if (storeId!==null) {
       applyQueryFilters(query, `stores.is_active=1,${storeId}`);
     }
@@ -282,18 +282,5 @@ export class OffersController {
     return new ActionResponse(response);
   }
 
-private getFilterValue(filters: string[], key: string): string | null {
-  if (!filters?.length) return null;
 
-  for (const filter of filters) {
-    const parts = filter.split(',');
-    for (const part of parts) {
-      const [k, v] = part.split('=');
-      if (k.trim() === key) {
-        return v;
-      }
-    }
-  }
-  return null;
-}
 }
