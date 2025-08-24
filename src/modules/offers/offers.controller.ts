@@ -151,11 +151,18 @@ export class OffersController {
   @Roles(Role.CLIENT)
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
+    const stores_filter = query.filters?.find((filter) =>
+      filter.includes('stores'),
+    );
+    if (stores_filter) {
+      applyQueryFilters(query, `stores.is_active=1,${stores_filter}`);
+    }
+    console.log(stores_filter);
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
-    applyQueryFilters(query, `stores.is_active=1`);
+    applyQueryFilters(query, `stores.is_active=1,`);
     applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED}`);
     applyQueryIncludes(query, 'favorites');
 
