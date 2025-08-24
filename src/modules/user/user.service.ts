@@ -189,6 +189,6 @@ export class UserService extends BaseService<User> {
   }
 
   async getPackage(){
-return await this.packageRepo.find({where:{is_active:true}});
+return await this.packageRepo.find({where:{is_active:true},order:{price:'ASC'}});
   }
 }
