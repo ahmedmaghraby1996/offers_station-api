@@ -75,10 +75,10 @@ export class UserController {
   @Roles(Role.ADMIN)
   @Get('')
   async getAll(@Query() query: PaginatedRequest) {
-    // applyQueryFilters(query, `roles!=${Role.DRIVER}`);
+
 
     applyQueryIncludes(query, 'city');
-    applyQueryIncludes(query, 'school');
+  
     const users = await this.userService.findAll(query);
     const usersResponse = await Promise.all(
       users.map(async (user) => {
@@ -240,4 +240,12 @@ async updateStoreInfo(
       ),
     );
   }
+
+@Get('packages')
+  async getPackages() {
+    const packages= await this.userService.getPackage();
+    const result=this._i18nResponse.entity(packages)
+    return new ActionResponse(result);
+  }
+  
 }

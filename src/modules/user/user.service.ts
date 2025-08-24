@@ -27,6 +27,7 @@ import {
 } from './dto/request/update-store-info.request';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { AddBranchRequest } from './dto/request/add-branch.request';
+import { Package } from 'src/infrastructure/entities/package/package.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
@@ -38,6 +39,7 @@ export class UserService extends BaseService<User> {
     @Inject(StorageManager) private readonly storageManager: StorageManager,
     @Inject(ConfigService) private readonly _config: ConfigService,
     @InjectRepository(Store) private readonly storeRepo: Repository<Store>,
+    @InjectRepository(Package) private readonly packageRepo: Repository<Package>,
   ) {
     super(userRepo);
   }
@@ -184,5 +186,9 @@ export class UserService extends BaseService<User> {
     });
     if (!branch) throw new NotFoundException('branch not found');
     return await this.storeRepo.softRemove(branch);
+  }
+
+  async getPackage(){
+return await this.packageRepo.find({where:{is_active:true}});
   }
 }

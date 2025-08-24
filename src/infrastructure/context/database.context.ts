@@ -25,6 +25,7 @@ import { OffersService } from 'src/modules/offers/offers.service';
 import { FavoriteOffer } from '../entities/offer/favorite-offer.entity';
 import { Chat } from '../entities/chat/chat.entity';
 import { Message } from '../entities/chat/messages.entity';
+import { Package } from '../entities/package/package.entity';
 
 
 
@@ -52,7 +53,8 @@ FavoriteOffer,
     Category,
     SubCategory,
     Chat,
-    Message
+    Message,
+    Package
 
 ];
 
