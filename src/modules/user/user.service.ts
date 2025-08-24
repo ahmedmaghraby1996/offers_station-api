@@ -28,9 +28,19 @@ import {
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 import { Package } from 'src/infrastructure/entities/package/package.entity';
+import axios from 'axios';
+import { createHash } from 'crypto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
+    private readonly terminalId = process.env.URWAY_TERMINAL_ID || 'pinnacle';
+  private readonly password = process.env.URWAY_PASSWORD || 'URWAY@123';
+  private readonly secretKey =
+    process.env.URWAY_SECRET_KEY ||
+    '50a735478393a39b4e1550fcea9d75f9fa9a9cf1ac41afafde21a60a78c3b547';
+  private readonly endpoint =
+    process.env.URWAY_API_URL ||
+    'https://payments-dev.urway-tech.com/URWAYPGService/transaction/jsonProcess/JSONrequest';
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
 
@@ -191,4 +201,52 @@ export class UserService extends BaseService<User> {
   async getPackage(){
 return await this.packageRepo.find({where:{is_active:true},order:{price:'ASC'}});
   }
+
+  
+
+  /**
+   * Generate URWAY SHA-256 request hash
+   */
+  private generateHash(
+    trackid: string,
+    amount: string,
+    currency: string,
+  ): string {
+    const data = `${trackid}|${this.terminalId}|${this.password}|${this.secretKey}|${amount}|${currency}`;
+    return createHash('sha256').update(data, 'utf8').digest('hex').toUpperCase();
+  }
+
+  /**
+   * Initiate a payment request
+   */
+  async makePayment( amount: string, currency = 'SAR') {
+    const trackid =   Math.random().toString(36).substring(2, 12);
+    const requestHash = this.generateHash(trackid, amount, currency);
+
+    const payload = {
+      trackid,
+      terminalId: this.terminalId,
+      action: '1', // Purchase
+      customerEmail: 'customer@mail.com',
+      merchantIp: '194.163.153.121',
+      country: 'SA',
+      password: this.password,
+      currency,
+      amount,
+      requestHash,
+    };
+
+    try {
+      const { data } = await axios.post(this.endpoint, payload, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      return data;
+    } catch (error) {
+      throw new Error(
+        `Payment request failed: ${error.response?.data || error.message}`,
+      );
+    }
+  }
+
 }

@@ -248,6 +248,9 @@ async updateStoreInfo(
     );
   }
 
-
-  
+@Post('test/payment')
+async testPayment() {
+  const amount = '10.00'; // Example amount
+ return await this.userService.makePayment(amount);
+}
 }
