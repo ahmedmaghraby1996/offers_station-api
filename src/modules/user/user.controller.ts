@@ -72,6 +72,13 @@ export class UserController {
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
   ) {}
 
+
+  @Get('packages')
+  async getPackages() {
+    const packages= await this.userService.getPackage();
+    const result=this._i18nResponse.entity(packages)
+    return new ActionResponse(result);
+  }
   @Roles(Role.ADMIN)
   @Get('')
   async getAll(@Query() query: PaginatedRequest) {
@@ -241,11 +248,6 @@ async updateStoreInfo(
     );
   }
 
-@Get('packages')
-  async getPackages() {
-    const packages= await this.userService.getPackage();
-    const result=this._i18nResponse.entity(packages)
-    return new ActionResponse(result);
-  }
+
   
 }
