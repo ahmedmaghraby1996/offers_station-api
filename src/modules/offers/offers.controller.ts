@@ -151,13 +151,11 @@ export class OffersController {
   @Roles(Role.CLIENT)
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
-    const stores_filter = query.filters?.find((filter) =>
-      filter.includes('stores'),
-    );
-    if (stores_filter) {
-      applyQueryFilters(query, `stores.is_active=1,${stores_filter}`);
+    const storeId = this.getFilterValue(query.filters,'stores.id');
+    if (storeId) {
+      applyQueryFilters(query, `stores.is_active=1,stores.id=${storeId}`);
     }
-    console.log(stores_filter);
+ 
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
@@ -281,4 +279,19 @@ export class OffersController {
 
     return new ActionResponse(response);
   }
+
+private getFilterValue(filters: string[], key: string): string | null {
+  if (!filters?.length) return null;
+
+  for (const filter of filters) {
+    const parts = filter.split(',');
+    for (const part of parts) {
+      const [k, v] = part.split('=');
+      if (k.trim() === key) {
+        return v;
+      }
+    }
+  }
+  return null;
+}
 }
