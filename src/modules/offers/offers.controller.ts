@@ -151,17 +151,17 @@ export class OffersController {
   @Roles(Role.CLIENT)
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
-    const storeId = this.getFilterValue(query.filters,'stores.id');
-    console.log("storeId",storeId)
+    console.log("query.filters",query.filters)
+    const storeId = query.filters.find((f) => f.startsWith('stores.id='));
+   console.log(query.filters.find((f) => f.startsWith('stores.id=')));
     if (storeId!==null) {
-      applyQueryFilters(query, `stores.is_active=1,stores.id=${storeId}`);
+      applyQueryFilters(query, `stores.is_active=1,${storeId}`);
     }
- 
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
-    applyQueryFilters(query, `stores.is_active=1,`);
+    applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED}`);
     applyQueryIncludes(query, 'favorites');
 
