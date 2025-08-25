@@ -225,7 +225,7 @@ export class UserService extends BaseService<User> {
             return {
               payment_url,
               package: find_package,
-              payment_details: paymentResponse,};
+              };
     });
 
   }
