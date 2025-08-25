@@ -218,10 +218,13 @@ export class UserService extends BaseService<User> {
         'SAR',
       );
       const payment_url =
-        paymentResponse?.data?.targetUrl +
+        paymentResponse?.targetUrl +
         '?paymentid=' +
-        paymentResponse?.data?.payid;
-            return payment_url;
+        paymentResponse?.payid;
+            return {
+              payment_url,
+              package: find_package,
+              payment_details: paymentResponse,};
     });
 
   }
