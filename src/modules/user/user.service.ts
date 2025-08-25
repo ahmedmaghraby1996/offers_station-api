@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/infrastructure/entities/user/user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BaseService } from 'src/core/base/service/service.base';
 import { randNum } from 'src/core/helpers/cast.helper';
 import { plainToInstance } from 'class-transformer';
@@ -33,7 +33,7 @@ import { createHash } from 'crypto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
-    private readonly terminalId = process.env.URWAY_TERMINAL_ID || 'pinnacle';
+  private readonly terminalId = process.env.URWAY_TERMINAL_ID || 'pinnacle';
   private readonly password = process.env.URWAY_PASSWORD || 'URWAY@123';
   private readonly secretKey =
     process.env.URWAY_SECRET_KEY ||
@@ -49,11 +49,13 @@ export class UserService extends BaseService<User> {
     @Inject(StorageManager) private readonly storageManager: StorageManager,
     @Inject(ConfigService) private readonly _config: ConfigService,
     @InjectRepository(Store) private readonly storeRepo: Repository<Store>,
-    @InjectRepository(Package) private readonly packageRepo: Repository<Package>,
+    @InjectRepository(Package)
+    private readonly packageRepo: Repository<Package>,
+    private readonly dataSource: DataSource,
   ) {
     super(userRepo);
   }
-// 
+  //
   async deleteUser(id: string) {
     const user = await this._repo.findOne({
       where: { id: id },
@@ -110,8 +112,8 @@ export class UserService extends BaseService<User> {
     if (req.tiktok_link) store.tiktok_link = req.tiktok_link;
     if (req.instagram_link) store.instagram_link = req.instagram_link;
     if (req.facebook_link) store.facebook_link = req.facebook_link;
-   store.first_phone = req.first_phone;
-  store.second_phone = req.second_phone;
+    store.first_phone = req.first_phone;
+    store.second_phone = req.second_phone;
 
     if (req?.logo) {
       const resizedImage = await this.imageManager.resize(req.logo, {
@@ -151,7 +153,7 @@ export class UserService extends BaseService<User> {
     });
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
-    if(req.is_active ) store.is_active = req.is_active
+    if (req.is_active) store.is_active = req.is_active;
     if (req.address) store.address = req.address;
     if (req.latitude) store.latitude = req.latitude;
     if (req.longitude) store.longitude = req.longitude;
@@ -186,7 +188,7 @@ export class UserService extends BaseService<User> {
               is_main_branch: true,
             }
           : { user_id: this.request.user.id },
-      relations: { category: true ,offers: true, city: true},
+      relations: { category: true, offers: true, city: true },
     });
     return branches;
   }
@@ -198,11 +200,31 @@ export class UserService extends BaseService<User> {
     return await this.storeRepo.softRemove(branch);
   }
 
-  async getPackage(){
-return await this.packageRepo.find({where:{is_active:true},order:{price:'ASC'}});
+  async getPackage() {
+    return await this.packageRepo.find({
+      where: { is_active: true },
+      order: { price: 'ASC' },
+    });
   }
 
-  
+  async buyPackage(package_id: string) {
+    return await this.dataSource.transaction(async (manager) => {
+      const find_package = await this.packageRepo.findOne({
+        where: { id: package_id, is_active: true },
+      });
+      if (!find_package) throw new NotFoundException('package not found');
+      const paymentResponse = await this.makePayment(
+        find_package.price.toString(),
+        'SAR',
+      );
+      const payment_url =
+        paymentResponse?.data?.targetUrl +
+        '?paymentid=' +
+        paymentResponse?.data?.payid;
+            return payment_url;
+    });
+
+  }
 
   /**
    * Generate URWAY SHA-256 request hash
@@ -213,17 +235,17 @@ return await this.packageRepo.find({where:{is_active:true},order:{price:'ASC'}})
     currency: string,
   ): string {
     const data = `${trackid}|${this.terminalId}|${this.password}|${this.secretKey}|${amount}|${currency}`;
-    console.log('hash_data',data);
+    console.log('hash_data', data);
     return createHash('sha256').update(data).digest('hex');
   }
 
   /**
    * Initiate a payment request
    */
-  async makePayment( amount: string, currency = 'SAR') {
-    const trackid =   Math.random().toString(36).substring(2, 12);
+  async makePayment(amount: string, currency = 'SAR',package_id?:string): Promise<any> {
+    const trackid = Math.random().toString(36).substring(2, 12);
     const requestHash = this.generateHash(trackid, amount, currency);
-console.log('requestHash',requestHash);
+    console.log('requestHash', requestHash);
     const payload = {
       trackid,
       terminalId: this.terminalId,
@@ -235,6 +257,7 @@ console.log('requestHash',requestHash);
       currency,
       amount,
       requestHash,
+      udf1:package_id
     };
 
     try {
@@ -249,5 +272,4 @@ console.log('requestHash',requestHash);
       );
     }
   }
-
 }

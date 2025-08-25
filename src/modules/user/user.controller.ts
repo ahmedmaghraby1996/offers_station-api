@@ -40,7 +40,10 @@ import { UserResponse } from './dto/response/user-response';
 import { Roles } from '../authentication/guards/roles.decorator';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { GetUserRequest } from './dto/get-user.request';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { UploadValidator } from 'src/core/validators/upload.validator';
 import { RegisterResponse } from '../authentication/dto/responses/register.response';
 import { UpdateProfileRequest } from './dto/update-profile-request';
@@ -72,20 +75,23 @@ export class UserController {
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
   ) {}
 
-
   @Get('packages')
   async getPackages() {
-    const packages= await this.userService.getPackage();
-    const result=this._i18nResponse.entity(packages)
+    const packages = await this.userService.getPackage();
+    const result = this._i18nResponse.entity(packages);
     return new ActionResponse(result);
+  }
+
+  @Post('subscribe/:package_id')
+  async subscribePackage(@Param('package_id') package_id: string) {
+    const subscribe = await this.userService.buyPackage(package_id);
+    return new ActionResponse(subscribe);
   }
   @Roles(Role.ADMIN)
   @Get('')
   async getAll(@Query() query: PaginatedRequest) {
-
-
     applyQueryIncludes(query, 'city');
-  
+
     const users = await this.userService.findAll(query);
     const usersResponse = await Promise.all(
       users.map(async (user) => {
@@ -164,31 +170,32 @@ export class UserController {
     );
   }
 
- @UseInterceptors(
-  ClassSerializerInterceptor,
-  FileFieldsInterceptor([
-    { name: 'logo', maxCount: 1 },
-    { name: 'catalogue', maxCount: 1 },
-  ])
-)
-@ApiConsumes('multipart/form-data')
-@Roles(Role.STORE)
-@Put('store-info')
-async updateStoreInfo(
-  @Body() req: UpdateStoreInfoRequest,
-  @UploadedFiles()
-  files: {
-    logo?: Express.Multer.File[];
-    catalogue?: Express.Multer.File[];
-  },
-) {
-  if( files.logo && files.logo.length > 0) {
-    req.logo = files.logo[0];
-  }
-  if( files.catalogue && files.catalogue.length > 0) {
-    req.catalogue = files.catalogue[0];}
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    FileFieldsInterceptor([
+      { name: 'logo', maxCount: 1 },
+      { name: 'catalogue', maxCount: 1 },
+    ]),
+  )
+  @ApiConsumes('multipart/form-data')
+  @Roles(Role.STORE)
+  @Put('store-info')
+  async updateStoreInfo(
+    @Body() req: UpdateStoreInfoRequest,
+    @UploadedFiles()
+    files: {
+      logo?: Express.Multer.File[];
+      catalogue?: Express.Multer.File[];
+    },
+  ) {
+    if (files.logo && files.logo.length > 0) {
+      req.logo = files.logo[0];
+    }
+    if (files.catalogue && files.catalogue.length > 0) {
+      req.catalogue = files.catalogue[0];
+    }
 
-  // Now you can safely use `logo` and `catalogue`
+    // Now you can safely use `logo` and `catalogue`
 
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
@@ -217,7 +224,7 @@ async updateStoreInfo(
   @Get('get-branches')
   async getBranch(@Query('is_main_branch') is_main_branch?: boolean) {
     const branch = await this.userService.getBranches(is_main_branch);
-    
+
     const resposne = plainToInstance(BranchResponse, branch, {
       excludeExtraneousValues: true,
     });
@@ -248,9 +255,9 @@ async updateStoreInfo(
     );
   }
 
-@Post('test/payment')
-async testPayment() {
-  const amount = '10.00'; // Example amount
- return await this.userService.makePayment(amount);
-}
+  @Post('test/payment')
+  async testPayment() {
+    const amount = '10.00'; // Example amount
+    return await this.userService.makePayment(amount);
+  }
 }
