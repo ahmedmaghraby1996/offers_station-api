@@ -261,7 +261,7 @@ export class UserService extends BaseService<User> {
       currency,
       amount,
       requestHash,
-      udf1:package_id
+      metaData:package_id
     };
 
     try {
