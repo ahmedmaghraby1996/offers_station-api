@@ -216,6 +216,7 @@ export class UserService extends BaseService<User> {
       const paymentResponse = await this.makePayment(
         find_package.price.toString(),
         'SAR',
+        package_id
       );
       const payment_url =
         paymentResponse?.targetUrl +
