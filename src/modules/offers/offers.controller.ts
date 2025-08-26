@@ -157,7 +157,7 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     // applyQueryFilters(query, `stores.is_active=1`);
-    applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
+    applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=123123`);
     // if(query.filters && query.filters['stores.id']) {
     //   applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${query.filters['stores.id']}`);
     // }
