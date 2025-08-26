@@ -159,9 +159,12 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     // applyQueryFilters(query, `stores.is_active=1`);
-    applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
+   
     if(storesId){ 
       applyQueryFilters(query, ` stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${storesId}`);
+    }
+    else{
+      applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
     }
     applyQueryIncludes(query, 'favorites');
 
@@ -284,6 +287,7 @@ export class OffersController {
   }
 
 private extractStoreId(filters: string | string[]): string | null {
+  if (!filters) return null;
   // normalize to array
   const filterArr = Array.isArray(filters) ? filters : [filters];
 
