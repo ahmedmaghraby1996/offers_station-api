@@ -158,9 +158,9 @@ export class OffersController {
     applyQueryIncludes(query, 'images');
     // applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
-    if(query.filters && query.filters['stores.id']) {
-      applyQueryFilters(query, ` stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${query.filters['stores.id']}`);
-    }
+    // if(query.filters && query.filters['stores.id']) {
+    //   applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${query.filters['stores.id']}`);
+    // }
     applyQueryIncludes(query, 'favorites');
 
     const total = await this.offersService.count(query);
