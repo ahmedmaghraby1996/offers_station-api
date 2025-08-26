@@ -152,15 +152,16 @@ export class OffersController {
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
    console.log('query', query.filters);
+   console.log('query', query.filters['stores.id']);
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     // applyQueryFilters(query, `stores.is_active=1`);
-    applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=123123`);
-    // if(query.filters && query.filters['stores.id']) {
-    //   applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${query.filters['stores.id']}`);
-    // }
+    applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
+    if(query.filters && query.filters['stores.id']) {
+      applyQueryFilters(query, ` stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${query.filters['stores.id']}`);
+    }
     applyQueryIncludes(query, 'favorites');
 
     const total = await this.offersService.count(query);
