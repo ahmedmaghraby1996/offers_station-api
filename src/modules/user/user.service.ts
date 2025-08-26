@@ -147,7 +147,7 @@ export class UserService extends BaseService<User> {
     const store = await this.storeRepo.findOne({
       where: {
         user_id: this.request.user.id,
-        is_main_branch: false,
+       
         id: req.branch_id,
       },
     });
@@ -187,7 +187,7 @@ export class UserService extends BaseService<User> {
               user_id: this.request.user.id,
               is_main_branch: true,
             }
-          : { user_id: this.request.user.id, is_main_branch: false },
+          : { user_id: this.request.user.id,},
       relations: { category: true, offers: true, city: true },
     });
     return branches;

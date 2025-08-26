@@ -152,15 +152,16 @@ export class OffersController {
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
    console.log('query', query.filters);
-   console.log('query', query.filters['stores.id']);
+   const storesId =this.extractStoreId(query.filters);
+   console.log(storesId)
     applyQueryIncludes(query, 'stores');
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
     // applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
-    if(query.filters && query.filters['stores.id']) {
-      applyQueryFilters(query, ` stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${query.filters['stores.id']}`);
+    if(storesId){ {
+      applyQueryFilters(query, ` stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${storesId}`);
     }
     applyQueryIncludes(query, 'favorites');
 
@@ -282,5 +283,14 @@ export class OffersController {
     return new ActionResponse(response);
   }
 
+private extractStoreId(filters: string | string[]): string | null {
+  // normalize to array
+  const filterArr = Array.isArray(filters) ? filters : [filters];
 
+  const storeFilter = filterArr.find(f => f.startsWith('stores.id='));
+  if (!storeFilter) return null;
+
+  // return everything after "stores.id="
+  return storeFilter.substring('stores.id='.length) || null;
+}
 }
