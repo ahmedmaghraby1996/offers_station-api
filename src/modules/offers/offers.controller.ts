@@ -160,7 +160,7 @@ export class OffersController {
     applyQueryIncludes(query, 'images');
     // applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(query, `stores.status=${StoreStatus.APPROVED},stores.is_active=1`);
-    if(storesId){ {
+    if(storesId){ 
       applyQueryFilters(query, ` stores.status=${StoreStatus.APPROVED},stores.is_active=1,stores.id=${storesId}`);
     }
     applyQueryIncludes(query, 'favorites');
