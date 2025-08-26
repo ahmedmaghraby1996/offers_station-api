@@ -187,7 +187,7 @@ export class UserService extends BaseService<User> {
               user_id: this.request.user.id,
               is_main_branch: true,
             }
-          : { user_id: this.request.user.id },
+          : { user_id: this.request.user.id, is_main_branch: false },
       relations: { category: true, offers: true, city: true },
     });
     return branches;
