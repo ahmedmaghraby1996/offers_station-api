@@ -230,6 +230,10 @@ export class UserService extends BaseService<User> {
 
   }
 
+  async confirmPayment(data: any) {
+    console.log(data);
+  }
+
   /**
    * Generate URWAY SHA-256 request hash
    */

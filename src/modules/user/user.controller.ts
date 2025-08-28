@@ -4,12 +4,16 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Inject,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Query,
+  Req,
+  Res,
   UploadedFile,
   UploadedFiles,
   UseGuards,
@@ -112,6 +116,26 @@ export class UserController {
     const total = await this.userService.count(query);
 
     return new PaginatedResponse(usersResponse, { meta: { total, ...query } });
+  }
+
+  @Post('confirm/payment')
+  async handleWebhook(
+    @Body() body: any,
+    // assuming URWAY sends it in header
+  ) {
+    console.log('body', body);
+    const expectedApiKey = process.env.URWAY_WEBHOOK_API_KEY;
+console.log(expectedApiKey)
+    // 1. Validate API Key
+    if (
+      !this.request.headers.apiKey ||
+      this.request.headers.apiKey !== expectedApiKey
+    ) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+    console.log(body);
+    console.log('test')
+    console.log(this.request.body);
   }
 
   @Roles(Role.ADMIN)
