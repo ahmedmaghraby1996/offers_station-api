@@ -134,9 +134,10 @@ console.log(this.request.headers)
     // ) {
     //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     // }
-  return  await this.userService.confirmPayment(
-      plainToInstance(PaymentResponse, body, { excludeExtraneousValues: true }) as unknown as PaymentResponseInterface
-    );
+        const paymentResponse = Object.assign(new PaymentResponseInterface(), body);
+
+    return this.userService.confirmPayment(paymentResponse);
+
   }
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)

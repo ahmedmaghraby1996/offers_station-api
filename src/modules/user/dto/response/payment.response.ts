@@ -1,4 +1,4 @@
-export interface PaymentResponseInterface {
+export class PaymentResponseInterface {
   UserField1: string;
   UserField2?: string; // not provided but might exist
   UserField3: string;
