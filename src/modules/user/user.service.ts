@@ -20,7 +20,7 @@ import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { ConfigService } from '@nestjs/config';
-
+import { v4 as uuidv4 } from 'uuid';
 import {
   UpdateBranchInfoRequest,
   UpdateStoreInfoRequest,
@@ -30,6 +30,8 @@ import { AddBranchRequest } from './dto/request/add-branch.request';
 import { Package } from 'src/infrastructure/entities/package/package.entity';
 import axios from 'axios';
 import { createHash } from 'crypto';
+import {  PaymentResponseInterface } from './dto/response/payment.response';
+import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
@@ -51,6 +53,7 @@ export class UserService extends BaseService<User> {
     @InjectRepository(Store) private readonly storeRepo: Repository<Store>,
     @InjectRepository(Package)
     private readonly packageRepo: Repository<Package>,
+    @InjectRepository(Subscription) private readonly subscriptionRepo: Repository<Subscription>,
     private readonly dataSource: DataSource,
   ) {
     super(userRepo);
@@ -216,6 +219,7 @@ export class UserService extends BaseService<User> {
       const paymentResponse = await this.makePayment(
         find_package.price.toString(),
         'SAR',
+        this.request.user.id,
         package_id
       );
       const payment_url =
@@ -230,8 +234,23 @@ export class UserService extends BaseService<User> {
 
   }
 
-  async confirmPayment(data: any) {
-    console.log(data);
+  async confirmPayment(data: PaymentResponseInterface) {
+    const user= await this._repo.findOne({
+      where: { id:data.UserField2},
+    })
+    const getPackage = await this.packageRepo.findOne({
+      where: { id: data.UserField1 },
+    });
+    if(!getPackage || !user) return
+    await this.subscriptionRepo.save({
+      ...getPackage,
+      id:uuidv4(),
+      user_id: user.id,
+      package_id: getPackage.id,
+      expire_at: new Date(Date.now() + getPackage.duration * 24 * 60 * 60 * 1000),
+     
+    })
+    return true
   }
 
   /**
@@ -250,7 +269,7 @@ export class UserService extends BaseService<User> {
   /**
    * Initiate a payment request
    */
-  async makePayment(amount: string, currency = 'SAR',package_id?:string): Promise<any> {
+  async makePayment(amount: string, currency = 'SAR',user_id?:string,package_id?:string): Promise<any> {
     const trackid = Math.random().toString(36).substring(2, 12);
     const requestHash = this.generateHash(trackid, amount, currency);
     console.log('requestHash', requestHash);
@@ -266,6 +285,7 @@ export class UserService extends BaseService<User> {
       amount,
       requestHash,
       udf1:package_id,
+      udf2:user_id,
       usdf2: 'udf2',
       udf3: 'udf3',
       udf4: 'udf4',

@@ -52,7 +52,7 @@ import { UploadValidator } from 'src/core/validators/upload.validator';
 import { RegisterResponse } from '../authentication/dto/responses/register.response';
 import { UpdateProfileRequest } from './dto/update-profile-request';
 import { ILike, Repository } from 'typeorm';
-
+import { PaymentResponseInterface } from './dto/response/payment.response';
 import { InjectRepository } from '@nestjs/typeorm';
 import { toUrl } from 'src/core/helpers/file.helper';
 import { I18nResponse } from 'src/core/helpers/i18n.helper';
@@ -125,17 +125,17 @@ export class UserController {
   ) {
     console.log('body', body);
     const expectedApiKey = process.env.URWAY_WEBHOOK_API_KEY;
-console.log(expectedApiKey)
+console.log(this.request.headers)
     // 1. Validate API Key
-    if (
-      !this.request.headers.apiKey ||
-      this.request.headers.apiKey !== expectedApiKey
-    ) {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    }
-    console.log(body);
-    console.log('test')
-    console.log(this.request.body);
+    // if (
+    //   !this.request.headers.apiKey ||
+    //   this.request.headers.apiKey !== expectedApiKey
+    // ) {
+    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // }
+  return  await this.userService.confirmPayment(
+      plainToInstance(PaymentResponse, body, { excludeExtraneousValues: true }) as unknown as PaymentResponseInterface
+    );
   }
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
