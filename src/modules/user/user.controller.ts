@@ -63,13 +63,13 @@ import {
 import { AddBranchRequest } from './dto/request/add-branch.request';
 import { BranchResponse } from './dto/branch.response';
 
-@ApiBearerAuth()
+
 @ApiHeader({
   name: 'Accept-Language',
   required: false,
   description: 'Language header: en, ar',
 })
-@UseGuards(JwtAuthGuard)
+
 @ApiTags('Users')
 @Controller('user')
 export class UserController {
@@ -137,7 +137,8 @@ console.log(expectedApiKey)
     console.log('test')
     console.log(this.request.body);
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @Get('profile')
   async getProile() {
@@ -149,7 +150,8 @@ console.log(expectedApiKey)
       ),
     );
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   //update fcm token
   @Put('/fcm-token')
   async updateFcmToken(@Body() req: UpdateFcmRequest) {
@@ -160,7 +162,8 @@ console.log(expectedApiKey)
       await this.userService.findOne(this.request.user.id),
     );
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -185,7 +188,8 @@ console.log(expectedApiKey)
       ),
     );
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   //update fcm token
   @Delete('/delete')
   async deleteUser(@Query() query: GetUserRequest) {
@@ -201,6 +205,8 @@ console.log(expectedApiKey)
       { name: 'catalogue', maxCount: 1 },
     ]),
   )
+  @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
   @Roles(Role.STORE)
   @Put('store-info')
@@ -224,12 +230,17 @@ console.log(expectedApiKey)
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
+  @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
   @Put('update-branch-info')
   async updateBranchInfo(@Body() req: UpdateBranchInfoRequest) {
     const storeInfo = await this.userService.updateBranchInfo(req);
     return new ActionResponse(storeInfo);
   }
+
+  @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   //DELETE BRANCH
   @Roles(Role.STORE)
   @Delete('delete-branch/:id')
@@ -237,13 +248,17 @@ console.log(expectedApiKey)
     const branch = await this.userService.deleteBranch(id);
     return new ActionResponse(branch);
   }
+
+  @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
   @Post('add-branch')
   async addBranch(@Body() req: AddBranchRequest) {
     const branch = await this.userService.createBranch(req);
     return new ActionResponse(branch);
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
   @Get('get-branches')
   async getBranch(@Query('is_main_branch') is_main_branch?: boolean) {
@@ -255,6 +270,8 @@ console.log(expectedApiKey)
     const result = this._i18nResponse.entity(resposne);
     return new ActionResponse(result);
   }
+  @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Get('/:id')
   async getUserById(@Param('id') id: string) {
     const user = await this.userService._repo.findOne({
@@ -278,7 +295,8 @@ console.log(expectedApiKey)
       ),
     );
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Post('test/payment')
   async testPayment() {
     const amount = '10.00'; // Example amount
