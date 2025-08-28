@@ -85,7 +85,8 @@ export class UserController {
     const result = this._i18nResponse.entity(packages);
     return new ActionResponse(result);
   }
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Post('subscribe/:package_id')
   async subscribePackage(@Param('package_id') package_id: string) {
     const subscribe = await this.userService.buyPackage(package_id);
