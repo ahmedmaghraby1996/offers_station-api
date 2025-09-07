@@ -92,6 +92,8 @@ export class UserController {
     const subscribe = await this.userService.buyPackage(package_id);
     return new ActionResponse(subscribe);
   }
+  @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @Get('')
   async getAll(@Query() query: PaginatedRequest) {
@@ -124,7 +126,7 @@ export class UserController {
     @Body() body: any,
     // assuming URWAY sends it in header
   ) {
-    console.log('body', body);
+   
     const expectedApiKey = process.env.URWAY_WEBHOOK_API_KEY;
 console.log(this.request.headers)
     // 1. Validate API Key
