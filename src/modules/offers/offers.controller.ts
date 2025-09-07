@@ -148,8 +148,8 @@ export class OffersController {
   //
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.CLIENT)
-  @Get('/admin/all-offers')
+  @Roles(Role.ADMIN)
+  @Get('/admin/all')
   async getAdminOffers(@Query() query: PaginatedRequest) {
     const storesId = this.extractStoreId(query.filters);
 
