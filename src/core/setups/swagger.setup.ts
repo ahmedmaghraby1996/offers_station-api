@@ -10,6 +10,7 @@ import { FaqModule } from 'src/modules/faq/faq.module';
 import { FileModule } from 'src/modules/file/file.module';
 import { NotificationModule } from 'src/modules/notification/notification.module';
 import { OffersModule } from 'src/modules/offers/offers.module';
+import { PackagesModule } from 'src/modules/packages/packages.module';
 import { SendEmailModule } from 'src/modules/send-email/send-email.module';
 import { StaticPageModule } from 'src/modules/static-page/static-page.module';
 import { SuggestionsComplaintsModule } from 'src/modules/suggestions-complaints/suggestions-complaints.module';
@@ -51,7 +52,8 @@ export default (app: INestApplication, config: ConfigService) => {
       OffersModule,
       FileModule,
       BanarModule,
-      ChatModule
+      ChatModule,
+      PackagesModule
       // TransactionModule,
     ],
     operationIdFactory,

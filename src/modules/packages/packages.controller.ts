@@ -1,0 +1,51 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { PackagesService } from './packages.service';
+import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
+import { Roles } from '../authentication/guards/roles.decorator';
+import { Role } from 'src/infrastructure/data/enums/role.enum';
+import {
+  CreatePackageRequest,
+  UpdatePackageRequest,
+} from './dto/request/create-package.request';
+@ApiHeader({
+  name: 'Accept-Language',
+  required: false,
+  description: 'Language header: en, ar',
+})
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@Roles(Role.ADMIN)
+@ApiTags('Packages')
+@Controller('packages')
+export class PackagesController {
+  constructor(private readonly packagesService: PackagesService) {}
+
+  @Get('/all')
+  getPackages() {
+    return this.packagesService.getPackages();
+  }
+
+  @Post('/create')
+  createPackage(@Body() data: CreatePackageRequest) {
+    return this.packagesService.createPackage(data);
+  }
+
+  @Post('/update')
+  updatePackage(@Body() data: UpdatePackageRequest) {
+    return this.packagesService.updatePackage(data);
+  }
+
+  @Delete('/delete/:id')
+  deletePackage(@Param('id') id: string) {
+    return this.packagesService.deletePackage(id);
+  }
+}

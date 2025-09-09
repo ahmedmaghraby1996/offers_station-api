@@ -206,7 +206,7 @@ export class UserService extends BaseService<User> {
   async getPackage() {
     const packages = await this.packageRepo.find({
       where: { is_active: true },
-      order: { price: 'ASC' },
+      order: { order_by: 'ASC' },
     });
     const subscription = await this.subscriptionRepo.findOne({
       where: { user_id: this.request.user.id ,expire_at: MoreThan(new Date())},

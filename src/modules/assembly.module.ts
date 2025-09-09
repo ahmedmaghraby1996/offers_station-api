@@ -14,6 +14,7 @@ import { OffersModule } from './offers/offers.module';
 import { FileModule } from './file/file.module';
 import { BanarModule } from './banar/banar.module';
 import { ChatModule } from './chat/chat.module';
+import { PackagesModule } from './packages/packages.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { ChatModule } from './chat/chat.module';
     OffersModule,
     FileModule,
     BanarModule,
-    ChatModule
+    ChatModule,
+    PackagesModule
   ],
   exports: [],
 })
