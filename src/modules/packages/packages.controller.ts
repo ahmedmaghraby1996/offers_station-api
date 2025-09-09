@@ -31,8 +31,8 @@ export class PackagesController {
   constructor(private readonly packagesService: PackagesService) {}
 
   @Get('/all')
-  getPackages() {
-    return new ActionResponse( this.packagesService.getPackages());
+  async getPackages() {
+    return new ActionResponse( await this.packagesService.getPackages());
   }
 
   @Post('/create')
