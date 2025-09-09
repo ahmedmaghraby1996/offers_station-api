@@ -110,6 +110,7 @@ export class UserController {
             gender: user.gender,
             phone: user.phone,
             avatar: user.avatar,
+            is_active: user.is_active,
             role: user.roles[0],
             created_at: user.created_at,
           }),
