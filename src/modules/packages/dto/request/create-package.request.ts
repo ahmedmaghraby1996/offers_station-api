@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreatePackageRequest {
   @ApiProperty()
@@ -40,6 +40,7 @@ export class UpdatePackageRequest {
 
     @ApiProperty()
     @IsString()
+    @IsOptional()
     id: string
     @ApiPropertyOptional()
     @IsString()
@@ -47,31 +48,38 @@ export class UpdatePackageRequest {
 
     @ApiPropertyOptional()
     @IsString()
+      @IsOptional()
     name_en: string
 
     @ApiPropertyOptional()
     @IsBoolean()
+      @IsOptional()
     is_active: boolean
 
     @ApiPropertyOptional()
     @IsString()
+      @IsOptional()
     description_ar: string
 
     @ApiPropertyOptional()
     @IsString()
+      @IsOptional()
     description_en: string
 
     @ApiPropertyOptional()
     @IsNumber()
+      @IsOptional()
     price: number
 
     @ApiPropertyOptional()
     @IsNumber()
+      @IsOptional()
     duration: number
 
 
 
     @ApiPropertyOptional()
     @IsNumber()
+      @IsOptional()
     order_by: number
 }
