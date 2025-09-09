@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/infrastructure/entities/user/user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, MoreThan, Repository } from 'typeorm';
 import { BaseService } from 'src/core/base/service/service.base';
 import { randNum } from 'src/core/helpers/cast.helper';
 import { plainToInstance } from 'class-transformer';
@@ -204,10 +204,21 @@ export class UserService extends BaseService<User> {
   }
 
   async getPackage() {
-    return await this.packageRepo.find({
+    const packages = await this.packageRepo.find({
       where: { is_active: true },
       order: { price: 'ASC' },
     });
+    const subscription = await this.subscriptionRepo.findOne({
+      where: { user_id: this.request.user.id ,expire_at: MoreThan(new Date())},
+    })
+
+    packages.forEach((item) => {
+      if (subscription?.package_id == item.id) {
+        item.is_current = true;
+      }
+    });
+    return packages;
+    
   }
 
   async buyPackage(package_id: string) {
@@ -242,6 +253,8 @@ export class UserService extends BaseService<User> {
       where: { id: data.UserField1 },
     });
     if(!getPackage || !user) return
+    //delete user.subscription
+     await this.subscriptionRepo.delete({user_id:user.id})
     await this.subscriptionRepo.save({
       ...getPackage,
       id:uuidv4(),

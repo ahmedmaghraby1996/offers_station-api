@@ -20,4 +20,6 @@ export class Package extends AuditableEntity {
 
   @Column({ nullable: true })
   order_by: number;
+
+  is_current: boolean;
 }
