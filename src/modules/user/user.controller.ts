@@ -78,7 +78,9 @@ export class UserController {
     @Inject(REQUEST) private request: Request,
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
   ) {}
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@Roles(Role.STORE)
   @Get('packages')
   async getPackages() {
     const packages = await this.userService.getPackage();
