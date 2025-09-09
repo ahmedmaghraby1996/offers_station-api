@@ -13,6 +13,8 @@ export class UserResponse {
   phone: string;
 
   @Expose()
+  is_active: boolean;
+  @Expose()
   gender: string;
   @Expose()
   email: string;
