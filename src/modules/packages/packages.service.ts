@@ -15,7 +15,7 @@ export class PackagesService {
     private readonly packageRepo: Repository<Package>,
   ) {}
   async getPackages() {
-    await this.packageRepo.find({ order: { order_by: 'ASC' } });
+     return await this.packageRepo.find({ order: { order_by: 'ASC' } });
   }
 
   async createPackage(data: CreatePackageRequest) {

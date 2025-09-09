@@ -16,6 +16,7 @@ import {
   CreatePackageRequest,
   UpdatePackageRequest,
 } from './dto/request/create-package.request';
+import { ActionResponse } from 'src/core/base/responses/action.response';
 @ApiHeader({
   name: 'Accept-Language',
   required: false,
@@ -31,7 +32,7 @@ export class PackagesController {
 
   @Get('/all')
   getPackages() {
-    return this.packagesService.getPackages();
+    return new ActionResponse( this.packagesService.getPackages());
   }
 
   @Post('/create')
