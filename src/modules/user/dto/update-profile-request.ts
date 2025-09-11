@@ -77,7 +77,7 @@ export class UpdateProfileRequest {
   })
   @IsBoolean()
   is_active?: boolean;
-}
+
 
   // @ApiProperty({required:false})
   // @Transform(({ value }) => value.split(','))
