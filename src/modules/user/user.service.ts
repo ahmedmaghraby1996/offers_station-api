@@ -205,23 +205,26 @@ export class UserService extends BaseService<User> {
     return await this.storeRepo.softRemove(branch);
   }
 
-  async getPackage() {
-    const packages = await this.packageRepo.find({
-      where: { is_active: true },
-      order: { order_by: 'ASC' },
-    });
-    const subscription = await this.subscriptionRepo.findOne({
-      where: { user_id: this.request.user.id, expire_at: MoreThan(new Date()) },
-    });
+async getPackage() {
+  const packages = await this.packageRepo.find({
+    where: { is_active: true },
+    order: { order_by: 'ASC' },
+  });
 
-   const result= packages.forEach((item) => {
-      if (subscription?.package_id == item.id) {
-        item.is_current = true;
-      }
-      return item;
-    });
-    return result;
-  }
+  const subscription = await this.subscriptionRepo.findOne({
+    where: { user_id: this.request.user.id, expire_at: MoreThan(new Date()) },
+  });
+
+  const result = packages.map((item) => {
+    if (subscription?.package_id === item.id) {
+      return { ...item, is_current: true };
+    }
+    return { ...item, is_current: false };
+  });
+
+  return result;
+}
+
 
   async buyPackage(package_id: string) {
     return await this.dataSource.transaction(async (manager) => {
