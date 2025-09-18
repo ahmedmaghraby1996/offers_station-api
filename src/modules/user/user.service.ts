@@ -32,6 +32,7 @@ import axios from 'axios';
 import { createHash } from 'crypto';
 import { PaymentResponseInterface } from './dto/response/payment.response';
 import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
+import { NotificationService } from '../notification/services/notification.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
@@ -56,6 +57,7 @@ export class UserService extends BaseService<User> {
     @InjectRepository(Subscription)
     private readonly subscriptionRepo: Repository<Subscription>,
     private readonly dataSource: DataSource,
+
   ) {
     super(userRepo);
   }
@@ -250,8 +252,7 @@ export class UserService extends BaseService<User> {
     const getPackage = await this.packageRepo.findOne({
       where: { id: data.UserField1 },
     });
-    console.log('data', data);
-    console.log('user', user);
+  
     console.log('getPackage', getPackage);
     if (!getPackage || !user) return;
     //delete user.subscription

@@ -21,6 +21,6 @@ export class Package extends AuditableEntity {
 
   @Column({ nullable: true })
   order_by: number;
-  @Expose()
+  @Column({ default: false })
   is_current: boolean;
 }
