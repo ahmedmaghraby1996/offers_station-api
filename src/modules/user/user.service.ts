@@ -250,12 +250,12 @@ async getPackage() {
 
   async confirmPayment(data: PaymentResponseInterface) {
     const user = await this._repo.findOne({
-      where: { id: data.UserField2 },
+      where: { id: data.UserField3 },
     });
     const getPackage = await this.packageRepo.findOne({
       where: { id: data.UserField1 },
     });
-
+    console.log(data);
     console.log('getPackage', getPackage);
     if (!getPackage || !user) return;
     //delete user.subscription
@@ -311,7 +311,7 @@ async getPackage() {
       udf1: package_id,
       udf2: user_id,
       usdf2: 'udf2',
-      udf3: 'udf3',
+      udf3: user_id,
       udf4: 'udf4',
       udf5: 'udf5',
     };
