@@ -57,7 +57,6 @@ export class UserService extends BaseService<User> {
     @InjectRepository(Subscription)
     private readonly subscriptionRepo: Repository<Subscription>,
     private readonly dataSource: DataSource,
-
   ) {
     super(userRepo);
   }
@@ -215,12 +214,13 @@ export class UserService extends BaseService<User> {
       where: { user_id: this.request.user.id, expire_at: MoreThan(new Date()) },
     });
 
-    packages.forEach((item) => {
+   const result= packages.forEach((item) => {
       if (subscription?.package_id == item.id) {
         item.is_current = true;
       }
+      return item;
     });
-    return packages;
+    return result;
   }
 
   async buyPackage(package_id: string) {
@@ -252,7 +252,7 @@ export class UserService extends BaseService<User> {
     const getPackage = await this.packageRepo.findOne({
       where: { id: data.UserField1 },
     });
-  
+
     console.log('getPackage', getPackage);
     if (!getPackage || !user) return;
     //delete user.subscription
