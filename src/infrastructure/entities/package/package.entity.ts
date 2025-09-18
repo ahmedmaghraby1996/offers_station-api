@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import { AuditableEntity } from 'src/infrastructure/base/auditable.entity';
 import { Column, Entity } from 'typeorm';
 @Entity()
@@ -20,6 +21,6 @@ export class Package extends AuditableEntity {
 
   @Column({ nullable: true })
   order_by: number;
-
+  @Expose()
   is_current: boolean;
 }

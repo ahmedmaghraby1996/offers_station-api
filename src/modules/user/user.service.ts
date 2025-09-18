@@ -30,7 +30,7 @@ import { AddBranchRequest } from './dto/request/add-branch.request';
 import { Package } from 'src/infrastructure/entities/package/package.entity';
 import axios from 'axios';
 import { createHash } from 'crypto';
-import {  PaymentResponseInterface } from './dto/response/payment.response';
+import { PaymentResponseInterface } from './dto/response/payment.response';
 import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -53,7 +53,8 @@ export class UserService extends BaseService<User> {
     @InjectRepository(Store) private readonly storeRepo: Repository<Store>,
     @InjectRepository(Package)
     private readonly packageRepo: Repository<Package>,
-    @InjectRepository(Subscription) private readonly subscriptionRepo: Repository<Subscription>,
+    @InjectRepository(Subscription)
+    private readonly subscriptionRepo: Repository<Subscription>,
     private readonly dataSource: DataSource,
   ) {
     super(userRepo);
@@ -150,7 +151,7 @@ export class UserService extends BaseService<User> {
     const store = await this.storeRepo.findOne({
       where: {
         user_id: this.request.user.id,
-       
+
         id: req.branch_id,
       },
     });
@@ -190,7 +191,7 @@ export class UserService extends BaseService<User> {
               user_id: this.request.user.id,
               is_main_branch: true,
             }
-          : { user_id: this.request.user.id,},
+          : { user_id: this.request.user.id },
       relations: { category: true, offers: true, city: true },
     });
     return branches;
@@ -209,8 +210,8 @@ export class UserService extends BaseService<User> {
       order: { order_by: 'ASC' },
     });
     const subscription = await this.subscriptionRepo.findOne({
-      where: { user_id: this.request.user.id ,expire_at: MoreThan(new Date())},
-    })
+      where: { user_id: this.request.user.id, expire_at: MoreThan(new Date()) },
+    });
 
     packages.forEach((item) => {
       if (subscription?.package_id == item.id) {
@@ -218,7 +219,6 @@ export class UserService extends BaseService<User> {
       }
     });
     return packages;
-    
   }
 
   async buyPackage(package_id: string) {
@@ -231,39 +231,41 @@ export class UserService extends BaseService<User> {
         find_package.price.toString(),
         'SAR',
         this.request.user.id,
-        package_id
+        package_id,
       );
       const payment_url =
-        paymentResponse?.targetUrl +
-        '?paymentid=' +
-        paymentResponse?.payid;
-            return {
-              payment_url,
-              package: find_package,
-              payment_details: paymentResponse,};
+        paymentResponse?.targetUrl + '?paymentid=' + paymentResponse?.payid;
+      return {
+        payment_url,
+        package: find_package,
+        payment_details: paymentResponse,
+      };
     });
-
   }
 
   async confirmPayment(data: PaymentResponseInterface) {
-    const user= await this._repo.findOne({
-      where: { id:data.UserField2},
-    })
+    const user = await this._repo.findOne({
+      where: { id: data.UserField2 },
+    });
     const getPackage = await this.packageRepo.findOne({
       where: { id: data.UserField1 },
     });
-    if(!getPackage || !user) return
+    console.log('data', data);
+    console.log('user', user);
+    console.log('getPackage', getPackage);
+    if (!getPackage || !user) return;
     //delete user.subscription
-     await this.subscriptionRepo.delete({user_id:user.id})
+    await this.subscriptionRepo.delete({ user_id: user.id });
     await this.subscriptionRepo.save({
       ...getPackage,
-      id:uuidv4(),
+      id: uuidv4(),
       user_id: user.id,
       package_id: getPackage.id,
-      expire_at: new Date(Date.now() + getPackage.duration * 24 * 60 * 60 * 1000),
-     
-    })
-    return true
+      expire_at: new Date(
+        Date.now() + getPackage.duration * 24 * 60 * 60 * 1000,
+      ),
+    });
+    return true;
   }
 
   /**
@@ -282,7 +284,12 @@ export class UserService extends BaseService<User> {
   /**
    * Initiate a payment request
    */
-  async makePayment(amount: string, currency = 'SAR',user_id?:string,package_id?:string): Promise<any> {
+  async makePayment(
+    amount: string,
+    currency = 'SAR',
+    user_id?: string,
+    package_id?: string,
+  ): Promise<any> {
     const trackid = Math.random().toString(36).substring(2, 12);
     const requestHash = this.generateHash(trackid, amount, currency);
     console.log('requestHash', requestHash);
@@ -297,8 +304,8 @@ export class UserService extends BaseService<User> {
       currency,
       amount,
       requestHash,
-      udf1:package_id,
-      udf2:user_id,
+      udf1: package_id,
+      udf2: user_id,
       usdf2: 'udf2',
       udf3: 'udf3',
       udf4: 'udf4',
