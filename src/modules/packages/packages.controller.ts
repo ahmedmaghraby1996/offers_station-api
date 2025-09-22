@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
@@ -40,7 +41,7 @@ export class PackagesController {
     return this.packagesService.createPackage(data);
   }
 
-  @Post('/update')
+  @Put('/update')
   updatePackage(@Body() data: UpdatePackageRequest) {
     return this.packagesService.updatePackage(data);
   }
