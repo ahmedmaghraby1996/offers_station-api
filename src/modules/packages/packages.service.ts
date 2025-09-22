@@ -23,7 +23,7 @@ export class PackagesService {
     return await this.packageRepo.save(get_package);
   }
 
-  async updatePackage(id: string,data: UpdatePackageRequest) {
+  async   updatePackage(id: string,data: UpdatePackageRequest) {
     const get_package = await this.packageRepo.findOne({
       where: { id: id },
     });

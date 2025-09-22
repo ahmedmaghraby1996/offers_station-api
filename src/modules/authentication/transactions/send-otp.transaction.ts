@@ -7,6 +7,7 @@ import { Otp } from 'src/infrastructure/entities/auth/otp.entity';
 import { User } from 'src/infrastructure/entities/user/user.entity';
 import { DataSource, EntityManager } from 'typeorm';
 import { SendOtpRequest } from '../dto/requests/send-otp.dto';
+import { SmsService } from 'src/modules/send-email/sms-service';
 
 @Injectable()
 export class SendOtpTransaction extends BaseTransaction<
@@ -16,6 +17,7 @@ export class SendOtpTransaction extends BaseTransaction<
   constructor(
     dataSource: DataSource,
     @Inject(ConfigService) private readonly _config: ConfigService,
+    private readonly smsService: SmsService,
   ) {
     super(dataSource);
   }
@@ -46,6 +48,15 @@ export class SendOtpTransaction extends BaseTransaction<
       });
       // save otp
       await context.save(Otp, otp);
+
+      try {
+        await this.smsService.sendSms(
+           req.username,
+           `Your verification code is ${code}`,
+        );
+      } catch (error) {
+        console.log(error);
+      }
       // return code
       return code.toString();
     } catch (error) {
