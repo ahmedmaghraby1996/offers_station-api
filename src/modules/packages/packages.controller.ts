@@ -42,7 +42,7 @@ export class PackagesController {
   }
 
   @Put('/update/:id')
-  updatePackage(@Param('id') id,@Body() data: UpdatePackageRequest) {
+  updatePackage(@Param('id') id: string,@Body() data: UpdatePackageRequest) {
     return this.packagesService.updatePackage(id,data);
   }
 
