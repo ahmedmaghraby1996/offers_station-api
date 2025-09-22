@@ -50,10 +50,10 @@ export class SendOtpTransaction extends BaseTransaction<
       await context.save(Otp, otp);
 
       try {
-        await this.smsService.sendSms(
-           req.username,
-           `Your verification code is ${code}`,
-        );
+        // await this.smsService.sendSms(
+        //    req.username,
+        //    `Your verification code is ${code}`,
+        // );
       } catch (error) {
         console.log(error);
       }
