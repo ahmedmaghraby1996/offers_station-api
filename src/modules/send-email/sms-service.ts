@@ -7,27 +7,33 @@ import { firstValueFrom } from 'rxjs';
 export class SmsService {
   private readonly logger = new Logger(SmsService.name);
   private readonly apiToken = process.env.FOURJAWALY_API_TOKEN;
-  private readonly baseUrl = 'https://api-sms.4jawaly.com/api/v1';
+  private readonly baseUrl = 'https://api-sms.4jawaly.com/api/v1/messages';
 
   constructor(private readonly httpService: HttpService) {}
 
   async sendSms(phone: string, message: string, sender?: string) {
     try {
       const payload = {
-        token: this.apiToken,
         recipients: phone,
-        msg: message,
-        sender: sender || 'MNTAHSCI'
+        body: message,
+        sender: sender || 'MNTAHSCI',
       };
 
       const response = await firstValueFrom(
-        this.httpService.post(this.baseUrl, payload)
+        this.httpService.post(this.baseUrl, payload, {
+          headers: {
+            Authorization: `Bearer ${this.apiToken}`,
+            'Content-Type': 'application/json',
+          },
+        }),
       );
 
-      this.logger.log(`SMS sent to ${phone}: ${response.data.message}`);
+      this.logger.log(`SMS sent to ${phone}: ${JSON.stringify(response.data)}`);
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to send SMS: ${error.message}`);
+      this.logger.error(
+        `Failed to send SMS: ${error.response?.data || error.message}`,
+      );
       throw error;
     }
   }
@@ -35,20 +41,26 @@ export class SmsService {
   async sendBulkSms(phones: string[], message: string, sender?: string) {
     try {
       const payload = {
-        token: this.apiToken,
-        recipients: phones.join(','),
-        msg: message,
-        sender: sender || 'SMS'
+        recipients: phones,
+        body: message,
+        sender: sender || 'MNTAHSCI',
       };
 
       const response = await firstValueFrom(
-        this.httpService.post(this.baseUrl, payload)
+        this.httpService.post(this.baseUrl, payload, {
+          headers: {
+            Authorization: `Bearer ${this.apiToken}`,
+            'Content-Type': 'application/json',
+          },
+        }),
       );
 
       this.logger.log(`Bulk SMS sent to ${phones.length} recipients`);
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to send bulk SMS: ${error.message}`);
+      this.logger.error(
+        `Failed to send bulk SMS: ${error.response?.data || error.message}`,
+      );
       throw error;
     }
   }
