@@ -18,10 +18,12 @@ import { TransactionService } from '../transaction/transaction.service';
 import { FirebaseAdminService } from '../notification/firebase-admin-service';
 import { SendEmailModule } from '../send-email/send-email.module';
 import { SendEmailService } from '../send-email/send-email.service';
+import { SmsService } from '../send-email/sms-service';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({
-  imports: [JWTSetup()],
+  imports: [JWTSetup(),HttpModule],
   controllers: [AuthenticationController],
   providers: [
     AuthenticationService,
@@ -33,6 +35,7 @@ import { SendEmailService } from '../send-email/send-email.service';
     JwtStrategy,
     FileService,
     NotificationService,
+    SmsService,
     FcmIntegrationService
     ,TransactionService
 

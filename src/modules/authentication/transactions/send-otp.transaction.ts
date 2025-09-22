@@ -5,7 +5,7 @@ import { BaseTransaction } from 'src/core/base/database/base.transaction';
 import { randNum } from 'src/core/helpers/cast.helper';
 import { Otp } from 'src/infrastructure/entities/auth/otp.entity';
 import { User } from 'src/infrastructure/entities/user/user.entity';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, In } from 'typeorm';
 import { SendOtpRequest } from '../dto/requests/send-otp.dto';
 import { SmsService } from 'src/modules/send-email/sms-service';
 
@@ -17,7 +17,7 @@ export class SendOtpTransaction extends BaseTransaction<
   constructor(
     dataSource: DataSource,
     @Inject(ConfigService) private readonly _config: ConfigService,
-    private readonly smsService: SmsService,
+    @Inject(SmsService) private readonly smsService: SmsService,
   ) {
     super(dataSource);
   }
