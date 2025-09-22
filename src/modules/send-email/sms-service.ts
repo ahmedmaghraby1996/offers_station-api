@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 export class SmsService {
   private readonly logger = new Logger(SmsService.name);
   private readonly apiToken = process.env.FOURJAWALY_API_TOKEN;
-  private readonly baseUrl = 'https://api.4jawaly.com/sms-api.php';
+  private readonly baseUrl = 'https://api-sms.4jawaly.com/api/v1';
 
   constructor(private readonly httpService: HttpService) {}
 
