@@ -38,10 +38,7 @@ export class CreatePackageRequest {
 
 export class UpdatePackageRequest {
 
-    @ApiProperty()
-    @IsString()
-    @IsOptional()
-    id: string
+  
     @ApiPropertyOptional()
     @IsString()
     name_ar: string

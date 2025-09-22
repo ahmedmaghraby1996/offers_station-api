@@ -42,8 +42,8 @@ export class PackagesController {
   }
 
   @Put('/update')
-  updatePackage(@Body() data: UpdatePackageRequest) {
-    return this.packagesService.updatePackage(data);
+  updatePackage(@Param('id') id,@Body() data: UpdatePackageRequest) {
+    return this.packagesService.updatePackage(id,data);
   }
 
   @Delete('/delete/:id')

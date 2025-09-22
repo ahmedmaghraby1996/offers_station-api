@@ -23,9 +23,9 @@ export class PackagesService {
     return await this.packageRepo.save(get_package);
   }
 
-  async updatePackage(data: UpdatePackageRequest) {
+  async updatePackage(id: string,data: UpdatePackageRequest) {
     const get_package = await this.packageRepo.findOne({
-      where: { id: data.id },
+      where: { id: id },
     });
     if (!get_package) throw new NotFoundException('package not found');
     return await this.packageRepo.update(get_package.id, data);
