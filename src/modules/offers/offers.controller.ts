@@ -1,4 +1,5 @@
 import {
+  applyDecorators,
   Body,
   Controller,
   Delete,
@@ -28,6 +29,7 @@ import { query } from 'express';
 import {
   applyQueryFilters,
   applyQueryIncludes,
+  applyQuerySort,
 } from 'src/core/helpers/service-related.helper';
 import { app } from 'firebase-admin';
 import { REQUEST } from '@nestjs/core';
@@ -110,7 +112,7 @@ export class OffersController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STORE)
+  @Roles(Role.STORE,Role.ADMIN)
   @Put('update')
   async updateOffer(@Body() req: UpdateOfferRequest) {
     const offer = await this.offersService.updateOffer(req);
@@ -157,6 +159,7 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
+    applyQuerySort(query, 'created_at=DESC');
     // applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(
       query,
@@ -202,6 +205,7 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
+        applyQuerySort(query, 'created_at=DESC');
     // applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(
       query,
@@ -255,7 +259,7 @@ export class OffersController {
   //DELETE OFFER
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STORE)
+  @Roles(Role.STORE, Role.ADMIN)
   @Delete('delete/:id')
   async deleteOffer(@Param('id') id: string) {
     const offer = await this.offersService.findOne(id);
@@ -317,7 +321,7 @@ export class OffersController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STORE, Role.CLIENT)
+  @Roles(Role.STORE, Role.CLIENT, Role.ADMIN)
   @Get('details/:id')
   async getOfferById(@Param('id') id: string) {
     const offer = await this.offersService.findOne(id);
