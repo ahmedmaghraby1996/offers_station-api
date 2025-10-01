@@ -1,6 +1,6 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { PaginatedRequest } from 'src/core/base/requests/paginated.request';
 import { PaginatedResponse } from 'src/core/base/responses/paginated.response';
 import { SubCategoryService } from '../offers/sub_category.service';
@@ -8,12 +8,19 @@ import { GraphInspector } from '@nestjs/core';
 import { plainToInstance } from 'class-transformer';
 import { Category } from 'src/infrastructure/entities/category/category.entity';
 import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
+import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
+import { Role } from 'src/infrastructure/data/enums/role.enum';
+import { RolesGuard } from '../authentication/guards/roles.guard';
+import { Roles } from '../authentication/guards/roles.decorator';
 @ApiTags('Category')
 @ApiHeader({
   name: 'Accept-Language',
   required: false,
   description: 'Language header: en, ar',
 })
+@UseGuards(JwtAuthGuard,RolesGuard)
+@ApiBearerAuth()
+@Roles(Role.ADMIN)
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService,private readonly subcategoryService: SubCategoryService ) {}
