@@ -15,6 +15,8 @@ import { FileModule } from './file/file.module';
 import { BanarModule } from './banar/banar.module';
 import { ChatModule } from './chat/chat.module';
 import { PackagesModule } from './packages/packages.module';
+import { CategoryModule } from './category/category.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -29,7 +31,8 @@ import { PackagesModule } from './packages/packages.module';
     FileModule,
     BanarModule,
     ChatModule,
-    PackagesModule
+    PackagesModule,
+    CategoryModule
   ],
   exports: [],
 })
