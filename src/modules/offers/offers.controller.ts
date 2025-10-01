@@ -188,8 +188,8 @@ export class OffersController {
       excludeExtraneousValues: true,
     });
 
-    const response = this._i18nResponse.entity(result);
-    return new PaginatedResponse(response, {
+ 
+    return new PaginatedResponse(result, {
       meta: { total, ...query },
     });
   }
