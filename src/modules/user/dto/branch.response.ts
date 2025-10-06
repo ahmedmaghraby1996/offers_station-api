@@ -4,6 +4,7 @@ import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 import { Category } from 'src/infrastructure/entities/category/category.entity';
 import { City } from 'src/infrastructure/entities/city/city.entity';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
+import { UserResponse } from './response/user-response';
 
 export class BranchResponse {
   @Expose()
@@ -67,6 +68,11 @@ export class BranchResponse {
 
   @Expose()
   twitter_link: string;
+
+
+  @Expose()
+  @Type(() => UserResponse)
+  user: UserResponse
   
 @Expose()
 city_id: string;

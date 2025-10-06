@@ -7,7 +7,7 @@ export class Subscription extends AuditableEntity {
   name_ar: string;
   @Column()
   name_en: string;
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.subscriptions)
   user: string;
   @Column({ nullable: true })
   user_id: string;

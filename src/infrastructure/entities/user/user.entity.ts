@@ -26,6 +26,7 @@ import { SuggestionsComplaints } from '../suggestions-complaints/suggestions-com
 import { City } from '../city/city.entity';
 import { Chat } from '../chat/chat.entity';
 import { Store } from '../store/store.entity';
+import { Subscription } from '../subscription/subscription.entity';
 
 @Entity()
 export class User extends AuditableEntity {
@@ -37,6 +38,10 @@ export class User extends AuditableEntity {
   @OneToMany(() => Store, (store) => store.user)
   @Expose()
   stores: Store[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.user)
+  @Expose()
+  subscriptions: Subscription[];
 
   @ManyToOne(() => City)
   @Expose()

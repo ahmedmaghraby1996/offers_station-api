@@ -15,4 +15,11 @@ export class StoreService extends BaseService<Store> {
   ) {
     super(repo);
   }
+
+  getDetails(id:string) {
+    return this.repo.findOne({
+      where: { id: id },
+      relations: { user: true ,category: true,},
+    });
+  }
 }

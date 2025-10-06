@@ -24,7 +24,7 @@ import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
 import { Roles } from '../authentication/guards/roles.decorator';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
-import { UpdateOfferRequest } from './dto/requests/update-offer.request';
+import { UpdateAdminOfferRequest, UpdateOfferRequest } from './dto/requests/update-offer.request';
 import { query } from 'express';
 import {
   applyQueryFilters,
@@ -132,9 +132,21 @@ export class OffersController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STORE,Role.ADMIN)
+  @Roles(Role.ADMIN)
   @Put('update')
   async updateOffer(@Body() req: UpdateOfferRequest) {
+    const offer = await this.offersService.updateOffer(req);
+    return offer;
+  }
+
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @Put('update/:offer_id')
+  async updateAdminOffer(@Param('offer_id') offer_id,@Body() req: UpdateAdminOfferRequest) {
+
+
+    req.id = offer_id
     const offer = await this.offersService.updateOffer(req);
     return offer;
   }
@@ -213,6 +225,7 @@ export class OffersController {
       meta: { total, ...query },
     });
   }
+  //store
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)

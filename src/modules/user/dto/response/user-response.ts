@@ -1,6 +1,8 @@
-import { Expose, Transform } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { toUrl } from 'src/core/helpers/file.helper';
 import { City } from 'src/infrastructure/entities/city/city.entity';
+import { Package } from 'src/infrastructure/entities/package/package.entity';
+import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
 
 
 export class UserResponse {
@@ -37,4 +39,11 @@ export class UserResponse {
       : null;
   })
   city: City;
+
+  @Expose()
+  @Transform((value) => {
+     if(value.obj?.subscriptions?.length>0) return value.obj.subscriptions[0]
+     else return null
+  })
+  subscription: Subscription
 }
