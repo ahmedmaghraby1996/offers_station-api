@@ -12,10 +12,16 @@ export class Category extends AuditableEntity {
   @Expose()
   name_en: string;
   @Column({ nullable: true })
-
   @Transform(({ value }) => toUrl(value))
   @Expose()
   logo: string;
+  @Column({ nullable: true })
+   @Expose()
+  order_by: number;
+
+  @Column({ nullable: true })
+   @Expose()
+  is_active: number;
 
   @OneToMany(() => SubCategory, (subcategory) => subcategory.category)
   subcategories: SubCategory[];

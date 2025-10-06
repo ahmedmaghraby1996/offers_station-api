@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { FavoriteOfferService, OffersService } from './offers.service';
 import { CreateOfferRequest } from './dto/requests/create-offer.request';
-import { CategoryService } from './category.service';
+
 import { PaginatedRequest } from 'src/core/base/requests/paginated.request';
 import { I18nResponse } from 'src/core/helpers/i18n.helper';
 import { PaginatedResponse } from 'src/core/base/responses/paginated.response';
@@ -43,6 +43,7 @@ import { BranchResponse } from '../user/dto/branch.response';
 import { ActionResponse } from 'src/core/base/responses/action.response';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
+import { CategoryService } from '../category/category.service';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -63,6 +64,8 @@ export class OffersController {
 
   @Get('/sub-categories')
   async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
+     applyQueryFilters(PaginatedRequest, `is_active=1`);
+    applyQuerySort(PaginatedRequest, 'order_by=asc');
     const subcategories = await this.subCategoryService.findAll(
       PaginatedRequest,
     );
@@ -78,6 +81,8 @@ export class OffersController {
   }
   @Get('/categories')
   async getCategories(@Query() PaginatedRequest: PaginatedRequest) {
+    applyQueryFilters(PaginatedRequest, `is_active=1`);
+    applyQuerySort(PaginatedRequest, 'order_by=asc');
     const categories = await this.categoryService.findAll(PaginatedRequest);
     const total = await this.categoryService.count(PaginatedRequest);
     const response = plainToInstance(Category, categories, {

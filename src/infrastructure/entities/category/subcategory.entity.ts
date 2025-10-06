@@ -25,6 +25,19 @@ export class SubCategory extends AuditableEntity {
  @Column({ nullable: true })
  category_id: number;
 
+ @Column({ nullable: true })
+  @Expose()
+ order_by: number;
+
+ @Column({ nullable: true })
+  @Expose()
+ is_active: boolean
+
  @OneToMany(() => Offer, (offer) => offer.subcategory)
  offers: Offer[]
+
+ constructor(partial: Partial<SubCategory>) {
+  super();
+  Object.assign(this, partial);
+ }
 }

@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { OffersController } from './offers.controller';
 import { FavoriteOfferService, OffersService } from './offers.service';
 import { CreateOfferTransaction } from './util/create-offer.transaction';
-import { CategoryService } from './category.service';
+
 import { UpdateOfferTransaction } from './util/update-offer.transaction';
 import { SubCategoryService } from './sub_category.service';
 import { StoreService } from './store.service';
+import { CategoryService } from '../category/category.service';
+import { FileService } from '../file/file.service';
 
 @Module({
   controllers: [OffersController],
@@ -16,7 +18,8 @@ import { StoreService } from './store.service';
     UpdateOfferTransaction,
     SubCategoryService,
     StoreService,
-    FavoriteOfferService
+    FavoriteOfferService,
+    FileService
   ],
 })
 export class OffersModule {}
