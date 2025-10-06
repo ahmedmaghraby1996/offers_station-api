@@ -283,7 +283,7 @@ export class UserController {
   async getUserById(@Param('id') id: string) {
     const user = await this.userService._repo.findOne({
       where: { id: id },
-      relations: { city: true ,subscriptions: true},
+      relations: { city: true, subscriptions: true },
     });
     return new ActionResponse(
       this._i18nResponse.entity(
@@ -296,10 +296,11 @@ export class UserController {
           avatar: user.avatar,
           role: user.roles[0],
           created_at: user.created_at,
-          subscriptions:user.subscriptions,
+          subscriptions: user.subscriptions,
 
           city: user.city,
-        }),
+        },
+        { excludeExtraneousValues: true }),
       ),
     );
   }
