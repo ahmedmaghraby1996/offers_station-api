@@ -283,7 +283,7 @@ export class UserController {
   async getUserById(@Param('id') id: string) {
     const user = await this.userService._repo.findOne({
       where: { id: id },
-      relations: { city: true },
+      relations: { city: true ,subscriptions: true},
     });
     return new ActionResponse(
       this._i18nResponse.entity(
