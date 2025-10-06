@@ -107,6 +107,21 @@ export class OffersController {
     return new PaginatedResponse(response, { meta: { total, ...query } });
   }
 
+
+  @Roles(Role.ADMIN)
+    @Get('admin/store')
+    
+  async getAllStore(@Query() query: PaginatedRequest) {
+    
+    const total = await this.storeService.count(query);
+    const stores = await this.storeService.findAll(query);
+    const result = plainToInstance(BranchResponse, stores, {
+      excludeExtraneousValues: true,
+    });
+    const response = this._i18nResponse.entity(result);
+    return new PaginatedResponse(response, { meta: { total, ...query } });
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
