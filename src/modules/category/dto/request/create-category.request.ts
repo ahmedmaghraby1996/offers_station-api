@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateCategoryRequest {
   @ApiProperty()
@@ -21,7 +21,7 @@ export class CreateCategoryRequest {
     order_by: number;
 
     @ApiProperty({required:false})
-    @IsNumber()
+    @IsBoolean()
     @IsOptional()
     @Transform(({ value }) => value === true || value === 'true')
     is_active: boolean
@@ -51,7 +51,7 @@ export class UpdateCategoryRequest{
     order_by: number;
 
     @ApiProperty({required:false})
-    @IsNumber()
+    @IsBoolean()
     @IsOptional()
     @Transform(({ value }) => value === true || value === 'true')
     is_active: boolean
