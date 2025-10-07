@@ -19,9 +19,9 @@ export class Category extends AuditableEntity {
    @Expose()
   order_by: number;
 
-  @Column()
+  @Column({ default: true })
    @Expose()
-  is_active: number;
+  is_active: boolean;
 
   @OneToMany(() => SubCategory, (subcategory) => subcategory.category)
   subcategories: SubCategory[];
