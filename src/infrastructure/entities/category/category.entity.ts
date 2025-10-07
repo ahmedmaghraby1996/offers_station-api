@@ -19,7 +19,7 @@ export class Category extends AuditableEntity {
    @Expose()
   order_by: number;
 
-  @Column({ nullable: true })
+  @Column({ default: true})
    @Expose()
   is_active: number;
 
