@@ -24,7 +24,7 @@ export class CreateCategoryRequest {
     @IsNumber()
     @IsOptional()
     @Transform(({ value }) => value === true || value === 'true')
-    is_active: number
+    is_active: boolean
 }
 
 export class UpdateCategoryRequest{
@@ -54,7 +54,7 @@ export class UpdateCategoryRequest{
     @IsNumber()
     @IsOptional()
     @Transform(({ value }) => value === true || value === 'true')
-    is_active: number
+    is_active: boolean
 }
 
 export class CreateSubCategoryRequest extends CreateCategoryRequest {
