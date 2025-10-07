@@ -29,7 +29,7 @@ export class SubCategory extends AuditableEntity {
   @Expose()
  order_by: number;
 
- @Column({ default: true })
+ @Column()
   @Expose()
  is_active: boolean
 
