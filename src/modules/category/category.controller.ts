@@ -62,7 +62,7 @@ async createCategory(
 }
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Post()
+@Post('/subcategory')
 @Roles(Role.ADMIN)
 @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('logo'))
 @ApiConsumes('multipart/form-data')
