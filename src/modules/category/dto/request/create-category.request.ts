@@ -11,8 +11,9 @@ export class CreateCategoryRequest {
   @IsString()
   name_en: string;
 
-  @ApiProperty({ type: 'file', required: true })
-  logo: Express.Multer.File;
+   @ApiProperty({ type: 'file', required: false })
+    @IsOptional()
+    logo: Express.Multer.File;
 
       @ApiProperty({required:false})
     @IsNumber()
