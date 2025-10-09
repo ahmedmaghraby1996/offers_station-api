@@ -16,6 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ActionResponse } from 'src/core/base/responses/action.response';
 import { UploadValidator } from 'src/core/validators/upload.validator';
 import { CreateCategoryRequest, CreateSubCategoryRequest, UpdateCategoryRequest, UpdateSubCategoryRequest } from './dto/request/create-category.request';
+import { applyQueryIncludes } from 'src/core/helpers/service-related.helper';
 @ApiTags('Category')
 @ApiHeader({
   name: 'Accept-Language',
@@ -39,6 +40,7 @@ export class CategoryController {
 
   @Get('/subcategory')
   async findSubCategories(@Query() query: PaginatedRequest) {
+    applyQueryIncludes(query, 'category');
     const subcategories = await this.subcategoryService.findAll(query);
     const total = await this.subcategoryService.count(query);
     const result=plainToInstance(SubCategory,subcategories,{excludeExtraneousValues: true})

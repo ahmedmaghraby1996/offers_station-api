@@ -20,6 +20,7 @@ export class SubCategory extends AuditableEntity {
 
  @ManyToOne(() => Category, (category) => category.subcategories)
  @JoinColumn()
+ @Expose()
  category: Category
 
  @Column({ nullable: true })
