@@ -59,11 +59,11 @@ export class CategoryService extends BaseService<Category> {
   }
 
   async createSubCategory(req: CreateSubCategoryRequest) {
-  const tempImage = await this._fileService.upload(req.logo, `subcategories`);
+  // const tempImage = await this._fileService.upload(req.logo, `subcategories`);
     const subCategory = plainToInstance(SubCategory, {
       name_ar: req.name_ar,
       name_en: req.name_en,
-      logo: tempImage,
+      // logo: tempImage,
       is_active: req.is_active,
       order_by: req.order_by,
     })
