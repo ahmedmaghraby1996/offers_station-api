@@ -117,6 +117,7 @@ export class UserService extends BaseService<User> {
     if (req.tiktok_link) store.tiktok_link = req.tiktok_link;
     if (req.instagram_link) store.instagram_link = req.instagram_link;
     if (req.facebook_link) store.facebook_link = req.facebook_link;
+    if(req.is_active != null) store.is_active = req.is_active
     store.first_phone = req.first_phone;
     store.second_phone = req.second_phone;
 
