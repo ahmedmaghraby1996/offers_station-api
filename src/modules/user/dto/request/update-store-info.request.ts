@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsLatitude,
@@ -19,6 +20,7 @@ export class UpdateStoreInfoRequest {
   @IsString()
   name: string;
 
+  id:string
   @ApiProperty({
     required: false,
     description: 'Store address',
@@ -175,6 +177,16 @@ export class UpdateStoreInfoRequest {
   @IsOptional()
   @IsString()
   category_id: string;
+    @ApiProperty({ required: false, type: Boolean })
+    @IsOptional()
+    @Transform(({ value }) => {
+      if (typeof value === 'string') {
+        return value.toLowerCase() === 'true';
+      }
+      return Boolean(value);
+    })
+    @IsBoolean()
+    is_active?: boolean;
 }
 
 export class UpdateBranchInfoRequest {

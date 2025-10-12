@@ -237,6 +237,33 @@ export class UserController {
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
+
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiConsumes('multipart/form-data')
+  @Roles(Role.ADMIN)
+  @Put('store-info/:id')
+  async AdminupdateStoreInfo(
+    @Param('id') id: string,
+    @Body() req: UpdateStoreInfoRequest,
+    @UploadedFiles()
+    files: {
+      logo?: Express.Multer.File[];
+      catalogue?: Express.Multer.File[];
+    },
+  ) {
+    if (files.logo && files.logo.length > 0) {
+      req.logo = files.logo[0];
+    }
+    if (files.catalogue && files.catalogue.length > 0) {
+      req.catalogue = files.catalogue[0];
+    }
+
+    // Now you can safely use `logo` and `catalogue`
+    req.id=id
+    const storeInfo = await this.userService.updateMainStoreInfo(req);
+    return new ActionResponse(storeInfo);
+  }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
