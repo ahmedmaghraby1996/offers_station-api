@@ -33,6 +33,7 @@ import { createHash } from 'crypto';
 import { PaymentResponseInterface } from './dto/response/payment.response';
 import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
 import { NotificationService } from '../notification/services/notification.service';
+import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
@@ -206,6 +207,12 @@ export class UserService extends BaseService<User> {
     return await this.storeRepo.softRemove(branch);
   }
 
+    adminAcceptStore(id: string) {
+    return this.storeRepo.update({ id: id }, { status: StoreStatus.APPROVED });
+  }
+  adminRejectStore(id: string) {
+    return this.storeRepo.update({ id: id }, { status: StoreStatus.REJECTED });
+  }
 async getPackage() {
   const packages = await this.packageRepo.find({
     where: { is_active: true },

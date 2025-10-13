@@ -238,7 +238,7 @@ export class UserController {
     return new ActionResponse(storeInfo);
   }
 
-    @ApiBearerAuth()
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
   @Roles(Role.ADMIN)
@@ -260,10 +260,27 @@ export class UserController {
     }
 
     // Now you can safely use `logo` and `catalogue`
-    req.id=id
+    req.id = id;
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @Post('approve-store/:id')
+  async adminApproveStore(@Param('id') id: string) {
+    return this.userService.adminAcceptStore(id);
+  }
+
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @Post('reject-store/:id')
+  async adminRejectStore(@Param('id') id: string) {
+    return this.userService.adminRejectStore(id);
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.STORE)
@@ -314,20 +331,23 @@ export class UserController {
     });
     return new ActionResponse(
       this._i18nResponse.entity(
-        plainToInstance(UserResponse, {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          gender: user.gender,
-          phone: user.phone,
-          avatar: user.avatar,
-          role: user.roles[0],
-          created_at: user.created_at,
-          subscriptions: user.subscriptions,
+        plainToInstance(
+          UserResponse,
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            gender: user.gender,
+            phone: user.phone,
+            avatar: user.avatar,
+            role: user.roles[0],
+            created_at: user.created_at,
+            subscriptions: user.subscriptions,
 
-          city: user.city,
-        },
-        { excludeExtraneousValues: true }),
+            city: user.city,
+          },
+          { excludeExtraneousValues: true },
+        ),
       ),
     );
   }
