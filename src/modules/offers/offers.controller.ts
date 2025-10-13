@@ -24,7 +24,10 @@ import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
 import { Roles } from '../authentication/guards/roles.decorator';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
-import { UpdateAdminOfferRequest, UpdateOfferRequest } from './dto/requests/update-offer.request';
+import {
+  UpdateAdminOfferRequest,
+  UpdateOfferRequest,
+} from './dto/requests/update-offer.request';
 import { query } from 'express';
 import {
   applyQueryFilters,
@@ -64,7 +67,7 @@ export class OffersController {
 
   @Get('/sub-categories')
   async getSubCategories(@Query() PaginatedRequest: PaginatedRequest) {
-     applyQueryFilters(PaginatedRequest, `is_active=1`);
+    applyQueryFilters(PaginatedRequest, `is_active=1`);
     applyQuerySort(PaginatedRequest, 'order_by=asc');
     const subcategories = await this.subCategoryService.findAll(
       PaginatedRequest,
@@ -107,10 +110,8 @@ export class OffersController {
     return new PaginatedResponse(response, { meta: { total, ...query } });
   }
 
-
   @Roles(Role.ADMIN)
-    @Get('admin/store')
-    
+  @Get('admin/store')
   async getAllStore(@Query() query: PaginatedRequest) {
     applyQueryIncludes(query, 'user');
     applyQueryIncludes(query, 'category');
@@ -121,6 +122,17 @@ export class OffersController {
     });
     const response = this._i18nResponse.entity(result);
     return new PaginatedResponse(response, { meta: { total, ...query } });
+  }
+
+  @Roles(Role.ADMIN)
+  @Get('admin/store')
+  async geStoredetials(@Param('id') id: string) {
+    const stores = await this.storeService.getDetails(id);
+    const result = plainToInstance(BranchResponse, stores, {
+      excludeExtraneousValues: true,
+    });
+
+    return new ActionResponse(result);
   }
 
   @ApiBearerAuth()
@@ -140,14 +152,15 @@ export class OffersController {
     return offer;
   }
 
-    @ApiBearerAuth()
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @Put('update/:offer_id')
-  async updateAdminOffer(@Param('offer_id') offer_id,@Body() req: UpdateAdminOfferRequest) {
-
-
-    req.id = offer_id
+  async updateAdminOffer(
+    @Param('offer_id') offer_id,
+    @Body() req: UpdateAdminOfferRequest,
+  ) {
+    req.id = offer_id;
     const offer = await this.offersService.updateOffer(req);
     return offer;
   }
@@ -221,7 +234,6 @@ export class OffersController {
       excludeExtraneousValues: true,
     });
 
- 
     return new PaginatedResponse(result, {
       meta: { total, ...query },
     });
@@ -239,7 +251,7 @@ export class OffersController {
     applyQueryIncludes(query, 'subcategory');
     applyQueryIncludes(query, 'subcategory.category');
     applyQueryIncludes(query, 'images');
-        applyQuerySort(query, 'created_at=DESC');
+    applyQuerySort(query, 'created_at=DESC');
     // applyQueryFilters(query, `stores.is_active=1`);
     applyQueryFilters(
       query,
