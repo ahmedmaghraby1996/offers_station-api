@@ -125,7 +125,7 @@ export class OffersController {
   }
 
   @Roles(Role.ADMIN)
-  @Get('admin/store')
+  @Get('admin/store/:id')
   async geStoredetials(@Param('id') id: string) {
     const stores = await this.storeService.getDetails(id);
     const result = plainToInstance(BranchResponse, stores, {
