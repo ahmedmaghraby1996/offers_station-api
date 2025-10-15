@@ -277,7 +277,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @Post('reject-store/:id')
-  async adminRejectStore(@Param('id') id: string) {
+  async adminRejectStore(@Param('id') id: string,@Body() req: UpdateBranchInfoRequest) {
     return this.userService.adminRejectStore(id);
   }
 
