@@ -293,7 +293,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   //DELETE BRANCH
-  @Roles(Role.STORE)
+  @Roles(Role.STORE, Role.ADMIN)
   @Delete('delete-branch/:id')
   async deleteBranch(@Param('id') id: string) {
     const branch = await this.userService.deleteBranch(id);
