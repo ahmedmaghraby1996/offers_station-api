@@ -206,7 +206,7 @@ export class UserService extends BaseService<User> {
   }
   async deleteBranch(id: string) {
     const branch = await this.storeRepo.findOne({
-      where: { id: id, user_id: this.request.user.id },
+      where: { id: id, },
     });
     if (!branch) throw new NotFoundException('branch not found');
     return await this.storeRepo.softRemove(branch);
