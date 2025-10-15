@@ -237,7 +237,13 @@ export class UserController {
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
-
+ @UseInterceptors(
+    ClassSerializerInterceptor,
+    FileFieldsInterceptor([
+      { name: 'logo', maxCount: 1 },
+      { name: 'catalogue', maxCount: 1 },
+    ]),
+  )
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
