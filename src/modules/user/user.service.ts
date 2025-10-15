@@ -101,9 +101,13 @@ export class UserService extends BaseService<User> {
     });
   }
   async updateMainStoreInfo(req: UpdateStoreInfoRequest) {
-    const store = await this.storeRepo.findOne({
-      where: { user_id: this.request.user.id, is_main_branch: true },
-    });
+    const store = await this.storeRepo.findOne(
+      this.request.user.roles.includes(Role.ADMIN)
+        ? { where: { id: req.id } }
+        : {
+            where: { user_id: this.request.user.id, is_main_branch: true },
+          },
+    );
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
     if (req.address) store.address = req.address;
@@ -118,7 +122,7 @@ export class UserService extends BaseService<User> {
     if (req.tiktok_link) store.tiktok_link = req.tiktok_link;
     if (req.instagram_link) store.instagram_link = req.instagram_link;
     if (req.facebook_link) store.facebook_link = req.facebook_link;
-    if(req.is_active != null) store.is_active = req.is_active
+    if (req.is_active != null) store.is_active = req.is_active;
     store.first_phone = req.first_phone;
     store.second_phone = req.second_phone;
 
@@ -207,32 +211,31 @@ export class UserService extends BaseService<User> {
     return await this.storeRepo.softRemove(branch);
   }
 
-    adminAcceptStore(id: string) {
+  adminAcceptStore(id: string) {
     return this.storeRepo.update({ id: id }, { status: StoreStatus.APPROVED });
   }
   adminRejectStore(id: string) {
     return this.storeRepo.update({ id: id }, { status: StoreStatus.REJECTED });
   }
-async getPackage() {
-  const packages = await this.packageRepo.find({
-    where: { is_active: true },
-    order: { order_by: 'ASC' },
-  });
+  async getPackage() {
+    const packages = await this.packageRepo.find({
+      where: { is_active: true },
+      order: { order_by: 'ASC' },
+    });
 
-  const subscription = await this.subscriptionRepo.findOne({
-    where: { user_id: this.request.user.id, expire_at: MoreThan(new Date()) },
-  });
+    const subscription = await this.subscriptionRepo.findOne({
+      where: { user_id: this.request.user.id, expire_at: MoreThan(new Date()) },
+    });
 
-  const result = packages.map((item) => {
-    if (subscription?.package_id === item.id) {
-      return { ...item, is_current: true };
-    }
-    return { ...item, is_current: false };
-  });
+    const result = packages.map((item) => {
+      if (subscription?.package_id === item.id) {
+        return { ...item, is_current: true };
+      }
+      return { ...item, is_current: false };
+    });
 
-  return result;
-}
-
+    return result;
+  }
 
   async buyPackage(package_id: string) {
     return await this.dataSource.transaction(async (manager) => {
