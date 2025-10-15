@@ -277,7 +277,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @Post('reject-store/:id')
-  async adminRejectStore(@Param('id') id: string,@Body() req: UpdateBranchInfoRequest) {
+  async adminRejectStore(@Param('id') id: string,) {
     return this.userService.adminRejectStore(id);
   }
 
@@ -295,7 +295,7 @@ export class UserController {
   //DELETE BRANCH
   @Roles(Role.STORE, Role.ADMIN)
   @Delete('delete-branch/:id')
-  async deleteBranch(@Param('id') id: string) {
+  async deleteBranch(@Param('id') id: string,@Body() req: UpdateBranchInfoRequest) {
     const branch = await this.userService.deleteBranch(id);
     return new ActionResponse(branch);
   }
