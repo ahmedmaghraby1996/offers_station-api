@@ -108,6 +108,7 @@ export class UserService extends BaseService<User> {
             where: { user_id: this.request.user.id, is_main_branch: true },
           },
     );
+    console.log(req)
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
     if (req.address) store.address = req.address;
