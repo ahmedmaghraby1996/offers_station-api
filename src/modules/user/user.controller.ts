@@ -246,7 +246,7 @@ export class UserController {
   async AdminupdateStoreInfo(
     @Param('id') id: string,
     @Body() req: UpdateStoreInfoRequest,
-    @UploadedFiles()
+    @UploadedFiles()  
     files: {
       logo?: Express.Multer.File[];
       catalogue?: Express.Multer.File[];
@@ -258,6 +258,7 @@ export class UserController {
     if (files?.catalogue && files.catalogue?.length > 0) {
       req.catalogue = files.catalogue[0];
     }
+    console.log(req);
 
     // Now you can safely use `logo` and `catalogue`
     req.id = id;
