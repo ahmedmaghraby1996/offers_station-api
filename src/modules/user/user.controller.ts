@@ -252,10 +252,10 @@ export class UserController {
       catalogue?: Express.Multer.File[];
     },
   ) {
-    if (files.logo && files.logo.length > 0) {
+    if (files?.logo && files?.logo?.length > 0) {
       req.logo = files.logo[0];
     }
-    if (files.catalogue && files.catalogue.length > 0) {
+    if (files?.catalogue && files.catalogue?.length > 0) {
       req.catalogue = files.catalogue[0];
     }
 
