@@ -175,8 +175,9 @@ export class AuthenticationController {
     @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Roles(Role.ADMIN)
-    @Put('edit/city')
-    async updateCity(@Body() req: UpdateCityRequest) {
+    @Put('edit/city/:id')
+    async updateCity(@Param('id') id: string,@Body() req: UpdateCityRequest) {
+      req.id = id;
       const city = await this.cityRepository.update(req.id, req);
      await this.resortCities();
       return new ActionResponse(  city);

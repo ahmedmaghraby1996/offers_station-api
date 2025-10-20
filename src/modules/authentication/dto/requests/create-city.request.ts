@@ -27,8 +27,7 @@ export class CreateCityRequest {
 
 export class UpdateCityRequest {
 
-    @ApiProperty()
-    @IsString()
+  
     id: string;
     @ApiProperty()
     @IsString()
