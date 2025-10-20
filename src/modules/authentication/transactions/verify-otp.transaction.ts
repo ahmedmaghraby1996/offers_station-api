@@ -57,7 +57,7 @@ export class VerifyOtpTransaction extends BaseTransaction<
       }
 
       if (!user) throw new BadRequestException('message.invalid_credentials');
-    
+    if(user.is_active==false) throw new BadRequestException('message.user_inactive');
       const payload = { username: user.username, sub: user.id };
   if (user.roles.includes(Role.STORE)) {
         // check for store
