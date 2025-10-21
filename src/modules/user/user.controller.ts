@@ -136,7 +136,7 @@ export class UserController {
     applyQueryFilters(query, `roles=${Role.AGENT}`);
     applyQueryFilters(
       query,
-      is_active !== undefined ? `is_active=${is_active}` : ``,
+      is_active !== undefined ? `is_active=${is_active==true?1:0}` : ``,
     );
 
     const users = await this.userService.findAll(query);
