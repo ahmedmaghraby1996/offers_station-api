@@ -37,6 +37,11 @@ export class RegisterRequest {
   @IsNotEmpty()
   @IsEnum(Role)
   role: Role;
+
+      @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  agent_id: string;
 }
 export class AgentRegisterRequest extends RegisterRequest {
   @ApiProperty()
@@ -48,6 +53,8 @@ export class AgentRegisterRequest extends RegisterRequest {
   @IsNotEmpty()
   @IsString()
   city_id: string;
+
+
 
   @ApiProperty()
   @IsNotEmpty()

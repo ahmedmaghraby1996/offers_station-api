@@ -2,7 +2,10 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, EntityManager, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { AgentRegisterRequest, RegisterRequest } from '../dto/requests/register.dto';
+import {
+  AgentRegisterRequest,
+  RegisterRequest,
+} from '../dto/requests/register.dto';
 import { User } from 'src/infrastructure/entities/user/user.entity';
 import { randStr } from 'src/core/helpers/cast.helper';
 import { BaseTransaction } from 'src/core/base/database/base.transaction';
@@ -45,7 +48,7 @@ export class RegisterUserTransaction extends BaseTransaction<
   ): Promise<User> {
     try {
       // upload avatar
-      const admin_id = this.request?.user?.id
+      const admin_id = this.request?.user?.id;
       const user = new User(req);
       // upload avatar
       if (req.avatarFile) {
@@ -73,52 +76,38 @@ export class RegisterUserTransaction extends BaseTransaction<
         randomPassword + this._config.get('app.key'),
         10,
       );
-      
-      user.username = user?.phone??user?.email;
- 
-      
+
+      user.username = user?.phone ?? user?.email;
+
       // set user role
       user.roles = [req.role];
       // save user
       const savedUser = await context.save(User, user);
 
-    
-      
- 
+      if (req.role == Role.STORE) {
+        const store = new Store({
+          status: StoreStatus.APPROVED,
+          is_active: true,
+        });
+        store.user_id = savedUser.id;
+        store.is_main_branch = true;
+        savedUser.agent_id = req.agent_id;
+        await context.save(store);
+      }
 
+      if (req.role == Role.AGENT) {
+        savedUser.resume = req.resume;
+        savedUser.resume = req.cv;
+        savedUser.certificate = req.certificate;
+        savedUser.bank_account_number = req.bank_account_number;
+        savedUser.bank_name = req.bank_name;
+        savedUser.bank_branch = req.bank_branch;
+        savedUser.id_number = req.id_number;
+        savedUser.city_id = req.city_id;
+        savedUser.is_active = false;
+      }
 
-   
-       
-        if(req.role == Role.STORE){
-          const store = new Store({status:StoreStatus.APPROVED,is_active:true});
-          store.user_id = savedUser.id;
-         store.is_main_branch = true
-          await context.save(store);
-        }
-
-        if(req.role==Role.AGENT){
-          savedUser.resume = req.resume;
-          savedUser.resume = req.cv;
-          savedUser.certificate = req.certificate;
-          savedUser.bank_account_number = req.bank_account_number;
-          savedUser.bank_name = req.bank_name;
-          savedUser.bank_branch = req.bank_branch;
-          savedUser.id_number = req.id_number;
-          savedUser.city_id = req.city_id;
-          savedUser.is_active = false;
-        }
-
-
-
-        
-  
-   
-
-        await context.save(savedUser);
-
-        
-      
-   
+      await context.save(savedUser);
 
       // return user
       return savedUser;
@@ -133,8 +122,8 @@ export class RegisterUserTransaction extends BaseTransaction<
 }
 
 function generateFormattedNumber(prefix, number, numDigits) {
-  const formattedValue = `${prefix}${number.toString().padStart(numDigits, '0')}`;
+  const formattedValue = `${prefix}${number
+    .toString()
+    .padStart(numDigits, '0')}`;
   return formattedValue;
 }
-
-

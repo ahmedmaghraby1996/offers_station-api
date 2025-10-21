@@ -166,6 +166,16 @@ export class User extends AuditableEntity {
   @Column({ nullable: true ,unique: true})
   code: string;
 
+  @OneToMany(() => User, (user) => user.agent)
+  merchants: User[];
+
+  @ManyToOne(() => User, (user) => user.merchants)
+  @JoinColumn({ name: 'agent_id' })
+  agent: User;
+
+  @Column({ nullable: true })
+  agent_id: string;
+
 
 
   constructor(partial: Partial<User>) {
