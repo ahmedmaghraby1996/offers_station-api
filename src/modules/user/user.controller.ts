@@ -133,7 +133,7 @@ export class UserController {
     @Query('is_active') is_active: boolean,
   ) {
     applyQueryIncludes(query, 'city');
-    applyQueryFilters(query, `roles='${Role.AGENT}'`);
+    applyQueryFilters(query, `roles=${Role.AGENT}`);
     applyQueryFilters(
       query,
       is_active !== undefined ? `is_active=${is_active}` : ``,
