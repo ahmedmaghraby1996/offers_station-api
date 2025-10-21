@@ -28,7 +28,7 @@ export class City extends AuditableEntity {
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @Column()
+  @Column({ nullable: true })
   country_id: string;
   @Column({ nullable: true })
   order_by: number;

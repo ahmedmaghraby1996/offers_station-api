@@ -12,10 +12,7 @@ export class CreateCityRequest {
     @IsOptional()
     name_en: string;
 
-    @ApiProperty()
-    @IsString()
-    @IsOptional()
-    code: string;
+ 
 
     @ApiProperty()
     @IsNumber()
@@ -43,10 +40,5 @@ export class UpdateCityRequest {
     @IsNumber()
     @IsOptional()
     order_by: number;
-    
-    @ApiProperty()
-    @IsString()
-    @IsOptional()
-    code: string;
 
 }
