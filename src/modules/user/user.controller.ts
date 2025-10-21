@@ -79,7 +79,7 @@ export class UserController {
     @Inject(I18nResponse) private readonly _i18nResponse: I18nResponse,
   ) {}
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.STORE)
   @Get('packages')
   async getPackages() {
@@ -88,14 +88,14 @@ export class UserController {
     return new ActionResponse(result);
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('subscribe/:package_id')
   async subscribePackage(@Param('package_id') package_id: string) {
     const subscribe = await this.userService.buyPackage(package_id);
     return new ActionResponse(subscribe);
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get('')
   async getAll(@Query() query: PaginatedRequest) {
@@ -125,7 +125,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get('/agents')
   async getAllAgents(
@@ -149,7 +149,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post('activate-agent/:id')
   async activateAgent(@Param('id') id: string, @Body() req: AcceptAgentRequest) {
@@ -176,7 +176,7 @@ export class UserController {
     return this.userService.confirmPayment(paymentResponse);
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get('profile')
   async getProile() {
@@ -193,7 +193,7 @@ export class UserController {
     );
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   //update fcm token
   @Put('/fcm-token')
   async updateFcmToken(@Body() req: UpdateFcmRequest) {
@@ -205,7 +205,7 @@ export class UserController {
     );
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -231,7 +231,7 @@ export class UserController {
     );
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   //update fcm token
   @Delete('/delete')
   async deleteUser(@Query() query: GetUserRequest) {
@@ -248,7 +248,7 @@ export class UserController {
     ]),
   )
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes('multipart/form-data')
   @Roles(Role.STORE)
   @Put('store-info')
@@ -280,7 +280,7 @@ export class UserController {
     ]),
   )
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes('multipart/form-data')
   @Roles(Role.ADMIN)
   @Put('store-info/:id')
@@ -308,7 +308,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post('approve-store/:id')
   async adminApproveStore(@Param('id') id: string) {
@@ -316,7 +316,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post('reject-store/:id')
   async adminRejectStore(@Param('id') id: string) {
@@ -324,7 +324,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.STORE)
   @Put('update-branch-info')
   async updateBranchInfo(@Body() req: UpdateBranchInfoRequest) {
@@ -333,7 +333,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   //DELETE BRANCH
   @Roles(Role.STORE, Role.ADMIN)
   @Delete('delete-branch/:id')
@@ -343,7 +343,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.STORE)
   @Post('add-branch')
   async addBranch(@Body() req: AddBranchRequest) {
@@ -351,7 +351,7 @@ export class UserController {
     return new ActionResponse(branch);
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.STORE)
   @Get('get-branches')
   async getBranch(@Query('is_main_branch') is_main_branch?: boolean) {
@@ -364,7 +364,7 @@ export class UserController {
     return new ActionResponse(result);
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/:id')
   async getUserById(@Param('id') id: string) {
     const user = await this.userService._repo.findOne({
@@ -394,7 +394,7 @@ export class UserController {
     );
   }
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('test/payment')
   async testPayment() {
     const amount = '10.00'; // Example amount
