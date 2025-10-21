@@ -193,14 +193,7 @@ export class AuthenticationService {
 
     return user;
   }
-  async registerFamilyMember(req: any) {
-    const user = await this.registerUserTransaction.run(req);
-    user.user_id = this.request.user.id;
-    user.relation_type = req.relation_type;
-    this.userService._repo.save(user);
 
-    return user;
-  }
 
   async sendOtp(req: SendOtpRequest) {
     return await this.sendOtpTransaction.run(req);

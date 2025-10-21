@@ -1,9 +1,11 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform, Type } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
+
 import { toUrl } from 'src/core/helpers/file.helper';
 import { City } from 'src/infrastructure/entities/city/city.entity';
 import { Package } from 'src/infrastructure/entities/package/package.entity';
 import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
-
 
 export class UserResponse {
   @Expose()
@@ -42,8 +44,48 @@ export class UserResponse {
 
   @Expose()
   @Transform((value) => {
-     if(value.obj?.subscriptions?.length>0) return value.obj.subscriptions[0]
-     else return null
+    if (value.obj?.subscriptions?.length > 0) return value.obj.subscriptions[0];
+    else return null;
   })
-  subscription: Subscription
+  subscription: Subscription;
+}
+
+export class AgentResponse extends UserResponse {
+  @Expose()
+  resume: string;
+
+  @Expose()
+  @Type(() => City)
+  city:City
+
+  @Expose()
+  cv: string;
+
+  @Expose()
+  certificate: string;
+
+  @Expose()
+  bank_account_number: string;
+
+  @Expose()
+  bank_name: string;
+
+  @Expose()
+  bank_branch: string;
+
+  @Expose()
+  id_number: string;
+
+  @Expose()
+  code: string;
+
+
+}
+
+
+export class AcceptAgentRequest {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  code: string;
 }

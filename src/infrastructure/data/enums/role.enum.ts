@@ -12,4 +12,5 @@ export enum Role {
   ADMIN = 'ADMIN',
   CLIENT = 'CLIENT',
   STORE = 'STORE',
+  AGENT = 'AGENT',
 }

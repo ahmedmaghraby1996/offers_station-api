@@ -13,36 +13,16 @@ import { AcademicStage } from 'src/infrastructure/data/enums/academic-stage.enum
 import { Gender } from 'src/infrastructure/data/enums/gender.enum';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 
-
 export class RegisterRequest {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   @IsOptional()
   // @IsStrongPassword()
   password: string;
-
-
-
-  // @ApiPropertyOptional()
-  // @IsOptional()
-  // @IsNotEmpty()
-  // @IsEmail()
-  // @Unique('User')
-  // email?: string;
- 
-
-  // @ApiPropertyOptional({isArray:true})
-  // @IsOptional()
-  // grades_ids:string[]
-
- 
-  
-
-
 
   @ApiProperty()
   @IsOptional()
@@ -58,4 +38,44 @@ export class RegisterRequest {
   @IsEnum(Role)
   role: Role;
 }
-    
+export class AgentRegisterRequest extends RegisterRequest {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  resume: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  city_id: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  cv: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  certificate: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  bank_account_number: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  bank_name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  bank_branch: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  id_number: string;
+}

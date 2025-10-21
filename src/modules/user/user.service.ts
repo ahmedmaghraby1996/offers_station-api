@@ -215,6 +215,14 @@ export class UserService extends BaseService<User> {
   adminAcceptStore(id: string) {
     return this.storeRepo.update({ id: id }, { status: StoreStatus.APPROVED });
   }
+
+  async activateAgent(id: string, code:string) {
+    const user = await this._repo.findOne({ where: { id: id } });
+    if (!user) throw new NotFoundException('agent not found');
+    user.is_active = true;
+    user.code = code;
+    return await this._repo.save(user);
+  }
   adminRejectStore(id: string) {
     return this.storeRepo.update({ id: id }, { status: StoreStatus.REJECTED });
   }

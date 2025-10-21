@@ -144,27 +144,29 @@ export class User extends AuditableEntity {
   @Expose()
   addresses: Promise<Address[]>;
 
-  @OneToMany(() => User, (user) => user.user)
-  @Expose()
-  family: User[];
 
-  @ManyToOne(() => User, (user) => user.family)
-  @JoinColumn({ name: 'user_id' })
-  @Expose()
-  user: User;
 
   @Column({ nullable: true })
-  @Expose()
-  user_id: string;
+  id_number: string;
 
   @Column({ nullable: true })
-  @Expose()
-  relation_type: string;
+  bank_account_number: string;
 
-  @ManyToMany(() => User)
-  @JoinTable()
-  @Expose()
-  school_users: User[];
+  @Column({ nullable: true })
+  bank_name: string;
+
+  @Column({ nullable: true })
+  bank_branch: string;
+
+  @Column({ nullable: true })
+  certificate: string;
+  @Column({ nullable: true })
+  resume: string;
+
+  @Column({ nullable: true ,unique: true})
+  code: string;
+
+
 
   constructor(partial: Partial<User>) {
     super();

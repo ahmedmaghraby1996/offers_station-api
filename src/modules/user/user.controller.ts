@@ -40,7 +40,7 @@ import {
   applyQueryIncludes,
 } from 'src/core/helpers/service-related.helper';
 import { plainToInstance } from 'class-transformer';
-import { UserResponse } from './dto/response/user-response';
+import { AcceptAgentRequest, AgentResponse, UserResponse } from './dto/response/user-response';
 import { Roles } from '../authentication/guards/roles.decorator';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { GetUserRequest } from './dto/get-user.request';
@@ -62,6 +62,8 @@ import {
 } from './dto/request/update-store-info.request';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 import { BranchResponse } from './dto/branch.response';
+import { Agent } from 'http';
+import { app } from 'firebase-admin';
 
 @ApiHeader({
   name: 'Accept-Language',
@@ -120,6 +122,39 @@ export class UserController {
     const total = await this.userService.count(query);
 
     return new PaginatedResponse(usersResponse, { meta: { total, ...query } });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @Get('/agents')
+  async getAllAgents(
+    @Query() query: PaginatedRequest,
+    @Query('is_active') is_active: boolean,
+  ) {
+    applyQueryIncludes(query, 'city');
+    applyQueryFilters(query, `roles='${Role.AGENT}'`);
+    applyQueryFilters(
+      query,
+      is_active !== undefined ? `is_active=${is_active}` : ``,
+    );
+
+    const users = await this.userService.findAll(query);
+    const usersResponse = plainToInstance(AgentResponse, users, {
+      excludeExtraneousValues: true,
+    });
+    const total = await this.userService.count(query);
+
+    return new PaginatedResponse(usersResponse, { meta: { total, ...query } });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @Post('activate-agent/:id')
+  async activateAgent(@Param('id') id: string, @Body() req: AcceptAgentRequest) {
+    const agent = await this.userService.activateAgent(id,req.code);
+    return new ActionResponse(agent);
   }
 
   @Post('confirm/payment')
@@ -237,7 +272,7 @@ export class UserController {
     const storeInfo = await this.userService.updateMainStoreInfo(req);
     return new ActionResponse(storeInfo);
   }
- @UseInterceptors(
+  @UseInterceptors(
     ClassSerializerInterceptor,
     FileFieldsInterceptor([
       { name: 'logo', maxCount: 1 },
@@ -252,7 +287,7 @@ export class UserController {
   async AdminupdateStoreInfo(
     @Param('id') id: string,
     @Body() req: UpdateStoreInfoRequest,
-    @UploadedFiles()  
+    @UploadedFiles()
     files: {
       logo?: Express.Multer.File[];
       catalogue?: Express.Multer.File[];
@@ -280,7 +315,7 @@ export class UserController {
     return this.userService.adminAcceptStore(id);
   }
 
-    @ApiBearerAuth()
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @Post('reject-store/:id')

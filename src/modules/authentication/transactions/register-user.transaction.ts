@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, EntityManager, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { RegisterRequest } from '../dto/requests/register.dto';
+import { AgentRegisterRequest, RegisterRequest } from '../dto/requests/register.dto';
 import { User } from 'src/infrastructure/entities/user/user.entity';
 import { randStr } from 'src/core/helpers/cast.helper';
 import { BaseTransaction } from 'src/core/base/database/base.transaction';
@@ -39,7 +39,7 @@ export class RegisterUserTransaction extends BaseTransaction<
 
   // the important thing here is to use the manager that we've created in the base class
   protected async execute(
-    req: RegisterRequest,
+    req: Partial<AgentRegisterRequest>,
 
     context: EntityManager,
   ): Promise<User> {
@@ -94,6 +94,18 @@ export class RegisterUserTransaction extends BaseTransaction<
           store.user_id = savedUser.id;
          store.is_main_branch = true
           await context.save(store);
+        }
+
+        if(req.role==Role.AGENT){
+          savedUser.resume = req.resume;
+          savedUser.resume = req.cv;
+          savedUser.certificate = req.certificate;
+          savedUser.bank_account_number = req.bank_account_number;
+          savedUser.bank_name = req.bank_name;
+          savedUser.bank_branch = req.bank_branch;
+          savedUser.id_number = req.id_number;
+          savedUser.city_id = req.city_id;
+          savedUser.is_active = false;
         }
 
 
