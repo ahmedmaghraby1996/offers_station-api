@@ -127,7 +127,7 @@ export class AuthenticationController {
   }
   @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')
-  @Post(Router.Auth.Register)
+  @Post('agent-register')
   async Agentregister(
     @Body() req: AgentRegisterRequest,
     @UploadedFile(new UploadValidator().build())
