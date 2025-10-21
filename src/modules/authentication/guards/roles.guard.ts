@@ -25,6 +25,7 @@ export class RolesGuard implements CanActivate {
     const { user } = request;
     if (user.is_active == false)
       throw new UnauthorizedException('message.user_inactive');
+    console.log('user roles:', user);
     return requiredRoles.some((role) => user.roles?.includes(role));
   }
 }
