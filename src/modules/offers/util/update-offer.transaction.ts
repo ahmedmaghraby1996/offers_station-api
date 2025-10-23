@@ -49,7 +49,7 @@ export class UpdateOfferTransaction extends BaseTransaction<
         throw new NotFoundException(
           `SubCategory with ID ${req.subcategory_id} not found.`,
         );
-      }
+      }}
 
       // Update offer fields
       const updatedData = new Offer({
