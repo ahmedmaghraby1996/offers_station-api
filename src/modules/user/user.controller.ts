@@ -139,10 +139,7 @@ export class UserController {
     }else if(is_active==false){
       applyQueryFilters(query, `is_active=0`);
     }
-    applyQueryFilters(
-      query,
-      is_active !== undefined ? `is_active=${is_active==true?1:0}` : ``,
-    );
+
 
     const users = await this.userService.findAll(query);
     const usersResponse = plainToInstance(AgentResponse, users, {
