@@ -14,6 +14,7 @@ import { Request } from 'express';
 import * as fs from 'fs';
 import { OfferImages } from 'src/infrastructure/entities/offer/offer-images.entity';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
+import { SubCategory } from 'src/infrastructure/entities/category/subcategory.entity';
 
 @Injectable()
 export class UpdateOfferTransaction extends BaseTransaction<
@@ -39,6 +40,15 @@ export class UpdateOfferTransaction extends BaseTransaction<
 
       if (!existingOffer) {
         throw new NotFoundException(`Offer with ID ${req.id} not found.`);
+      }
+      if(req.subcategory_id){
+      const subcategory = await context.findOne(SubCategory, {
+        where: { id: req.subcategory_id },
+      });
+      if (!subcategory) {
+        throw new NotFoundException(
+          `SubCategory with ID ${req.subcategory_id} not found.`,
+        );
       }
 
       // Update offer fields
