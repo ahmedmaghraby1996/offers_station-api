@@ -135,7 +135,7 @@ export class UserController {
     applyQueryIncludes(query, 'city');
     applyQueryFilters(query, `roles=${Role.AGENT}`);
     if(is_active==true){
-      applyQueryFilters(query, `is_active=1`,[`is_active=0,code== `]);
+      applyQueryFilters(query, `code== `);
     }else if(is_active==false){
       console.log('here');
       applyQueryFilters(query, `is_active=0,code=! `);
