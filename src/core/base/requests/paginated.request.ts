@@ -141,6 +141,10 @@ export class PaginatedRequest {
               case '=!':
                 whereFilter = { ...whereFilter, [key]: IsNull() };
                 break;
+
+                case '==':
+                  whereFilter = { ...whereFilter, [key]: Not(IsNull()) };
+                  break;
                 
               
               whereFilter = { ...whereFilter, [key]: value };
@@ -245,6 +249,8 @@ export class PaginatedRequest {
           return { [key]: Not(value) };
         case '=!':
           return { [key]: IsNull() };
+        case '==':
+          return { [key]: Not(IsNull()) };
         default:
           return { [key]: Like(`%${value}%`) };
       }
@@ -260,6 +266,7 @@ export class PaginatedRequest {
     if (statement.includes('>')) return '>';
     if (statement.includes('!=')) return '!=';
     if( statement.includes('=!')) return '=!';
+    if( statement.includes('==')) return '==';
     return '=';
   }
 }
