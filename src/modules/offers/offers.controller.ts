@@ -367,7 +367,7 @@ export class OffersController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STORE, Role.CLIENT, Role.ADMIN)
+  @Roles(Role.STORE, Role.CLIENT,)
   @Get('details/:id')
   async getOfferById(@Param('id') id: string) {
     const offer = await this.offersService.findOne(id);
@@ -386,6 +386,23 @@ export class OffersController {
     return new ActionResponse(response);
   }
 
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Roles( Role.ADMIN)
+  @Get('admin/details/:id')
+  async getAdminOfferById(@Param('id') id: string) {
+    const offer = await this.offersService.findOne(id);
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+    const result = plainToInstance(OfferResponse, offer, {
+      excludeExtraneousValues: true,
+    });
+   
+ 
+
+    return new ActionResponse(result);
+  }
   private extractStoreId(filters: string | string[]): string | null {
     if (!filters) return null;
     // normalize to array
