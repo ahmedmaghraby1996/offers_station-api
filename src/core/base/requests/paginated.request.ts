@@ -5,6 +5,7 @@ import { toRightNumber } from 'src/core/helpers/cast.helper';
 import {
   ILike,
   In,
+  IsNull,
   LessThan,
   LessThanOrEqual,
   Like,
@@ -136,6 +137,10 @@ export class PaginatedRequest {
             case ':=':
               whereFilter = { ...whereFilter, [key]: Like(`%${value}`) };
               break;
+
+              case '!=!':
+                whereFilter = { ...whereFilter, [key]: IsNull() };
+                break;
               
               whereFilter = { ...whereFilter, [key]: value };
               break;
@@ -237,6 +242,8 @@ export class PaginatedRequest {
           return { [key]: MoreThanOrEqual(value) };
         case '!=':
           return { [key]: Not(value) };
+        case '!=!':
+          return { [key]: IsNull() };
         default:
           return { [key]: Like(`%${value}%`) };
       }
@@ -251,6 +258,7 @@ export class PaginatedRequest {
     if (statement.includes('<')) return '<';
     if (statement.includes('>')) return '>';
     if (statement.includes('!=')) return '!=';
+    if( statement.includes('!=!')) return '!=!';
     return '=';
   }
 }
