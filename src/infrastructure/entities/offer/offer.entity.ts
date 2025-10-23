@@ -70,7 +70,7 @@ export class Offer extends AuditableEntity {
   @ManyToOne(() => SubCategory, (subcategory) => subcategory.offers)
   subcategory: SubCategory;
   @Column({ nullable: true })
-  subcategory_id: number;
+  subcategory_id: string;
 
   @Column({ default: true })
   is_active: boolean;
