@@ -124,9 +124,9 @@ export class UserController {
     return new PaginatedResponse(usersResponse, { meta: { total, ...query } });
   }
 
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
   @Get('/agents')
   async getAllAgents(
     @Query() query: PaginatedRequest,
