@@ -24,6 +24,10 @@ export class TransactionService extends BaseUserService<Transaction> {
     const user_wallet = await this.walletRepository.findOneBy({
       user_id: req.user_id,
     });
+
+    if (!user_wallet) {
+      await this.walletRepository.save( new Wallet({ user_id: req.user_id, balance: 0 }));  
+    }
     req.amount= Number(req.amount)
 
     user_wallet.balance = user_wallet.balance - req.amount;

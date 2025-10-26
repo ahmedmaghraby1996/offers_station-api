@@ -55,8 +55,8 @@ export default (app: INestApplication, config: ConfigService) => {
       BanarModule,
       ChatModule,
       PackagesModule,
-      CategoryModule
-      // TransactionModule,
+      CategoryModule,
+      TransactionModule,
     ],
     operationIdFactory,
   });
