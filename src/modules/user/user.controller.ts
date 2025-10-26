@@ -40,7 +40,11 @@ import {
   applyQueryIncludes,
 } from 'src/core/helpers/service-related.helper';
 import { plainToInstance } from 'class-transformer';
-import { AcceptAgentRequest, AgentResponse, UserResponse } from './dto/response/user-response';
+import {
+  AcceptAgentRequest,
+  AgentResponse,
+  UserResponse,
+} from './dto/response/user-response';
 import { Roles } from '../authentication/guards/roles.decorator';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { GetUserRequest } from './dto/get-user.request';
@@ -134,29 +138,35 @@ export class UserController {
   ) {
     applyQueryIncludes(query, 'city');
     applyQueryFilters(query, `roles=${Role.AGENT}`);
-    if(is_active==true){
+    if (is_active == true) {
       applyQueryFilters(query, `code== `);
-    }else if(is_active==false){
+    } else if (is_active == false) {
       console.log('here');
       applyQueryFilters(query, `is_active=0,code=! `);
     }
+  }
 
-
-    const users = await this.userService.findAll(query);
-    const usersResponse = plainToInstance(AgentResponse, users, {
-      excludeExtraneousValues: true,
+  @Get('/agent/:id')
+  async getAgentById(@Param('id') id: string) {
+    const user = await this.userService._repo.findOne({
+      where: { id: id },
+      relations: { city: true, wallet: true },
     });
-    const total = await this.userService.count(query);
 
-    return new PaginatedResponse(usersResponse, { meta: { total, ...query } });
+    return new ActionResponse(
+      plainToInstance(AgentResponse, user, { excludeExtraneousValues: true }),
+    );
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post('activate-agent/:id')
-  async activateAgent(@Param('id') id: string, @Body() req: AcceptAgentRequest) {
-    const agent = await this.userService.activateAgent(id,req.code);
+  async activateAgent(
+    @Param('id') id: string,
+    @Body() req: AcceptAgentRequest,
+  ) {
+    const agent = await this.userService.activateAgent(id, req.code);
     return new ActionResponse(agent);
   }
 
@@ -283,7 +293,7 @@ export class UserController {
     ]),
   )
   @ApiBearerAuth()
-   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes('multipart/form-data')
   @Roles(Role.ADMIN)
   @Put('store-info/:id')
@@ -311,7 +321,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post('approve-store/:id')
   async adminApproveStore(@Param('id') id: string) {
@@ -346,7 +356,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.STORE)
   @Post('add-branch')
   async addBranch(@Body() req: AddBranchRequest) {
@@ -354,7 +364,7 @@ export class UserController {
     return new ActionResponse(branch);
   }
   @ApiBearerAuth()
-   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.STORE)
   @Get('get-branches')
   async getBranch(@Query('is_main_branch') is_main_branch?: boolean) {

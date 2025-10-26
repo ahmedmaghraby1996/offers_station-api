@@ -272,6 +272,7 @@ export class AuthenticationService {
 
     // Assign req fields into user
     Object.assign(user, req);
+    await this.walletRepo.save(new Wallet({ user_id: user.id, balance: 0 }));
 
    return await this.userService._repo.save(user);
   }

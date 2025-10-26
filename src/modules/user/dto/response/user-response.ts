@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform, Type } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
+import e from 'express';
 
 import { toUrl } from 'src/core/helpers/file.helper';
 import { City } from 'src/infrastructure/entities/city/city.entity';
@@ -78,6 +79,12 @@ export class AgentResponse extends UserResponse {
 
   @Expose()
   code: string;
+
+  @Expose()
+  nickname: string;
+
+  @Expose()
+  wallet_
 
 
 }
