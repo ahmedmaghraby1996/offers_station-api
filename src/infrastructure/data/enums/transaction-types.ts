@@ -3,5 +3,6 @@ export enum TransactionTypes {
     ORDER_CANCEL = 'ORDER_CANCEL',
     ORDER_COMMISSION = 'ORDER_COMMISSION',
     ADMIN_RESET = 'ADMIN_RESET',
+    AGENT_PAYMENT = 'AGENT_PAYMENT',
     OTHER = 'OTHER',
 }
