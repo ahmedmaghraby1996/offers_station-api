@@ -125,17 +125,14 @@ export class AuthenticationController {
       statusCode: HttpStatus.CREATED,
     });
   }
-  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('avatarFile'))
-  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.CLIENT)
   @Post('agent-register')
   async Agentregister(
     @Body() req: AgentRegisterRequest,
-    @UploadedFile(new UploadValidator().build())
-    avatarFile: Express.Multer.File,
   ): Promise<ActionResponse<RegisterResponse>> {
-    req.avatarFile = avatarFile;
-    req.role = Role.AGENT;
-    const user = await this.authService.register(req);
+    const user = await this.authService.registerAgent(req);
     const result = plainToInstance(RegisterResponse, user, {
       excludeExtraneousValues: true,
     });

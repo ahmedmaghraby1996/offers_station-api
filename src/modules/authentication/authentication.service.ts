@@ -1,10 +1,18 @@
 import { JwtService } from '@nestjs/jwt';
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { GoogleSigninRequest, LoginRequest } from './dto/requests/signin.dto';
 import { Inject } from '@nestjs/common/decorators';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { RegisterRequest } from './dto/requests/register.dto';
+import {
+  AgentRegisterRequest,
+  RegisterRequest,
+} from './dto/requests/register.dto';
 import { SendOtpRequest } from './dto/requests/send-otp.dto';
 import { VerifyOtpRequest } from './dto/requests/verify-otp.dto';
 import { RegisterUserTransaction } from './transactions/register-user.transaction';
@@ -47,7 +55,8 @@ export class AuthenticationService {
     @InjectRepository(Wallet) private readonly walletRepo: Repository<Wallet>,
     private readonly _firebase_admin_service: FirebaseAdminService,
     @Inject(REQUEST) private readonly request: Request,
-    @Inject(SendEmailService) private readonly sendEmailService: SendEmailService,
+    @Inject(SendEmailService)
+    private readonly sendEmailService: SendEmailService,
 
     @Inject(ConfigService) private readonly _config: ConfigService,
   ) {}
@@ -88,7 +97,7 @@ export class AuthenticationService {
         const userInfo = response.data;
 
         const user = await this.userService._repo.findOne({
-          where: [{ id: userInfo.id },{ email: userInfo.email }],
+          where: [{ id: userInfo.id }, { email: userInfo.email }],
         });
 
         if (!user) {
@@ -99,9 +108,9 @@ export class AuthenticationService {
             email: userInfo.email,
             avatar: userInfo.picture,
           });
-          return  {
-            ...await this.userService._repo.save(newUser),
-            role:Role.CLIENT,
+          return {
+            ...(await this.userService._repo.save(newUser)),
+            role: Role.CLIENT,
             access_token: this.jwtService.sign(
               { username: user.email, sub: user.id },
               jwtSignOptions(this._config),
@@ -109,7 +118,8 @@ export class AuthenticationService {
           };
         } else
           return {
-            ...user,role:Role.CLIENT,
+            ...user,
+            role: Role.CLIENT,
             access_token: this.jwtService.sign(
               { username: user.email, sub: user.id },
               jwtSignOptions(this._config),
@@ -177,12 +187,12 @@ export class AuthenticationService {
           username: email,
           roles: [Role.CLIENT],
           email,
-          name:name??""
+          name: name ?? '',
         });
-      user=  await  this.userService._repo.save(user);
+        user = await this.userService._repo.save(user);
       }
 
-      return { ...user, access_token,role:Role.CLIENT };
+      return { ...user, access_token, role: Role.CLIENT };
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
@@ -194,7 +204,6 @@ export class AuthenticationService {
     return user;
   }
 
-
   async sendOtp(req: SendOtpRequest) {
     return await this.sendOtpTransaction.run(req);
   }
@@ -205,7 +214,9 @@ export class AuthenticationService {
 
   async resetPassword(resetToken: string, req: ResetPasswordRequest) {
     const { newPassword } = req;
-    const payload = this.jwtService.verify(resetToken, { secret: this._config.get<string>('app.key') });
+    const payload = this.jwtService.verify(resetToken, {
+      secret: this._config.get<string>('app.key'),
+    });
     const user = await this.userService.findOne([
       { username: payload.username },
     ] as any);
@@ -214,36 +225,56 @@ export class AuthenticationService {
       throw new BadRequestException('User not found');
     }
 
-    user.password = await bcrypt.hash(newPassword + this._config.get('app.key'), 10);
+    user.password = await bcrypt.hash(
+      newPassword + this._config.get('app.key'),
+      10,
+    );
     await user.save();
 
     const newPayload = { username: user.username, sub: user.id };
     return {
       ...user,
-      access_token: this.jwtService.sign(newPayload, jwtSignOptions(this._config)),
+      access_token: this.jwtService.sign(
+        newPayload,
+        jwtSignOptions(this._config),
+      ),
     };
   }
 
-
   async requestResetPassword(req: RequestResetPassword) {
-    const user = await this.userService.findOne([
-      { email: req.email },
-    ] as any);
+    const user = await this.userService.findOne([{ email: req.email }] as any);
 
     if (!user) {
       throw new BadRequestException('Email not found');
     }
 
-    const token = this.jwtService.sign({ username: user.username }, { secret: this._config.get<string>('app.key'), expiresIn: '1h' })
-    const resetPasswordUrl = 'https://admin.nadnee.click/auth/reset-password/' + token;
+    const token = this.jwtService.sign(
+      { username: user.username },
+      { secret: this._config.get<string>('app.key'), expiresIn: '1h' },
+    );
+    const resetPasswordUrl =
+      'https://admin.nadnee.click/auth/reset-password/' + token;
 
-    await this.sendEmailService.sendResetPasswordEmail(user.email, resetPasswordUrl);
+    await this.sendEmailService.sendResetPasswordEmail(
+      user.email,
+      resetPasswordUrl,
+    );
 
     return true;
   }
 
+  async registerAgent(req: AgentRegisterRequest) {
+    const user = this.request.user;
 
+    Object.assign(req, {
+      role: Role.AGENT,
+    });
 
+    // Assign req fields into user
+    Object.assign(user, req);
+
+   return await this.userService._repo.save(user);
+  }
 
   // async removeSecurityGrade(req: AddSecurityGradeRequest) {
   //   const user = await this.userService.findOne(req.user_id);

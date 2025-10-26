@@ -43,7 +43,7 @@ export class RegisterRequest {
   @IsString()
   agent_id: string;
 }
-export class AgentRegisterRequest extends RegisterRequest {
+export class AgentRegisterRequest  {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -85,4 +85,12 @@ export class AgentRegisterRequest extends RegisterRequest {
   @IsNotEmpty()
   @IsString()
   id_number: string;
+
+
+    @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  nickname: string;
+
+
 }

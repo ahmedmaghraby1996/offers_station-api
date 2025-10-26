@@ -42,7 +42,7 @@ export class RegisterUserTransaction extends BaseTransaction<
 
   // the important thing here is to use the manager that we've created in the base class
   protected async execute(
-    req: Partial<AgentRegisterRequest>,
+    req: Partial<RegisterRequest>,
 
     context: EntityManager,
   ): Promise<User> {
@@ -95,17 +95,17 @@ export class RegisterUserTransaction extends BaseTransaction<
         await context.save(store);
       }
 
-      if (req.role == Role.AGENT) {
-        savedUser.resume = req.resume;
-        savedUser.resume = req.cv;
-        savedUser.certificate = req.certificate;
-        savedUser.bank_account_number = req.bank_account_number;
-        savedUser.bank_name = req.bank_name;
-        savedUser.bank_branch = req.bank_branch;
-        savedUser.id_number = req.id_number;
-        savedUser.city_id = req.city_id;
-        savedUser.is_active = false;
-      }
+      // if (req.role == Role.AGENT) {
+      //   savedUser.resume = req.resume;
+      //   savedUser.resume = req.cv;
+      //   savedUser.certificate = req.certificate;
+      //   savedUser.bank_account_number = req.bank_account_number;
+      //   savedUser.bank_name = req.bank_name;
+      //   savedUser.bank_branch = req.bank_branch;
+      //   savedUser.id_number = req.id_number;
+      //   savedUser.city_id = req.city_id;
+      //   savedUser.is_active = false;
+      // }
 
       await context.save(savedUser);
 
