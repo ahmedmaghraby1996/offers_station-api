@@ -21,12 +21,12 @@ export class TransactionService extends BaseUserService<Transaction> {
   }
 
   async makeTransaction(req: MakeTransactionRequest) {
-    const user_wallet = await this.walletRepository.findOneBy({
+    let user_wallet = await this.walletRepository.findOneBy({
       user_id: req.user_id,
     });
 
     if (!user_wallet) {
-      await this.walletRepository.save( new Wallet({ user_id: req.user_id, balance: 0 }));  
+      user_wallet=await this.walletRepository.save( new Wallet({ user_id: req.user_id, balance: 0 }));  
     }
     req.amount= Number(req.amount)
 
