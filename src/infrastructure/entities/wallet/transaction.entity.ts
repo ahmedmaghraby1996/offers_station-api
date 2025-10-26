@@ -15,15 +15,8 @@ export class Transaction extends AuditableEntity {
 
   @Column({ default: TransactionTypes.OTHER })
   type: TransactionTypes;
-  @ManyToOne(() => User, (user) => user.transactions)
-  @JoinColumn({ name: 'receiver_id' })
-  receiver: User;
 
-  @Column({nullable:true})
-  receiver_id: string;
 
-  @Column({ nullable: true })
-  order_id: string;
   @ManyToOne(() => User, (user) => user.transactions)
   @JoinColumn({ name: 'user_id' })
   user: User;
