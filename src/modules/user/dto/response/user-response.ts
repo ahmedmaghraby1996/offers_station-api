@@ -88,6 +88,10 @@ export class AgentResponse extends UserResponse {
     return value.obj?.wallet ? value.obj?.wallet?.balance : 0;})
   wallet_balance: number;
 
+  @Expose()
+  @Type(() => UserResponse)
+  merchants: UserResponse[];
+
 
 }
 

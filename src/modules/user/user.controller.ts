@@ -151,7 +151,7 @@ export class UserController {
   async getAgentById(@Param('id') id: string) {
     const user = await this.userService._repo.findOne({
       where: { id: id },
-      relations: { city: true, wallet: true },
+      relations: { city: true, wallet: true, merchants: true },
     });
 
     return new ActionResponse(
