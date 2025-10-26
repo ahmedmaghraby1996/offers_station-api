@@ -136,6 +136,7 @@ export class UserController {
     @Query() query: PaginatedRequest,
     @Query('is_active') is_active: boolean,
   ) {
+    applyQueryIncludes(query, 'wallet');
     applyQueryIncludes(query, 'city');
     applyQueryFilters(query, `roles=${Role.AGENT}`);
     if (is_active == true) {

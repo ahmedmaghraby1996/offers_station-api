@@ -84,7 +84,9 @@ export class AgentResponse extends UserResponse {
   nickname: string;
 
   @Expose()
-  wallet_
+  @Transform(( value ) => {
+    return value.obj?.wallet ? value.obj?.wallet?.balance : 0;})
+  wallet_balance: number;
 
 
 }
