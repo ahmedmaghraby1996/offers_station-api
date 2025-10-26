@@ -6,12 +6,12 @@ export class MakeTransactionRequest {
   @ApiProperty()
   @IsNumber()
   amount: number;
-  @ApiProperty({
+@ApiProperty({
   enum: TransactionTypes,
   enumName: 'TransactionTypes',
   default: TransactionTypes.AGENT_PAYMENT,
 })
-type: TransactionTypes;
+type: TransactionTypes = TransactionTypes.AGENT_PAYMENT;
     @ApiProperty()
     @IsString()
   user_id: string;
