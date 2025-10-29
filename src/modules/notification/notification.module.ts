@@ -9,6 +9,7 @@ import { UserService } from '../user/user.service';
 import { NotifyModule } from 'src/integration/notify/notify.module';
 import { NotificationEntity } from 'src/infrastructure/entities/notification/notification.entity';
 import { FirebaseAdminService } from './firebase-admin-service';
+import { TransactionService } from '../transaction/transaction.service';
 
 
 @Module({
@@ -27,6 +28,7 @@ import { FirebaseAdminService } from './firebase-admin-service';
     FcmIntegrationService,
     I18nResponse,
     UserService,
+    TransactionService
 
   ],
   exports: [
