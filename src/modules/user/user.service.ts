@@ -28,7 +28,7 @@ import {
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 import { Package } from 'src/infrastructure/entities/package/package.entity';
-import axios, { get } from 'axios';
+import axios from 'axios';
 import { createHash } from 'crypto';
 import { PaymentResponseInterface } from './dto/response/payment.response';
 import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
