@@ -61,7 +61,7 @@ export class TransactionController {
   }
 
   @Roles(Role.ADMIN)
-  @Post()
+  @Post('set-agent-percentage')
   async set(@Body() request: setAgentPercentageRequest) {
     return new ActionResponse(
       await this.transactionService.setAgentPercentage(request.percentage),
