@@ -143,7 +143,7 @@ export class UserController {
       applyQueryFilters(query, `code== `);
     } else if (is_active == false) {
      
-      applyQueryFilters(query, `is_active=0,code=! `);
+      applyQueryFilters(query, `code=! `);
     }
     const count= await this.userService.count(query)
     const users = await this.userService.findAll(query);
