@@ -27,6 +27,7 @@ import { Chat } from '../entities/chat/chat.entity';
 import { Message } from '../entities/chat/messages.entity';
 import { Package } from '../entities/package/package.entity';
 import { Subscription } from '../entities/subscription/subscription.entity';
+import { SystemVariable } from '../entities/system-variables/system-variable.entity';
 
 
 
@@ -56,7 +57,8 @@ FavoriteOffer,
     Chat,
     Message,
     Package,
-    Subscription
+    Subscription,
+    SystemVariable
 
 ];
 

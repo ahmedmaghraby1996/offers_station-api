@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString, Max, Min } from "class-validator";
 import { TransactionTypes } from "src/infrastructure/data/enums/transaction-types";
 
 export class MakeTransactionRequest {
@@ -20,4 +20,12 @@ type: TransactionTypes = TransactionTypes.AGENT_PAYMENT;
   constructor(partial?: Partial<MakeTransactionRequest>) {
     Object.assign(this, partial);
   }
+}
+
+export class setAgentPercentageRequest {
+  @ApiProperty()
+  @IsNumber()
+  @Max(100)
+  @Min(0)
+  percentage: number;
 }

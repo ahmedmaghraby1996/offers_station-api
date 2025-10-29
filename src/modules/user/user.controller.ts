@@ -142,9 +142,16 @@ export class UserController {
     if (is_active == true) {
       applyQueryFilters(query, `code== `);
     } else if (is_active == false) {
-      console.log('here');
+     
       applyQueryFilters(query, `is_active=0,code=! `);
     }
+    const count= await this.userService.count(query)
+    const users = await this.userService.findAll(query);
+    const usersResponse = plainToInstance(AgentResponse, users, {
+      excludeExtraneousValues: true,
+    })
+    return new PaginatedResponse(usersResponse, { meta: { total: count, ...query } });
+    
   }
 
   @Get('/agent/:id')

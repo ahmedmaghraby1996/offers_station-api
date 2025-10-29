@@ -13,7 +13,7 @@ import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
 import { RolesGuard } from '../authentication/guards/roles.guard';
 import { plainToInstance } from 'class-transformer';
 import { TransactionResponse } from './dto/response/transaction-response';
-import { MakeTransactionRequest } from './dto/requests/make-transaction-request';
+import { MakeTransactionRequest, setAgentPercentageRequest } from './dto/requests/make-transaction-request';
 import { Role } from 'src/infrastructure/data/enums/role.enum';
 import { Roles } from '../authentication/guards/roles.decorator';
 
@@ -31,12 +31,13 @@ export class TransactionController {
 
   @Get()
   async getTransactions(@Query() query: PaginatedRequest) {
- 
     applyQuerySort(query, 'created_at=desc');
-    if(!this.transactionService.currentUser.roles .includes(Role.ADMIN)) 
-    applyQueryFilters(query,`user_id=${this.transactionService.currentUser.id}`);
+    if (!this.transactionService.currentUser.roles.includes(Role.ADMIN))
+      applyQueryFilters(
+        query,
+        `user_id=${this.transactionService.currentUser.id}`,
+      );
     const transaction = await this.transactionService.findAll(query);
-
 
     if (query.page && query.limit) {
       const total = await this.transactionService.count(query);
@@ -59,6 +60,17 @@ export class TransactionController {
     );
   }
 
+  @Roles(Role.ADMIN)
+  @Post()
+  async set(@Body() request: setAgentPercentageRequest) {
+    return new ActionResponse(
+      await this.transactionService.setAgentPercentage(request.percentage),
+    );
+  }
 
-
+  @Roles(Role.ADMIN)
+  @Get('earnings')
+  async getEarnings() {
+    return new ActionResponse(await this.transactionService.getEarnings());
+  }
 }

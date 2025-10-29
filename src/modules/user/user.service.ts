@@ -28,12 +28,17 @@ import {
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { AddBranchRequest } from './dto/request/add-branch.request';
 import { Package } from 'src/infrastructure/entities/package/package.entity';
-import axios from 'axios';
+import axios, { get } from 'axios';
 import { createHash } from 'crypto';
 import { PaymentResponseInterface } from './dto/response/payment.response';
 import { Subscription } from 'src/infrastructure/entities/subscription/subscription.entity';
 import { NotificationService } from '../notification/services/notification.service';
 import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
+import { SystemVariable } from 'src/infrastructure/entities/system-variables/system-variable.entity';
+import { SystemVariableEnum } from 'src/infrastructure/data/enums/sysytem-variable.enum';
+import { TransactionService } from '../transaction/transaction.service';
+import { agent } from 'supertest';
+import { TransactionTypes } from 'src/infrastructure/data/enums/transaction-types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
@@ -58,6 +63,9 @@ export class UserService extends BaseService<User> {
     @InjectRepository(Subscription)
     private readonly subscriptionRepo: Repository<Subscription>,
     private readonly dataSource: DataSource,
+    @InjectRepository(SystemVariable)
+    private readonly systemVariableRepo: Repository<SystemVariable>,
+    private readonly transactionService: TransactionService,
   ) {
     super(userRepo);
   }
@@ -108,7 +116,7 @@ export class UserService extends BaseService<User> {
             where: { user_id: this.request.user.id, is_main_branch: true },
           },
     );
-    console.log(req)
+    console.log(req);
     if (!store) throw new NotFoundException('store not found');
     if (req.name) store.name = req.name;
     if (req.address) store.address = req.address;
@@ -206,7 +214,7 @@ export class UserService extends BaseService<User> {
   }
   async deleteBranch(id: string) {
     const branch = await this.storeRepo.findOne({
-      where: { id: id, },
+      where: { id: id },
     });
     if (!branch) throw new NotFoundException('branch not found');
     return await this.storeRepo.softRemove(branch);
@@ -216,7 +224,7 @@ export class UserService extends BaseService<User> {
     return this.storeRepo.update({ id: id }, { status: StoreStatus.APPROVED });
   }
 
-  async activateAgent(id: string, code:string) {
+  async activateAgent(id: string, code: string) {
     const user = await this._repo.findOne({ where: { id: id } });
     if (!user) throw new NotFoundException('agent not found');
     user.is_active = true;
@@ -288,6 +296,46 @@ export class UserService extends BaseService<User> {
         Date.now() + getPackage.duration * 24 * 60 * 60 * 1000,
       ),
     });
+    const system_variables = await this.systemVariableRepo.find({});
+    await this.systemVariableRepo.update(
+      {
+        key: SystemVariableEnum.TOTAL_EARNINGS,
+      },
+      {
+        value:
+          getPackage.price +
+          system_variables.find(
+            (item) => item.key == SystemVariableEnum.TOTAL_EARNINGS,
+          ).value,
+      },
+    );
+
+    if (user.agent_id) {
+      const agent_amount =
+        getPackage.price *
+        (system_variables.find(
+          (item) => item.key == SystemVariableEnum.AGENT_PERCENTAGE,
+        ).value /
+          100);
+      await this.transactionService.makeTransaction({
+        user_id: user.agent_id,
+        amount: agent_amount,
+        type: TransactionTypes.COMMISSION,
+      });
+      await this.systemVariableRepo.update(
+        {
+          key: SystemVariableEnum.TOTAL_EARNINGS,
+        },
+        {
+          value:
+            agent_amount +
+            system_variables.find(
+              (item) => item.key == SystemVariableEnum.AGENT_DUES,
+            ).value,
+        },
+      );
+    }
+
     return true;
   }
 
