@@ -283,7 +283,7 @@ export class UserService extends BaseService<User> {
     const getPackage = await this.packageRepo.findOne({
       where: { id: data.UserField1 },
     });
-
+console.log(getPackage);
     if (!getPackage || !user) return;
     //delete user.subscription
     await this.subscriptionRepo.delete({ user_id: user.id });
