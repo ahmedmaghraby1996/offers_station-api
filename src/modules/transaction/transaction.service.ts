@@ -42,6 +42,13 @@ export class TransactionService extends BaseUserService<Transaction> {
     const transaction = plainToInstance(Transaction, {
       ...req,
     });
+if (req.date || req.iban || req.bank) {
+  transaction.meta_data = JSON.stringify({
+    date: req.date,
+    iban: req.iban,
+    bank: req.bank,
+  });
+}
 
     await this.transactionRepository.save(transaction);
 

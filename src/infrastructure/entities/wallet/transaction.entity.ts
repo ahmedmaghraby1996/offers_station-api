@@ -27,6 +27,9 @@ export class Transaction extends AuditableEntity {
   @Column()
   user_id: string;
 
+  @Column({nullable:true})
+  meta_data: string
+
   constructor(partial?: Partial<Transaction>) {
     super();
     Object.assign(this, partial);

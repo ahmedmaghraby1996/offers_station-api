@@ -32,6 +32,7 @@ export class TransactionController {
   @Get()
   async getTransactions(@Query() query: PaginatedRequest) {
     applyQuerySort(query, 'created_at=desc');
+    applyQueryIncludes(query, 'user');
     if (!this.transactionService.currentUser.roles.includes(Role.ADMIN))
       applyQueryFilters(
         query,

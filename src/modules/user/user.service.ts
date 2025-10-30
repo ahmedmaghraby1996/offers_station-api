@@ -335,6 +335,11 @@ export class UserService extends BaseService<User> {
         },
       );
     }
+    await this.transactionService._repo.save({
+      user_id: user.id,
+      amount: getPackage.price,
+      type: TransactionTypes.STORE_PAYMENT,
+    });
 
     return true;
   }
