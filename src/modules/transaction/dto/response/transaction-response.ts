@@ -19,4 +19,7 @@ export class TransactionResponse {
     @Expose()
     @Type(() => UserResponse)
     user: User
+
+    @Expose()
+    meta_data: string
 }
