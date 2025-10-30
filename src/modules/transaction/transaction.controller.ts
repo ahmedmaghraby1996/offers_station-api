@@ -44,7 +44,7 @@ export class TransactionController {
       const total = await this.transactionService.count(query);
       return new PaginatedResponse(transaction, { meta: { total, ...query } });
     } else {
-      return new ActionResponse(transaction);
+      return new ActionResponse(plainToInstance(TransactionResponse, transaction, { excludeExtraneousValues: true }));
     }
   }
 
