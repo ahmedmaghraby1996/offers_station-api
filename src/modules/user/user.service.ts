@@ -283,7 +283,7 @@ export class UserService extends BaseService<User> {
     const getPackage = await this.packageRepo.findOne({
       where: { id: data.UserField1 },
     });
-console.log(getPackage);
+    console.log(getPackage);
     if (!getPackage || !user) return;
     //delete user.subscription
     await this.subscriptionRepo.delete({ user_id: user.id });
@@ -324,13 +324,26 @@ console.log(getPackage);
       });
       await this.systemVariableRepo.update(
         {
-          key: SystemVariableEnum.TOTAL_EARNINGS,
+          key: SystemVariableEnum.AGENT_DUES,
         },
         {
           value:
             agent_amount +
             system_variables.find(
               (item) => item.key == SystemVariableEnum.AGENT_DUES,
+            ).value,
+        },
+      );
+
+      await this.systemVariableRepo.update(
+        {
+          key: SystemVariableEnum.REMANDING_AGENT_DUES,
+        },
+        {
+          value:
+            agent_amount +
+            system_variables.find(
+              (item) => item.key == SystemVariableEnum.REMANDING_AGENT_DUES,
             ).value,
         },
       );

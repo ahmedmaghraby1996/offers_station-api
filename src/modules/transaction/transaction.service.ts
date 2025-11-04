@@ -10,6 +10,7 @@ import { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
 import { SystemVariable } from 'src/infrastructure/entities/system-variables/system-variable.entity';
 import { SystemVariableEnum } from 'src/infrastructure/data/enums/sysytem-variable.enum';
+import { TransactionTypes } from 'src/infrastructure/data/enums/transaction-types';
 
 @Injectable()
 export class TransactionService extends BaseUserService<Transaction> {
@@ -53,6 +54,20 @@ if (req.date || req.iban || req.bank) {
     await this.transactionRepository.save(transaction);
 
     await this.walletRepository.save(user_wallet);
+    if(req.type==TransactionTypes.AGENT_PAYMENT){
+      const system_variables = await this.systemVariableRepo.find({});
+      await this.systemVariableRepo.update(
+        {
+          key: SystemVariableEnum.REMANDING_AGENT_DUES,
+        },
+        {
+          value:
+            system_variables.find(
+              (item) => item.key == SystemVariableEnum.REMANDING_AGENT_DUES,
+            ).value + req.amount,
+        },
+      );
+    }
     return transaction;
   }
   async checkBalance(user_id: string, amount: number) {
