@@ -111,6 +111,14 @@ if (req.date || req.iban || req.bank) {
       ).value,
       agent_dues: system_variables.find(
         (item) => item.key == SystemVariableEnum.AGENT_DUES,
-      ).value,};
+      ).value,
+      remanding_agent_dues: system_variables.find(
+        (item) => item.key == SystemVariableEnum.REMANDING_AGENT_DUES,
+      ).value,
+    
+      
+    };
+
+      
   }
 }
