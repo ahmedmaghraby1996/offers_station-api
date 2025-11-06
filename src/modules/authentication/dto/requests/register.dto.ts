@@ -38,8 +38,8 @@ export class RegisterRequest {
   @IsEnum(Role)
   role: Role;
 
-      @ApiProperty()
-  @IsNotEmpty()
+      @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
   agent_id: string;
 }
