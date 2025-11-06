@@ -276,6 +276,12 @@ export class UserService extends BaseService<User> {
     });
   }
 
+    async rejectAgent(id: string) {
+    const user = await this._repo.findOne({ where: { id: id } });
+    if (!user) throw new NotFoundException('agent not found');
+    user.roles = [Role.CLIENT];
+    return await this._repo.save(user);
+  }
   async confirmPayment(data: PaymentResponseInterface) {
     const user = await this._repo.findOne({
       where: { id: data.UserField3 },

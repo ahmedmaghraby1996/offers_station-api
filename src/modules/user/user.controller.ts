@@ -178,6 +178,15 @@ export class UserController {
     return new ActionResponse(agent);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post('reject-agent/:id')
+  async rejectAgent(@Param('id') id: string) {
+    const agent = await this.userService.rejectAgent(id);
+    return new ActionResponse(agent);
+  }
+
   @Post('confirm/payment')
   async handleWebhook(
     @Body() body: any,
