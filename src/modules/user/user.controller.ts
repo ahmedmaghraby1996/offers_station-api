@@ -207,7 +207,7 @@ export class UserController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STORE,Role.CLIENT)
   @Get('profile')
   async getProile() {
     return new ActionResponse(
