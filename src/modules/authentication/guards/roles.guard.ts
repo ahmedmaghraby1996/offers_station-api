@@ -23,6 +23,13 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const { user } = request;
+    
+    // If user is null, allow access (handles OptionalJwtAuthGuard case)
+    // The endpoint can work without authentication, but if authenticated, roles are checked
+    if (!user) {
+      return true;
+    }
+    
     if (user.is_active == false)
       throw new UnauthorizedException('message.user_inactive');
     console.log('user roles:', user);
