@@ -47,6 +47,8 @@ import { ActionResponse } from 'src/core/base/responses/action.response';
 import { Store } from 'src/infrastructure/entities/store/store.entity';
 import { StoreStatus } from 'src/infrastructure/data/enums/store-status.enum';
 import { CategoryService } from '../category/category.service';
+import { RolesGuard } from '../authentication/guards/roles.guard';
+import { OptionalJwtAuthGuard } from '../authentication/guards/OptionalJwtAuth.guard';
 @ApiTags('Offers')
 @ApiHeader({
   name: 'Accept-Language',
@@ -241,7 +243,7 @@ export class OffersController {
   //store
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards( OptionalJwtAuthGuard, RolesGuard)
   @Roles(Role.CLIENT)
   @Get('all-offers')
   async getClientOffers(@Query() query: PaginatedRequest) {
@@ -271,7 +273,7 @@ export class OffersController {
       offer.is_favorite =
         offer.favorites?.some(
           (favorite) =>
-            String(favorite.user_id) === String(this.request.user.id),
+            String(favorite?.user_id) === String(this.request?.user?.id),
         ) ?? false;
 
       return offer;
