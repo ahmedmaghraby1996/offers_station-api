@@ -289,7 +289,7 @@ export class OffersController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard,RolesGuard)
   @Roles(Role.CLIENT)
   @Get('nearby-offers')
   async getNearbyOffers(
