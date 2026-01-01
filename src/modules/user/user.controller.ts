@@ -142,16 +142,16 @@ export class UserController {
     if (is_active == true) {
       applyQueryFilters(query, `code== `);
     } else if (is_active == false) {
-     
       applyQueryFilters(query, `code=! `);
     }
-    const count= await this.userService.count(query)
+    const count = await this.userService.count(query);
     const users = await this.userService.findAll(query);
     const usersResponse = plainToInstance(AgentResponse, users, {
       excludeExtraneousValues: true,
-    })
-    return new PaginatedResponse(usersResponse, { meta: { total: count, ...query } });
-    
+    });
+    return new PaginatedResponse(usersResponse, {
+      meta: { total: count, ...query },
+    });
   }
 
   @Get('/agent/:id')
@@ -207,7 +207,7 @@ export class UserController {
   }
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.STORE,Role.CLIENT)
+  @Roles(Role.ADMIN, Role.STORE, Role.CLIENT)
   @Get('profile')
   async getProile() {
     return new ActionResponse(
@@ -423,11 +423,11 @@ export class UserController {
       ),
     );
   }
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('test/payment')
-  async testPayment() {
-    const amount = '10.00'; // Example amount
-    return await this.userService.makePayment(amount);
-  }
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Post('test/payment')
+  // async testPayment() {
+  //   const amount = '10.00'; // Example amount
+  //   return await this.userService.makePayment(amount);
+  // }
 }

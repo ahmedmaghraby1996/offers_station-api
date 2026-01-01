@@ -10,20 +10,20 @@ import { CoreModule } from './core/core.module';
 import { FileModule } from './modules/file/file.module';
 
 import { NotificationModule } from './modules/notification/notification.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
-    AssemblyModule,         // ?Assembly
-    CoreModule,             // !Global
-    InfrastructureModule,   // !Global
-    IntegrationModule,      // !Global
-    UserModule,             // !Global
-    AuthenticationModule,   // !Global
-    FileModule,              // !Global
-  
-  
+    AssemblyModule, // ?Assembly
+    CoreModule, // !Global
+    InfrastructureModule, // !Global
+    IntegrationModule, // !Global
+    UserModule, // !Global
+    AuthenticationModule, // !Global
+    FileModule, // !Global
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

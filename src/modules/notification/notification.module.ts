@@ -11,30 +11,10 @@ import { NotificationEntity } from 'src/infrastructure/entities/notification/not
 import { FirebaseAdminService } from './firebase-admin-service';
 import { TransactionService } from '../transaction/transaction.service';
 
-
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      NotificationEntity,
-      User
-    ]),
-    NotifyModule,
-  ],
-  controllers: [
-    NotificationController
-  ],
-  providers: [
-    NotificationService,
-    FcmIntegrationService,
-    I18nResponse,
-    UserService,
-    TransactionService
-
-  ],
-  exports: [
-    NotificationModule,
-    NotificationService,
- 
-  ],
+  imports: [TypeOrmModule.forFeature([NotificationEntity, User]), NotifyModule],
+  controllers: [NotificationController],
+  providers: [NotificationService, FcmIntegrationService, I18nResponse],
+  exports: [NotificationModule, NotificationService],
 })
-export class NotificationModule { }
+export class NotificationModule {}

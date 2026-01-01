@@ -39,18 +39,10 @@ import { SystemVariableEnum } from 'src/infrastructure/data/enums/sysytem-variab
 import { TransactionService } from '../transaction/transaction.service';
 import { agent } from 'supertest';
 import { TransactionTypes } from 'src/infrastructure/data/enums/transaction-types';
+import { PaymentService } from '../payment/payment.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
-  private readonly terminalId = process.env.NEOLEAP_TERMINAL_ID || 'PG426500';
-  private readonly tranportalId =
-    process.env.NEOLEAP_TRANPORTAL_ID || 'bR5T3Pni7UeVp08';
-  private readonly password = process.env.NEOLEAP_PASSWORD || 'Q6#S#j31i#4JqnO';
-  private readonly secretKey =
-    process.env.NEOLEAP_SECRET_KEY || '53656308399353656308399353656308';
-  private readonly endpoint =
-    process.env.NEOLEAP_API_URL ||
-    'https://securepayments.neoleap.com.sa/pg/payment/tranportal.htm';
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
 
@@ -67,6 +59,7 @@ export class UserService extends BaseService<User> {
     @InjectRepository(SystemVariable)
     private readonly systemVariableRepo: Repository<SystemVariable>,
     private readonly transactionService: TransactionService,
+    private readonly paymentService: PaymentService,
   ) {
     super(userRepo);
   }
@@ -261,20 +254,50 @@ export class UserService extends BaseService<User> {
         where: { id: package_id, is_active: true },
       });
       if (!find_package) throw new NotFoundException('package not found');
-      const paymentResponse = await this.makePayment(
-        find_package.price.toString(),
-        'SAR',
-        this.request.user.id,
-        package_id,
+
+      const trackid = Math.random().toString(36).substring(2, 12);
+      // Use the new PaymentService
+      const paymentResponse = await this.paymentService.createPayment(
+        Number(find_package.price),
+        trackid,
+        this.request.ip, // or get from headers
       );
-      const payment_url =
-        (paymentResponse?.targetUrl ||
-          'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm') +
-        '?paymentid=' +
-        (paymentResponse?.payid ||
-          paymentResponse?.paymentid ||
-          paymentResponse?.paymentId ||
-          paymentResponse?.tranid);
+
+      // Adapt the response handling based on what PaymentService returns
+      // Assuming PaymentService returns the raw data as requested by the user
+      // The old logic parsed XML/String, the new one might return JSON or String.
+      // We will perform a similar check if it's a string, otherwise pass it through.
+
+      let payment_url = '';
+      let payid = '';
+
+      if (typeof paymentResponse === 'string') {
+        const payidMatch =
+          paymentResponse.match(/<payid>(.*?)<\/payid>/) ||
+          paymentResponse.match(/<tranid>(.*?)<\/tranid>/) ||
+          paymentResponse.match(/<paymentid>(.*?)<\/paymentid>/);
+        const targetUrlMatch = paymentResponse.match(
+          /<targetUrl>(.*?)<\/targetUrl>/,
+        );
+
+        payid = payidMatch ? payidMatch[1] : '';
+        const targetUrl = targetUrlMatch
+          ? targetUrlMatch[1]
+          : 'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';
+        payment_url = `${targetUrl}?paymentid=${payid}`;
+      } else if (paymentResponse && typeof paymentResponse === 'object') {
+        // If JSON response (e.g. { "targetUrl": "...", "payid": "..." })
+        payid =
+          paymentResponse.payid ||
+          paymentResponse.paymentid ||
+          paymentResponse.tranid ||
+          paymentResponse.accessCode;
+        const targetUrl =
+          paymentResponse.targetUrl ||
+          'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';
+        payment_url = `${targetUrl}?paymentid=${payid}`;
+      }
+
       return {
         payment_url,
         package: find_package,
@@ -368,82 +391,5 @@ export class UserService extends BaseService<User> {
     });
 
     return true;
-  }
-
-  /**
-   * Generate URWAY SHA-256 request hash
-   */
-  private generateHash(
-    trackid: string,
-    amount: string,
-    currency: string,
-  ): string {
-    const data = `${trackid}|${this.terminalId}|${this.password}|${this.secretKey}|${amount}|${currency}`;
-    console.log('hash_data', data);
-    return createHash('sha256').update(data).digest('hex');
-  }
-
-  /**
-   * Initiate a payment request
-   */
-  async makePayment(
-    amount: string,
-    currency = 'SAR',
-    user_id?: string,
-    package_id?: string,
-  ): Promise<any> {
-    const trackid = Math.random().toString(36).substring(2, 12);
-    const requestHash = this.generateHash(trackid, amount, currency);
-    console.log('requestHash', requestHash);
-    const payload = {
-      id: this.tranportalId,
-      trackid,
-      terminalId: this.terminalId,
-      action: '1', // Purchase
-      customerEmail: 'customer@mail.com',
-      merchantIp: '194.163.153.121', // Consider getting real IP from request
-      country: 'SA',
-      password: this.password,
-      currency,
-      amount,
-      requestHash,
-      udf1: package_id,
-      udf2: user_id,
-      usdf2: 'udf2',
-      udf3: user_id,
-      udf4: 'udf4',
-      udf5: 'udf5',
-    };
-
-    try {
-      const { data } = await axios.post(this.endpoint, payload, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-      console.log('Neoleap Response:', data);
-
-      if (typeof data === 'string') {
-        const payidMatch =
-          data.match(/<payid>(.*?)<\/payid>/) ||
-          data.match(/<tranid>(.*?)<\/tranid>/) ||
-          data.match(/<paymentid>(.*?)<\/paymentid>/);
-        const targetUrlMatch = data.match(/<targetUrl>(.*?)<\/targetUrl>/);
-
-        return {
-          payid: payidMatch ? payidMatch[1] : undefined,
-          targetUrl: targetUrlMatch ? targetUrlMatch[1] : undefined,
-          raw: data,
-        };
-      }
-
-      return data;
-    } catch (error) {
-      console.error(
-        'Payment Request Error:',
-        error.response?.data || error.message,
-      );
-      throw new Error(
-        `Payment request failed: ${error.response?.data || error.message}`,
-      );
-    }
   }
 }
