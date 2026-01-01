@@ -281,11 +281,20 @@ export class UserService extends BaseService<User> {
           paymentResponse.match(/<payid>(.*?)<\/payid>/) ||
           paymentResponse.match(/<tranid>(.*?)<\/tranid>/) ||
           paymentResponse.match(/<paymentid>(.*?)<\/paymentid>/);
-        const targetUrlMatch = paymentResponse.match(
+        let targetUrlMatch = paymentResponse.match(
           /<targetUrl>(.*?)<\/targetUrl>/,
         );
 
         payid = payidMatch ? payidMatch[1] : '';
+
+        if (!payid || paymentResponse.includes('InvalidAccess')) {
+          console.error('Neoleap Error Response:', paymentResponse);
+          throw new BadRequestException(
+            'Payment Gateway Error: Invalid Access. Please check your credentials (Terminal ID, Tranportal ID, Password, Key) and IP Whitelisting.',
+          );
+        }
+
+        targetUrlMatch = paymentResponse.match(/<targetUrl>(.*?)<\/targetUrl>/);
         const targetUrl = targetUrlMatch
           ? targetUrlMatch[1]
           : 'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';

@@ -18,9 +18,9 @@ export class PaymentService {
     'https://securepayments.neoleap.com.sa/pg/payment/tranportal.htm';
   private readonly responseUrl =
     process.env.NEOLEAP_RESPONSE_URL ||
-    'https://your-domain.com/payment/response'; // Needs update
+    'http://127.0.0.1:3000/user/confirm/payment'; // Updated for local testing
   private readonly errorUrl =
-    process.env.NEOLEAP_ERROR_URL || 'https://your-domain.com/payment/error'; // Needs update
+    process.env.NEOLEAP_ERROR_URL || 'http://127.0.0.1:3000/user/payment/error'; // Updated for local testing
 
   async createPayment(
     amount: number,
