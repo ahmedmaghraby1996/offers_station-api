@@ -26,6 +26,11 @@ export class PaymentService {
     amount: number,
     trackId: string,
     customerIp: string = '127.0.0.1',
+    udf1: string = '',
+    udf2: string = '',
+    udf3: string = '',
+    udf4: string = '',
+    udf5: string = '',
   ) {
     const trandata = {
       amt: amount.toFixed(2),
@@ -37,11 +42,21 @@ export class PaymentService {
       responseURL: this.responseUrl,
       errorURL: this.errorUrl,
       langid: 'ar',
+      terminalId: this.terminalId, // Added terminalId
+      udf1,
+      udf2,
+      udf3,
+      udf4,
+      udf5,
     };
 
     this.logger.log(
-      `Creating payment with TrackID: ${trackId}, Amount: ${amount}`,
+      `Creating payment with TrackID: ${trackId}, Amount: ${amount}, TerminalID: ${this.terminalId}`,
     );
+
+    // Log the trandata (excluding password for security)
+    const { password, ...logData } = trandata;
+    this.logger.debug(`Trandata payload: ${JSON.stringify(logData)}`);
 
     const encryptedTrandata = encrypt(
       JSON.stringify(trandata),

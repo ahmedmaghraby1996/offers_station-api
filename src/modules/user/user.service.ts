@@ -261,6 +261,9 @@ export class UserService extends BaseService<User> {
         Number(find_package.price),
         trackid,
         this.request.ip, // or get from headers
+        find_package.id, // udf1
+        '', // udf2
+        this.request.user.id, // udf3
       );
 
       // Adapt the response handling based on what PaymentService returns
