@@ -419,9 +419,28 @@ export class UserService extends BaseService<User> {
       const { data } = await axios.post(this.endpoint, payload, {
         headers: { 'Content-Type': 'application/json' },
       });
+      console.log('Neoleap Response:', data);
+
+      if (typeof data === 'string') {
+        const payidMatch =
+          data.match(/<payid>(.*?)<\/payid>/) ||
+          data.match(/<tranid>(.*?)<\/tranid>/) ||
+          data.match(/<paymentid>(.*?)<\/paymentid>/);
+        const targetUrlMatch = data.match(/<targetUrl>(.*?)<\/targetUrl>/);
+
+        return {
+          payid: payidMatch ? payidMatch[1] : undefined,
+          targetUrl: targetUrlMatch ? targetUrlMatch[1] : undefined,
+          raw: data,
+        };
+      }
 
       return data;
     } catch (error) {
+      console.error(
+        'Payment Request Error:',
+        error.response?.data || error.message,
+      );
       throw new Error(
         `Payment request failed: ${error.response?.data || error.message}`,
       );
