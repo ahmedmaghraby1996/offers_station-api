@@ -268,6 +268,8 @@ export class UserService extends BaseService<User> {
       // The old logic parsed XML/String, the new one might return JSON or String.
       // We will perform a similar check if it's a string, otherwise pass it through.
 
+      console.log('paymentResponse', paymentResponse);
+
       let payment_url = '';
       let payid = '';
 
@@ -286,14 +288,31 @@ export class UserService extends BaseService<User> {
           : 'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';
         payment_url = `${targetUrl}?paymentid=${payid}`;
       } else if (paymentResponse && typeof paymentResponse === 'object') {
+        // Handle array response if applicable
+        const data = Array.isArray(paymentResponse)
+          ? paymentResponse[0]
+          : paymentResponse;
+
+        console.log('Payment Response Data:', data);
+
         // If JSON response (e.g. { "targetUrl": "...", "payid": "..." })
         payid =
-          paymentResponse.payid ||
-          paymentResponse.paymentid ||
-          paymentResponse.tranid ||
-          paymentResponse.accessCode;
+          data.payid ||
+          data.paymentid ||
+          data.tranid ||
+          data.transId ||
+          data.TransactionId ||
+          data.accessCode ||
+          data.paymentId; // Add camelCase check just in case
+
+        if (!payid) {
+          throw new BadRequestException(
+            `Payment ID not found in response: ${JSON.stringify(data)}`,
+          );
+        }
+
         const targetUrl =
-          paymentResponse.targetUrl ||
+          data.targetUrl ||
           'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';
         payment_url = `${targetUrl}?paymentid=${payid}`;
       }
