@@ -24,4 +24,9 @@ export class PaymentResponseInterface {
   event: string;
   email: string;
   TrackId: string;
+  udf1?: string;
+  udf2?: string;
+  udf3?: string;
+  udf4?: string;
+  udf5?: string;
 }

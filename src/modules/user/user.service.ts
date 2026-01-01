@@ -42,14 +42,15 @@ import { TransactionTypes } from 'src/infrastructure/data/enums/transaction-type
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService extends BaseService<User> {
-  private readonly terminalId = process.env.URWAY_TERMINAL_ID || 'pinnacle';
-  private readonly password = process.env.URWAY_PASSWORD || 'URWAY@123';
+  private readonly terminalId = process.env.NEOLEAP_TERMINAL_ID || 'PG426500';
+  private readonly tranportalId =
+    process.env.NEOLEAP_TRANPORTAL_ID || 'bR5T3Pni7UeVp08';
+  private readonly password = process.env.NEOLEAP_PASSWORD || 'Q6#S#j31i#4JqnO';
   private readonly secretKey =
-    process.env.URWAY_SECRET_KEY ||
-    '50a735478393a39b4e1550fcea9d75f9fa9a9cf1ac41afafde21a60a78c3b547';
+    process.env.NEOLEAP_SECRET_KEY || '53656308399353656308399353656308';
   private readonly endpoint =
-    process.env.URWAY_API_URL ||
-    'https://payments-dev.urway-tech.com/URWAYPGService/transaction/jsonProcess/JSONrequest';
+    process.env.NEOLEAP_API_URL ||
+    'https://securepayments.neoleap.com.sa/pg/payment/tranportal.htm';
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
 
@@ -267,7 +268,13 @@ export class UserService extends BaseService<User> {
         package_id,
       );
       const payment_url =
-        paymentResponse?.targetUrl + '?paymentid=' + paymentResponse?.payid;
+        (paymentResponse?.targetUrl ||
+          'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm') +
+        '?paymentid=' +
+        (paymentResponse?.payid ||
+          paymentResponse?.paymentid ||
+          paymentResponse?.paymentId ||
+          paymentResponse?.tranid);
       return {
         payment_url,
         package: find_package,
@@ -276,7 +283,7 @@ export class UserService extends BaseService<User> {
     });
   }
 
-    async rejectAgent(id: string) {
+  async rejectAgent(id: string) {
     const user = await this._repo.findOne({ where: { id: id } });
     if (!user) throw new NotFoundException('agent not found');
     user.roles = [Role.CLIENT];
@@ -284,10 +291,10 @@ export class UserService extends BaseService<User> {
   }
   async confirmPayment(data: PaymentResponseInterface) {
     const user = await this._repo.findOne({
-      where: { id: data.UserField3 },
+      where: { id: data.UserField3 || data.udf3 },
     });
     const getPackage = await this.packageRepo.findOne({
-      where: { id: data.UserField1 },
+      where: { id: data.UserField1 || data.udf1 },
     });
     console.log(getPackage);
     if (!getPackage || !user) return;
@@ -389,11 +396,12 @@ export class UserService extends BaseService<User> {
     const requestHash = this.generateHash(trackid, amount, currency);
     console.log('requestHash', requestHash);
     const payload = {
+      id: this.tranportalId,
       trackid,
       terminalId: this.terminalId,
       action: '1', // Purchase
       customerEmail: 'customer@mail.com',
-      merchantIp: '194.163.153.121',
+      merchantIp: '194.163.153.121', // Consider getting real IP from request
       country: 'SA',
       password: this.password,
       currency,
