@@ -257,76 +257,25 @@ export class UserService extends BaseService<User> {
 
       const trackid = Math.random().toString(36).substring(2, 12);
       // Use the new PaymentService
-      const paymentResponse = await this.paymentService.createPayment(
-        Number(find_package.price),
-        trackid,
-        this.request.ip, // or get from headers
-        find_package.id, // udf1
-        '', // udf2
-        this.request.user.id, // udf3
-      );
-
-      // Adapt the response handling based on what PaymentService returns
-      // Assuming PaymentService returns the raw data as requested by the user
-      // The old logic parsed XML/String, the new one might return JSON or String.
-      // We will perform a similar check if it's a string, otherwise pass it through.
+      const paymentResponse = await this.paymentService.createPayment({
+        amount: Number(find_package.price),
+        trackId: trackid,
+        customerIp: this.request.ip,
+        udf1: find_package.id,
+        udf3: this.request.user.id,
+      });
 
       console.log('paymentResponse', paymentResponse);
 
       let payment_url = '';
       let payid = '';
 
-      if (typeof paymentResponse === 'string') {
-        const payidMatch =
-          paymentResponse.match(/<payid>(.*?)<\/payid>/) ||
-          paymentResponse.match(/<tranid>(.*?)<\/tranid>/) ||
-          paymentResponse.match(/<paymentid>(.*?)<\/paymentid>/);
-        let targetUrlMatch = paymentResponse.match(
-          /<targetUrl>(.*?)<\/targetUrl>/,
-        );
-
-        payid = payidMatch ? payidMatch[1] : '';
-
-        if (!payid || paymentResponse.includes('InvalidAccess')) {
-          console.error('Neoleap Error Response:', paymentResponse);
-          throw new BadRequestException(
-            'Payment Gateway Error: Invalid Access. Please check your credentials (Terminal ID, Tranportal ID, Password, Key) and IP Whitelisting.',
-          );
+      if (paymentResponse.result) {
+        const separatorIndex = paymentResponse.result.indexOf(':');
+        if (separatorIndex > 0) {
+          payid = paymentResponse.result.substring(0, separatorIndex);
+          payment_url = paymentResponse.result.substring(separatorIndex + 1);
         }
-
-        targetUrlMatch = paymentResponse.match(/<targetUrl>(.*?)<\/targetUrl>/);
-        const targetUrl = targetUrlMatch
-          ? targetUrlMatch[1]
-          : 'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';
-        payment_url = `${targetUrl}?paymentid=${payid}`;
-      } else if (paymentResponse && typeof paymentResponse === 'object') {
-        // Handle array response if applicable
-        const data = Array.isArray(paymentResponse)
-          ? paymentResponse[0]
-          : paymentResponse;
-
-        console.log('Payment Response Data:', data);
-
-        // If JSON response (e.g. { "targetUrl": "...", "payid": "..." })
-        payid =
-          data.payid ||
-          data.paymentid ||
-          data.tranid ||
-          data.transId ||
-          data.TransactionId ||
-          data.accessCode ||
-          data.paymentId; // Add camelCase check just in case
-
-        if (!payid) {
-          throw new BadRequestException(
-            `Payment ID not found in response: ${JSON.stringify(data)}`,
-          );
-        }
-
-        const targetUrl =
-          data.targetUrl ||
-          'https://securepayments.neoleap.com.sa/pg/payment/hosted.htm';
-        payment_url = `${targetUrl}?paymentid=${payid}`;
       }
 
       return {

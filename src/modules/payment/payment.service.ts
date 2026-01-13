@@ -2,12 +2,30 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { encrypt } from './crypto.util';
 
+export interface CreatePaymentParams {
+  amount: number;
+  trackId: string;
+  customerIp: string; // Now required
+  udf1?: string;
+  udf2?: string;
+  udf3?: string;
+  udf4?: string;
+  udf5?: string;
+}
+
+export interface PaymentResponse {
+  status: string; // '1' for success, '2' for failure
+  result?: string; // paymentId:paymentURL
+  error?: string;
+  errorText?: string;
+}
+
 @Injectable()
 export class PaymentService {
   private readonly logger = new Logger(PaymentService.name);
 
   // Credentials from environment or defaults (as provided in the request)
-  private readonly terminalId = process.env.NEOLEAP_TERMINAL_ID || 'PG426500';
+  private readonly terminalId = process.env.NEOLEAP_TERMINAL_ID; // No default, must be provided if required
   private readonly tranportalId =
     process.env.NEOLEAP_TRANPORTAL_ID || 'bR5T3Pni7UeVp08';
   private readonly password = process.env.NEOLEAP_PASSWORD || 'Q6#S#j31i#4JqnO';
@@ -22,17 +40,18 @@ export class PaymentService {
   private readonly errorUrl =
     process.env.NEOLEAP_ERROR_URL || 'http://127.0.0.1:3000/user/payment/error'; // Updated for local testing
 
-  async createPayment(
-    amount: number,
-    trackId: string,
-    customerIp: string = '127.0.0.1',
-    udf1: string = '',
-    udf2: string = '',
-    udf3: string = '',
-    udf4: string = '',
-    udf5: string = '',
-  ) {
-    const trandata = {
+  async createPayment(params: CreatePaymentParams): Promise<PaymentResponse> {
+    const { amount, trackId, customerIp, udf1, udf2, udf3, udf4, udf5 } =
+      params;
+
+    // Validate required customer IP
+    if (!customerIp || customerIp === '127.0.0.1') {
+      throw new Error(
+        'Valid customer IP address is required for payment processing',
+      );
+    }
+
+    const trandata: any = {
       amt: amount.toFixed(2),
       action: '1', // Purchase
       password: this.password,
@@ -42,22 +61,23 @@ export class PaymentService {
       responseURL: this.responseUrl,
       errorURL: this.errorUrl,
       langid: 'ar',
-      terminalId: this.terminalId, // Added terminalId
-      udf1,
-      udf2,
-      udf3,
-      udf4,
-      udf5,
+      udf1: udf1 || '',
+      udf2: udf2 || '',
+      udf3: udf3 || '',
+      udf4: udf4 || '',
+      udf5: udf5 || '',
     };
 
+    // Only add terminalId if it exists
+    if (this.terminalId) {
+      trandata.terminalId = this.terminalId;
+    }
+
     this.logger.log(
-      `Creating payment with TrackID: ${trackId}, Amount: ${amount}, TerminalID: ${this.terminalId}`,
+      `Creating payment with TrackID: ${trackId}, Amount: ${amount}, IP: ${customerIp}`,
     );
 
-    // Log the trandata (excluding password for security)
-    const { password, ...logData } = trandata;
-    this.logger.debug(`Trandata payload: ${JSON.stringify(logData)}`);
-
+    // Encrypt the trandata
     const encryptedTrandata = encrypt(
       JSON.stringify(trandata),
       this.resourceKey,
@@ -71,20 +91,41 @@ export class PaymentService {
     };
 
     try {
-      const response = await axios.post(this.paymentUrl, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-FORWARDED-FOR': customerIp,
+      const response = await axios.post<PaymentResponse>(
+        this.paymentUrl,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-FORWARDED-FOR': customerIp, // CRITICAL: Customer IP must be first
+          },
+          timeout: 30000,
         },
+      );
+
+      this.logger.debug('Payment response received', {
+        status: response.data.status,
+        hasResult: !!response.data.result,
       });
 
-      this.logger.debug('Payment response received', response.data);
+      // Check response status
+      if (response.data.status === '2') {
+        // Validation failed
+        throw new Error(
+          response.data.errorText ||
+            `Payment validation failed: ${response.data.error}`,
+        );
+      }
+
+      // Status '1' means success - result contains "paymentId:paymentURL"
       return response.data;
     } catch (error) {
       this.logger.error('Payment request failed', error.message);
-      if (error.response) {
+
+      if (axios.isAxiosError(error) && error.response) {
         this.logger.error('Error details:', error.response.data);
       }
+
       throw error;
     }
   }
