@@ -36,9 +36,10 @@ export class PaymentService {
     'https://securepayments.neoleap.com.sa/pg/payment/tranportal.htm';
   private readonly responseUrl =
     process.env.NEOLEAP_RESPONSE_URL ||
-    'http://127.0.0.1:3000/user/confirm/payment'; // Updated for local testing
+    'http://194.163.153.121:3000/user/confirm/payment'; // Updated for server
   private readonly errorUrl =
-    process.env.NEOLEAP_ERROR_URL || 'http://127.0.0.1:3000/user/payment/error'; // Updated for local testing
+    process.env.NEOLEAP_ERROR_URL ||
+    'http://194.163.153.121:3000/user/payment/error'; // Updated for server
 
   async createPayment(params: CreatePaymentParams): Promise<PaymentResponse> {
     const { amount, trackId, customerIp, udf1, udf2, udf3, udf4, udf5 } =

@@ -260,7 +260,10 @@ export class UserService extends BaseService<User> {
       const paymentResponse = await this.paymentService.createPayment({
         amount: Number(find_package.price),
         trackId: trackid,
-        customerIp: this.request.ip,
+        customerIp:
+          this.request.ip === '::1' || this.request.ip === '127.0.0.1'
+            ? '194.163.153.121'
+            : this.request.ip,
         udf1: find_package.id,
         udf3: this.request.user.id,
       });
