@@ -105,9 +105,22 @@ export class PaymentService {
       );
 
       this.logger.debug('Payment response received', {
-        status: response.data.status,
-        hasResult: !!response.data.result,
+        status:
+          typeof response.data === 'object' ? response.data.status : 'UNKNOWN',
+        data: typeof response.data === 'string' ? response.data : 'Object',
       });
+
+      // Check for HTML response indicating access denied
+      const responseData = response.data as any;
+      if (
+        typeof responseData === 'string' &&
+        (responseData.includes('InvalidAccess') ||
+          responseData.includes('DOCTYPE'))
+      ) {
+        throw new Error(
+          'Payment Gateway Error: Invalid Access. Please check your IP Whitelisting and Credentials (Terminal ID, Tranportal ID, Password, Resource Key).',
+        );
+      }
 
       // Check response status
       if (response.data.status === '2') {
