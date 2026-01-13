@@ -25,7 +25,8 @@ export class PaymentService {
   private readonly logger = new Logger(PaymentService.name);
 
   // Credentials from environment or defaults (as provided in the request)
-  private readonly terminalId = process.env.NEOLEAP_TERMINAL_ID; // No default, must be provided if required
+  // Credentials from environment or defaults (as provided in the request)
+  private readonly terminalId = process.env.NEOLEAP_TERMINAL_ID || 'PG426500';
   private readonly tranportalId =
     process.env.NEOLEAP_TRANPORTAL_ID || 'bR5T3Pni7UeVp08';
   private readonly password = process.env.NEOLEAP_PASSWORD || 'Q6#S#j31i#4JqnO';
