@@ -83,7 +83,10 @@ export class UserService extends BaseService<User> {
     // if(req.city_id){user.school.city_id = req.city_id;}
 
     if (req.password) {
-      user.password = await bcrypt.hash(req.password, 10);
+      user.password = await bcrypt.hash(
+        req.password + this._config.get('app.key'),
+        10,
+      );
     }
 
     if (req.avatarFile) {
